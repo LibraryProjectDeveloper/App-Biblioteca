@@ -13,6 +13,7 @@ import java.util.Date;
 @Getter
 @Setter
 public class Book {
+
     private Long codeBook;
 
     @NotBlank(message = "El título es obligatorio")

@@ -21,21 +21,25 @@ public class BookReposity {
     }
 
     public Book addBook(Book book){
-        Long id = idGenerator.getAndIncrement();
-        book.setCodeBook(id);
-        bookMap.put(id, book);
+        book.setCodeBook(idGenerator.getAndIncrement());
+        bookMap.put(book.getCodeBook(), book);
         return book;
     }
 
     public Book updateBook(Long id, Book book){
-       return bookMap.computeIfPresent(id, (key, value) -> {
-           value.setTitle(book.getTitle());
-           value.setTitle(book.getTitle());
-           value.setPublisher(book.getPublisher());
-           value.setPublicationDate(book.getPublicationDate());
-           value.setCategory(book.getCategory());
-           value.setStockTotal(book.getStockTotal());
-           return value;
-        });
+       if(bookMap.containsKey(id)){
+           bookMap.put(id, book);
+           return book;
+       } else {
+           return null;
+       }
+    }
+    public boolean deleteBook(Long id){
+        if(bookMap.containsKey(id)){
+            bookMap.remove(id);
+            return true;
+        } else {
+            return false;
+        }
     }
 }
