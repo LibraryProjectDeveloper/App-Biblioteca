@@ -5,7 +5,8 @@ import com.WebBiblioteca.Service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.HashMap;
+
 
 @RestController
 @RequestMapping("/api/user")
@@ -15,12 +16,11 @@ public class UserController {
         this.userService = userService;
     }
     @GetMapping("/all")
-    public List<User> getAllUsers() {
+    public HashMap<Long,User> getAllUsers() {
         return userService.getAllUsers();
     }
     @PostMapping("/add")
     public ResponseEntity<?> addUser(@RequestBody User user) {
-        userService.addUser(user);
-        return ResponseEntity.ok("User added successfully");
+        return ResponseEntity.ok( userService.addUser(user));
     }
 }
