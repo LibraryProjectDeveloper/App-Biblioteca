@@ -58,5 +58,6 @@ public class User {
 
         @NotNull(message = "El rol es obligatorio")
         private Role role;
+
 }
 

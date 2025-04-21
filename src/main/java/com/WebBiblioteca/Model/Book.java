@@ -5,9 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.Date;
-
+import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -22,7 +20,7 @@ public class Book {
 
     @NotNull(message = "La fecha de publicación es obligatoria")
     @PastOrPresent(message = "La fecha de publicación no puede ser futura")
-    private Date publicationDate;
+    private LocalDate publicationDate;
 
     @NotBlank(message = "La editorial es obligatoria")
     @Size(max = 100, message = "La editorial no puede exceder los 100 caracteres")
