@@ -2,12 +2,10 @@ package com.WebBiblioteca.Service;
 
 import com.WebBiblioteca.Model.User;
 import com.WebBiblioteca.Repository.UserRepository;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
 
 @Service
 public class UserService {
@@ -43,32 +41,39 @@ public class UserService {
     public User updateUser(User user,Long id){
         User existingUser = userRepository.getUserById(id);
         if ( existingUser != null){
-            existingUser.setName(user.getName());
-            existingUser.setLastname(user.getLastname());
-            existingUser.setEmail(user.getEmail());
-            existingUser.setPhone(user.getPhone());
-            existingUser.setAddress(user.getAddress());
-            existingUser.setDNI(user.getDNI());
-            existingUser.setPassword(user.getPassword());
-            existingUser.setState(user.getState());
+            if(user.getName() != null) {
+                existingUser.setName(user.getName());
+            }
+            if(user.getLastname() != null) {
+                existingUser.setLastname(user.getLastname());
+            }
+            if(user.getEmail() != null) {
+                existingUser.setEmail(user.getEmail());
+            }
+            if(user.getPhone() != null) {
+                existingUser.setPhone(user.getPhone());
+            }
+            if(user.getAddress() != null) {
+                existingUser.setAddress(user.getAddress());
+            }
+            if(user.getDNI() != null) {
+                existingUser.setDNI(user.getDNI());
+            }
+            if(user.getPassword() != null) {
+                existingUser.setPassword(user.getPassword());
+            }
+            if(user.getState() != null) {
+                existingUser.setState(user.getState());
+            }
+            if(user.getRole() != null) {
+                existingUser.setRole(user.getRole());
+            }
+            if(user.getDateRegistered() != null) {
+                existingUser.setDateRegistered(user.getDateRegistered());
+            }
             return userRepository.updateUser(id,existingUser);
         }else{
             return null;
         }
-    }
-    public User updatePartialUser(Long id, User partialUser){
-        User existingUser = userRepository.getUserById(id);
-        if (existingUser != null) {
-            if (partialUser.getName() != null) existingUser.setName(partialUser.getName());
-            if (partialUser.getLastname() != null) existingUser.setLastname(partialUser.getLastname());
-            if (partialUser.getEmail() != null) existingUser.setEmail(partialUser.getEmail());
-            if (partialUser.getPhone() != null) existingUser.setPhone(partialUser.getPhone());
-            if (partialUser.getAddress() != null) existingUser.setAddress(partialUser.getAddress());
-            if (partialUser.getDNI() != null) existingUser.setDNI(partialUser.getDNI());
-            if (partialUser.getPassword() != null) existingUser.setPassword(partialUser.getPassword());
-            if (partialUser.getState() != null) existingUser.setState(partialUser.getState());
-            return userRepository.partialUpdate(id, existingUser);
-        }
-        return null;
     }
 }

@@ -1,5 +1,4 @@
 package com.WebBiblioteca.Model;
-
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.FutureOrPresent;
 import lombok.AllArgsConstructor;
@@ -14,7 +13,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter
-public class RerserveBoock {
+public class ReserveBook {
 
     private Long codeReserve; //se le genera el codigo automaticamente
     @FutureOrPresent(message = "La fecha de reserva no puede ser pasada")
@@ -23,8 +22,8 @@ public class RerserveBoock {
 
     private LocalTime startTime;
     private LocalTime endTime;
-    private User User;
-    private Book reserveBook;
+    private User user;
+    private Book book;
 
     public boolean isActive() {
         LocalDateTime now = LocalDateTime.now();
@@ -32,3 +31,4 @@ public class RerserveBoock {
         return Boolean.TRUE.equals(state) && now.isBefore(reservationEnd);
     }
 }
+
