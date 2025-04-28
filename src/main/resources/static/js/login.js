@@ -1,5 +1,5 @@
 const loginBox = document.getElementById('loginBox');
-const usernameInput = document.getElementById('username');
+const usernameInput = document.getElementById('email');
 const passwordInput = document.getElementById('password');
 
 

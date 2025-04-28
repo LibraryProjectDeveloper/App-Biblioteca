@@ -11,12 +11,12 @@
 <div class="login-container">
     <div class="login-box" id="loginBox">
         <h2><i class="fas fa-sign-in-alt"></i> LOGIN <span></span></h2>
-        <form>
+        <form id="login-form">
             <div class="input-group">
-                <input type="text" id="username" placeholder="Username" autocomplete="off">
+                <input type="email" id="email" name="correo" placeholder="Correo" autocomplete="off">
             </div>
             <div class="input-group">
-                <input type="password" id="password" placeholder="Password" autocomplete="off">
+                <input type="password" id="password" name="clave" placeholder="Contraseña" autocomplete="off">
             </div>
             <button type="submit" class="btn-signin">Sign in</button>
             <div class="links">
@@ -29,6 +29,6 @@
 
 <script src="https://kit.fontawesome.com/yourkitid.js" crossorigin="anonymous"></script> <!-- FontAwesome icons -->
 <script src="js/login.js"></script>
-
+<script src="js/ApiLogin.js"></script>
 </body>
 </html>
