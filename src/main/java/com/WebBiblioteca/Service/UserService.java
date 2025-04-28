@@ -19,6 +19,9 @@ public class UserService {
         return userRepository.getUsersList();
     }
     public User addUser(User user){
+        if (userRepository.getUserByEmail(user.getEmail()) != null) {
+            return null; // User with this email already exists
+        }
        user.setDateRegistered(LocalDateTime.now());
        user.setState(true);
        return userRepository.addUser(user);

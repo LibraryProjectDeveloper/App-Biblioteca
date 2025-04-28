@@ -38,7 +38,7 @@ public class User {
         private String address;
 
         @NotBlank(message = "El DNI es obligatorio")
-        @Pattern(regexp = "^\\d{8}$",
+        @Pattern(regexp = "^[0-9]{8}$",
                 message = "El DNI debe tener 8")
         private String DNI;
 

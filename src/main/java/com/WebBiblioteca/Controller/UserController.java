@@ -5,9 +5,11 @@ import com.WebBiblioteca.Service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.Map;
 
 
 @RestController
@@ -22,12 +24,30 @@ public class UserController {
         return userService.getAllUsers();
     }
     @PostMapping("/add")
-    public ResponseEntity<?> addUser(@Valid @RequestBody User user) {
-        return ResponseEntity.ok(userService.addUser(user));
+    public ResponseEntity<?> addUser(@Valid @RequestBody User user,  BindingResult result) {
+        Map<String,String> errores = new HashMap<>();
+        System.out.println(user.getDNI());
+        if (result.hasErrors()){
+            result.getFieldErrors().forEach(error -> {
+                System.out.println("Error in field: " + error.getField() + " - " + error.getDefaultMessage());
+                errores.put(error.getField(),error.getDefaultMessage());
+            });
+            return ResponseEntity.badRequest().body(errores);
+        }
+        User newuser  = userService.addUser(user);
+        if (newuser == null) {
+            return ResponseEntity.badRequest().body("User with this email already exists");
+        }
+        return ResponseEntity.ok(newuser);
     }
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> updateUser(@RequestBody User user,@Valid @PathVariable Long id){
+    public ResponseEntity<?> updateUser(@Valid @RequestBody User user,@PathVariable Long id, BindingResult result){
         User updatedUser = userService.updateUser(user,id);
+        if (result.hasErrors()){
+            result.getFieldErrors().forEach(error -> {
+                System.out.println("Error in field: " + error.getField() + " - " + error.getDefaultMessage());
+            });
+        }
         if(updatedUser != null){
             return ResponseEntity.ok(updatedUser);
         }else{
@@ -35,7 +55,7 @@ public class UserController {
         }
     }
     @PatchMapping("/update/{id}")
-    public ResponseEntity<?> updatePartialUser( @RequestBody User partialUser,@PathVariable Long id) {
+    public ResponseEntity<?> updatePartialUser(@RequestBody User partialUser,@PathVariable Long id) {
         User updatedUser = userService.updateUser(partialUser,id);
         if (updatedUser != null) {
             return ResponseEntity.ok(updatedUser);

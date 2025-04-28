@@ -14,7 +14,7 @@ public class UserServiceTest {
     private final UserService userService = new UserService(userRepository);
     @Test
     void testAddUser() {
-        User user = new User(1L,"Renato","Ballena","renato@gmail.com","987654321","Manco capac 249","87654321","clave123",true, LocalDateTime.now(),Role.USER);
+        User user = new User(1L,"Renato","Ballena","renato@gmail.com","987654321","Manco capac 249","87654321","clave123",null, null,Role.USER);
         User result = userService.addUser(user);
         assertEquals("Renato", result.getName());
         assertEquals("Ballena", result.getLastname());
