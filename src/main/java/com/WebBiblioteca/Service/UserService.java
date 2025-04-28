@@ -2,6 +2,7 @@ package com.WebBiblioteca.Service;
 
 import com.WebBiblioteca.Model.User;
 import com.WebBiblioteca.Repository.UserRepository;
+import com.WebBiblioteca.Utilidades.ExceptionUser;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,6 +20,10 @@ public class UserService {
         return userRepository.getUsersList();
     }
     public User addUser(User user){
+        if(userRepository.getUserByEmail(user.getEmail()) != null){
+            throw new ExceptionUser("El correo electrónico ya está en uso");
+        }
+
        user.setDateRegistered(LocalDateTime.now());
        user.setState(true);
        return userRepository.addUser(user);

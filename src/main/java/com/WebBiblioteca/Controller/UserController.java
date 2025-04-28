@@ -2,6 +2,7 @@ package com.WebBiblioteca.Controller;
 
 import com.WebBiblioteca.Model.User;
 import com.WebBiblioteca.Service.UserService;
+import com.WebBiblioteca.Utilidades.ExceptionUser;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,12 @@ public class UserController {
     }
     @PostMapping("/add")
     public ResponseEntity<?> addUser(@Valid @RequestBody User user) {
-        return ResponseEntity.ok(userService.addUser(user));
+        try {
+            User newuser = userService.addUser(user);
+            return ResponseEntity.ok(newuser);
+        }catch (ExceptionUser ex){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
     }
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateUser(@RequestBody User user,@Valid @PathVariable Long id){
@@ -56,7 +62,7 @@ public class UserController {
     public ResponseEntity<?> login(@PathVariable String email,@PathVariable String password){
         User user = userService.loginUser(email,password);
         if(user != null){
-            return ResponseEntity.ok("Login successful");
+            return ResponseEntity.ok(user);
         }else{
             return new ResponseEntity<>("Invalid email or password", HttpStatus.UNAUTHORIZED);
         }
