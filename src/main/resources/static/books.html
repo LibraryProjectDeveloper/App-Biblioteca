@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Libros</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="img/logo.jpeg" alt="logo" class="img-fluid" style="width: 90px; height: auto; border-radius: 100px">
+                AppBiblioteca
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasDarkNavbar" aria-labelledby="offcanvasDarkNavbarLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasDarkNavbarLabel">Dark offcanvas</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="Dashboard.html">Inicio</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="books.html">Libros</a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="index.html">Salir</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2>Libros Disponibles</h2>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#bookModal">
+                <i class="bi bi-plus-circle"></i> Añadir Libro
+            </button>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover" id="booksTable">
+                <thead class="table-dark">
+                <tr>
+                    <th>Código</th>
+                    <th>Título</th>
+                    <th>Fecha Publicación</th>
+                    <th>Editorial</th>
+                    <th>Categoría</th>
+                    <th>Stock</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Los datos se cargarán dinámicamente con JavaScript -->
+                </tbody>
+            </table>
+        </div>
+        <div class="modal fade" id="bookModal" tabindex="-1" aria-labelledby="bookModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="bookModalLabel">Nuevo Libro</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="bookForm">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="title" class="form-label">Título</label>
+                                    <input type="text" class="form-control" id="title" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="publicationDate" class="form-label">Fecha Publicación</label>
+                                    <input type="date" class="form-control" id="publicationDate" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="publisher" class="form-label">Editorial</label>
+                                    <input type="text" class="form-control" id="publisher" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="category" class="form-label">Categoría</label>
+                                    <input type="text" class="form-control" id="category" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="stockTotal" class="form-label">Stock Total</label>
+                                    <input type="number" class="form-control" id="stockTotal" required>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" id="saveBook">Guardar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="js/books.js"></script>
+</body>
+
+</html>

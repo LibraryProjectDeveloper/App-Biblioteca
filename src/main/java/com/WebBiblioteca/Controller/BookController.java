@@ -19,6 +19,17 @@ public class BookController {
     public Map<Long, Book> getAllBooks() {
         return bookService.getBookList();
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getBookById(@PathVariable Long id) {
+        Book book = bookService.getBookById(id);
+        if (book != null) {
+            return ResponseEntity.ok(book);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @PostMapping("/add")
     public ResponseEntity<?> addBook(@Valid @RequestBody Book book){
        Book bookAdded = bookService.addBook(book);
