@@ -49,4 +49,7 @@ public class BookService {
     public boolean deleteBook(Long id){
         return bookReposity.deleteBook(id);
     }
+    public Book getBookById(Long id){
+        return bookReposity.getBookById(id);
+    }
 }

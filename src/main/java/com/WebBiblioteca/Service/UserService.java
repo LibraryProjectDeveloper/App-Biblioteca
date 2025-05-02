@@ -1,7 +1,9 @@
 package com.WebBiblioteca.Service;
 
+import com.WebBiblioteca.Model.Role;
 import com.WebBiblioteca.Model.User;
 import com.WebBiblioteca.Repository.UserRepository;
+import com.WebBiblioteca.Utilidades.ExceptionUser;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,13 +21,17 @@ public class UserService {
         return userRepository.getUsersList();
     }
     public User addUser(User user){
+        if(userRepository.getUserByEmail(user.getEmail()) != null){
+            throw new ExceptionUser("El correo electrónico ya está en uso");
+        }
+
        user.setDateRegistered(LocalDateTime.now());
        user.setState(true);
        return userRepository.addUser(user);
     }
     public User loginUser(String email, String password){
         User user = userRepository.getUserByEmail(email);
-        if(user != null && user.getPassword().equals(password)){
+        if(user != null && user.getPassword().equals(password) && user.getRole()==Role.LIBRARIAN && user.getState()){
             return user;
         }
         return null;
