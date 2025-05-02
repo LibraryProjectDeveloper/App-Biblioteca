@@ -1,5 +1,6 @@
 package com.WebBiblioteca.Service;
 
+import com.WebBiblioteca.Model.Role;
 import com.WebBiblioteca.Model.User;
 import com.WebBiblioteca.Repository.UserRepository;
 import com.WebBiblioteca.Utilidades.ExceptionUser;
@@ -30,7 +31,7 @@ public class UserService {
     }
     public User loginUser(String email, String password){
         User user = userRepository.getUserByEmail(email);
-        if(user != null && user.getPassword().equals(password)){
+        if(user != null && user.getPassword().equals(password) && user.getRole()==Role.LIBRARIAN && user.getState()){
             return user;
         }
         return null;
