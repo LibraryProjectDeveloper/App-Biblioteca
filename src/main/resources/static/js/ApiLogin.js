@@ -24,7 +24,7 @@ document.getElementById('login-form').addEventListener('submit', async function 
         const data = await response.json();
         console.log('Login response:', data.email);
      setTimeout(() =>{
-         window.location.href = '../books.html';
+         window.location.href = '../Dashboard.html';
      },1500);
     }catch (error) {
         console.error('Error during login:', error);
