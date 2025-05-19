@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 
 
 @RestController
@@ -18,13 +19,14 @@ public class UserController {
         this.userService = userService;
     }
     @GetMapping("/")
-    public HashMap<Long,User> getAllUsers() {
+    public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
     @PostMapping("/add")
     public ResponseEntity<?> addUser(@Valid @RequestBody User user) {
         return ResponseEntity.ok(userService.addUser(user));
     }
+    /*
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateUser(@RequestBody User user,@Valid @PathVariable Long id){
         User updatedUser = userService.updateUser(user,id);
@@ -61,4 +63,5 @@ public class UserController {
             return new ResponseEntity<>("Invalid email or password", HttpStatus.UNAUTHORIZED);
         }
     }
+     */
 }

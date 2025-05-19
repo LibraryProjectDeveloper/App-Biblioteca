@@ -1,11 +1,13 @@
 package com.WebBiblioteca.Service;
 
+import com.WebBiblioteca.Model.Role;
 import com.WebBiblioteca.Model.User;
 import com.WebBiblioteca.Repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -15,20 +17,22 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public HashMap<Long, User> getAllUsers() {
-        return userRepository.getUsersList();
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
-    public User addUser(User user){
-        if (userRepository.getUserByEmail(user.getEmail()) != null) {
+
+    public User addUser(User user) {
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             return null; // User with this email already exists
         }
-       user.setDateRegistered(LocalDateTime.now());
-       user.setState(true);
-       return userRepository.addUser(user);
+        user.setDateRegistered(LocalDateTime.now());
+        user.setState(true);
+        return userRepository.save(user);
     }
-    public User loginUser(String email, String password){
+    /*
+    public User loginUser(String email, String password ){
         User user = userRepository.getUserByEmail(email);
-        if(user != null && user.getPassword().equals(password)){
+        if(user != null && user.getPassword().equals(password) && user.getRole().getNameRol() == Role.LIBRARIAN && user.getState()){
             return user;
         }
         return null;
@@ -79,4 +83,5 @@ public class UserService {
             return null;
         }
     }
+     */
 }

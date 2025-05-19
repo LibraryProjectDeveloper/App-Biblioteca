@@ -14,6 +14,15 @@ public class ReserveBookService {
     public ReserveBookService(ReserveBookRepository reserveBookRepository) {
         this.reserveBookRepository = reserveBookRepository;
     }
+
+    public List<ReserveBook> getReservationList() {
+        return reserveBookRepository.findAll();
+    }
+
+    public List<ReserveBook> getReservationActives() {
+        return reserveBookRepository.findByState(true);
+    }
+    /*
     public Map<Long, ReserveBook> getReservationList() {
         return reserveBookRepository.getReservationList();
     }
@@ -66,4 +75,6 @@ public class ReserveBookService {
     public boolean deleteReservation(Long id) {
         return reserveBookRepository.deleteReservation(id);
     }
+
+     */
 }

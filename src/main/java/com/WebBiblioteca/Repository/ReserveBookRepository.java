@@ -1,11 +1,14 @@
 package com.WebBiblioteca.Repository;
 import com.WebBiblioteca.Model.ReserveBook;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
-public class ReserveBookRepository {
+public interface ReserveBookRepository extends JpaRepository<ReserveBook, Long> {
+    List<ReserveBook> findByState(boolean state);
+    /*
     private final AtomicLong idGenerator = new AtomicLong(1);
     private final HashMap<Long, ReserveBook> reservationMap = new HashMap<>();
     private final Map<Long, Set<Long>> reservationsByUserId = new HashMap<>();
@@ -72,5 +75,7 @@ public class ReserveBookRepository {
             return false;
         }
     }
+
+     */
 }
 

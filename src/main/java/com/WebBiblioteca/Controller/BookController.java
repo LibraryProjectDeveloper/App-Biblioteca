@@ -1,11 +1,13 @@
 package com.WebBiblioteca.Controller;
 
+import com.WebBiblioteca.BookDTO;
 import com.WebBiblioteca.Model.Book;
 import com.WebBiblioteca.Service.BookService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -16,7 +18,7 @@ public class BookController {
         this.bookService = bookService;
     }
     @GetMapping("/")
-    public Map<Long, Book> getAllBooks() {
+    public List<Book> getAllBooks() {
         return bookService.getBookList();
     }
 
@@ -31,14 +33,15 @@ public class BookController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> addBook(@Valid @RequestBody Book book){
-       Book bookAdded = bookService.addBook(book);
+    public ResponseEntity<?> addBook(@Valid @RequestBody BookDTO book){
+        Book bookAdded = bookService.addBook(book);
         if (bookAdded != null) {
             return ResponseEntity.ok(bookAdded);
         } else {
             return ResponseEntity.badRequest().body("Error adding book");
         }
     }
+
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateBook(@PathVariable Long id, @Valid @RequestBody Book book) {
         Book updatedBook = bookService.updateBook(id, book);
@@ -48,6 +51,7 @@ public class BookController {
             return ResponseEntity.notFound().build();
         }
     }
+
     @PatchMapping("/update/{id}")
     public ResponseEntity<?> updatePartialBook(@PathVariable Long id, @RequestBody Book book) {
         Book updatedBook = bookService.updateBook(id, book);
@@ -57,6 +61,8 @@ public class BookController {
             return ResponseEntity.notFound().build();
         }
     }
+    /*
+
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteBook(@PathVariable Long id) {
         boolean isDeleted = bookService.deleteBook(id);
@@ -66,4 +72,6 @@ public class BookController {
             return ResponseEntity.notFound().build();
         }
     }
+
+     */
 }
