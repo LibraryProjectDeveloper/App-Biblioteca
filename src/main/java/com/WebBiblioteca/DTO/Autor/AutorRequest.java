@@ -1,51 +1,37 @@
-package com.WebBiblioteca.Model;
+package com.WebBiblioteca.DTO.Autor;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
-import lombok.*;
+import com.WebBiblioteca.Model.Genero;
+import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-
-@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter @Setter
-public class Autor {
-    @Id
-    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
+public class AutorRequest {
     private Long idAutor;
 
-    @Column(columnDefinition = "VARCHAR(20)")
     @NotBlank(message = "El nombre es obligatorio")
     @Size(min = 2, max = 20, message = "El nombre debe tener entre 2 y 20 caracteres")
     @Pattern(regexp = "^[\\p{L} .'-]+$", message = "El nombre solo puede contener letras y caracteres válidos")
     private String nombres;
 
-    @Column(columnDefinition = "VARCHAR(20)")
     @NotBlank(message = "El apellido es obligatorio")
     @Size(min = 2, max = 20, message = "El nombre debe tener entre 2 y 50 caracteres")
     @Pattern(regexp = "^[\\p{L} .'-]+$", message = "El apellido solo puede contener letras y caracteres válidos")
     private String apellidos;
 
-    @Column(columnDefinition = "VARCHAR(20)")
     @NotBlank(message = "La nacionalidad es obligatorio")
     @Size(min = 2, max = 20, message = "La nacionalidad debe tener entre 2 y 50 caracteres")
     @Pattern(regexp = "^[\\p{L} .'-]+$", message = "La nacionalidad solo puede contener letras y caracteres válidos")
     private String nacionalidad;
 
-    @Column(columnDefinition = "DATE")
     @Past(message = "La fecha de nacimiento debe ser una fecha pasada")
     private Date fechaNacimiento;
 
-    @Enumerated(EnumType.STRING)
+    @NotNull
     private Genero genero;
-
-    @ManyToMany(mappedBy = "autores")
-    private Set<Book> libros = new HashSet<>();
 }
