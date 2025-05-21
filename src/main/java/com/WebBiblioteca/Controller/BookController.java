@@ -1,14 +1,16 @@
 package com.WebBiblioteca.Controller;
 
-import com.WebBiblioteca.BookDTO;
+import com.WebBiblioteca.DTO.Book.BookRequest;
+import com.WebBiblioteca.DTO.Book.BookResponse;
 import com.WebBiblioteca.Model.Book;
+import com.WebBiblioteca.Model.EstadoBook;
 import com.WebBiblioteca.Service.BookService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/books")
@@ -17,9 +19,25 @@ public class BookController {
     public BookController(BookService bookService) {
         this.bookService = bookService;
     }
-    @GetMapping("/")
-    public List<Book> getAllBooks() {
-        return bookService.getBookList();
+
+    @GetMapping("/actives")
+    public ResponseEntity<?> getAllBooks() {
+        try {
+            List<BookResponse> bookList = bookService.getBookList(EstadoBook.ACTIVO);
+            return ResponseEntity.ok(bookList);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/inactives")
+    public ResponseEntity<?> getAllInactivesBooks() {
+        try {
+            List<BookResponse> bookList = bookService.getBookList(EstadoBook.INACTIVO);
+            return ResponseEntity.ok(bookList);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(e.getMessage());
+        }
     }
 
     @GetMapping("/{id}")
@@ -33,7 +51,7 @@ public class BookController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> addBook(@Valid @RequestBody BookDTO book){
+    public ResponseEntity<?> addBook(@Valid @RequestBody BookRequest book){
         Book bookAdded = bookService.addBook(book);
         if (bookAdded != null) {
             return ResponseEntity.ok(bookAdded);
@@ -43,7 +61,7 @@ public class BookController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> updateBook(@PathVariable Long id, @Valid @RequestBody Book book) {
+    public ResponseEntity<?> updateBook(@PathVariable Long id, @Valid @RequestBody BookRequest book) {
         Book updatedBook = bookService.updateBook(id, book);
         if (updatedBook != null) {
             return ResponseEntity.ok(updatedBook);
@@ -53,7 +71,7 @@ public class BookController {
     }
 
     @PatchMapping("/update/{id}")
-    public ResponseEntity<?> updatePartialBook(@PathVariable Long id, @RequestBody Book book) {
+    public ResponseEntity<?> updatePartialBook(@PathVariable Long id, @RequestBody BookRequest book) {
         Book updatedBook = bookService.updateBook(id, book);
         if (updatedBook != null) {
             return ResponseEntity.ok(updatedBook);
@@ -61,17 +79,4 @@ public class BookController {
             return ResponseEntity.notFound().build();
         }
     }
-    /*
-
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteBook(@PathVariable Long id) {
-        boolean isDeleted = bookService.deleteBook(id);
-        if (isDeleted) {
-            return ResponseEntity.ok("Book deleted successfully");
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-     */
 }

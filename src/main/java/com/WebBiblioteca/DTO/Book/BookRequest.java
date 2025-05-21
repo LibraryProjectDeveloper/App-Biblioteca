@@ -1,10 +1,8 @@
-package com.WebBiblioteca;
+package com.WebBiblioteca.DTO.Book;
 
+import com.WebBiblioteca.DTO.Autor.AutorRequest;
 import com.WebBiblioteca.Model.Categoria;
 import com.WebBiblioteca.Model.EstadoBook;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,10 +10,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter @Setter
-public class BookDTO {
+public class BookRequest {
     @NotBlank(message = "El título es obligatorio")
     @Size(min = 2, max = 200, message = "El título debe tener entre 2 y 90 caracteres")
     private String title;
@@ -42,4 +42,6 @@ public class BookDTO {
 
     @NotNull
     private EstadoBook estado;
+
+    private List<AutorRequest> listAutores;
 }

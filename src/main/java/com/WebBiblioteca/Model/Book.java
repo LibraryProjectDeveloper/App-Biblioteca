@@ -63,10 +63,9 @@ public class Book {
     @ManyToMany(mappedBy = "libros")
     private Set<Prestamo> prestamos = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "libro_autor",
             joinColumns = @JoinColumn(name = "libro_id"),
             inverseJoinColumns = @JoinColumn(name = "autor_id"))
-    @JsonManagedReference
     private Set<Autor> autores = new HashSet<>();
 }
