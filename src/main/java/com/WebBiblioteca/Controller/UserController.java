@@ -1,5 +1,7 @@
 package com.WebBiblioteca.Controller;
 
+import com.WebBiblioteca.DTO.Usuario.UsuarioRequest;
+import com.WebBiblioteca.DTO.Usuario.UsuarioResponse;
 import com.WebBiblioteca.Model.User;
 import com.WebBiblioteca.Service.UserService;
 import jakarta.validation.Valid;
@@ -19,41 +21,43 @@ public class UserController {
         this.userService = userService;
     }
     @GetMapping("/")
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<?> getAllUsers() {
+        try {
+            return ResponseEntity.ok(userService.getAllUsers());
+        }catch (RuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
     @PostMapping("/add")
-    public ResponseEntity<?> addUser(@Valid @RequestBody User user) {
-        return ResponseEntity.ok(userService.addUser(user));
+    public ResponseEntity<?> addUser(@Valid @RequestBody UsuarioRequest user) {
+        try {
+            userService.addUser(user);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Usuario creado correctamente");
+        }catch (RuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<?> updateUser(@Valid @RequestBody UsuarioRequest user){
+        try {
+           userService.updateUser(user);
+            return ResponseEntity.ok("Usuario actualizado correctamente");
+        }catch (RuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    @PatchMapping("/update")
+    public ResponseEntity<?> updatePartialUser( @RequestBody UsuarioRequest partialUser) {
+        try {
+            userService.updateUser(partialUser);
+            return ResponseEntity.ok("Usuario actualizado correctamente");
+        }catch (RuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
     /*
-    @PutMapping("/update/{id}")
-    public ResponseEntity<?> updateUser(@RequestBody User user,@Valid @PathVariable Long id){
-        User updatedUser = userService.updateUser(user,id);
-        if(updatedUser != null){
-            return ResponseEntity.ok(updatedUser);
-        }else{
-            return ResponseEntity.notFound().build();
-        }
-    }
-    @PatchMapping("/update/{id}")
-    public ResponseEntity<?> updatePartialUser( @RequestBody User partialUser,@PathVariable Long id) {
-        User updatedUser = userService.updateUser(partialUser,id);
-        if (updatedUser != null) {
-            return ResponseEntity.ok(updatedUser);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
-        boolean result = userService.deleteUser(id);
-        if(result){
-            return ResponseEntity.ok("User deleted successfully");
-        }else{
-            return ResponseEntity.notFound().build();
-        }
-    }
+
     @PostMapping("/login/{email}/{password}")
     public ResponseEntity<?> login(@PathVariable String email,@PathVariable String password){
         User user = userService.loginUser(email,password);

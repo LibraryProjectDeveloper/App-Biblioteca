@@ -1,6 +1,8 @@
 package com.WebBiblioteca.Repository;
 
 import com.WebBiblioteca.Model.User;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,11 +14,8 @@ public interface UserRepository extends JpaRepository<User,Long> {
     //listar usuarios por su estado
     List<User> findByState(Boolean state);
 
-    //buscar usuario por su id
-    Optional<User> findByCode(Long id);
-
     //buscar usuario por su email
     Optional<User> findByEmail(String email);
 
-    void deleteByCode(Long id);
+    Optional<User> findByDNI( String dni);
 }

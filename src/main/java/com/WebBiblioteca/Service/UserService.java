@@ -1,34 +1,125 @@
 package com.WebBiblioteca.Service;
 
-import com.WebBiblioteca.Model.Role;
+import com.WebBiblioteca.DTO.Usuario.UsuarioRequest;
+import com.WebBiblioteca.DTO.Usuario.UsuarioResponse;
+import com.WebBiblioteca.Model.Rol;
 import com.WebBiblioteca.Model.User;
+import com.WebBiblioteca.Repository.RolRepository;
 import com.WebBiblioteca.Repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final RolRepository rolRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, RolRepository rolRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.rolRepository = rolRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
+    public List<UsuarioResponse> getAllUsers() {
+        List<UsuarioResponse> usuarioResponseList =  userRepository.findAll().
+                stream().map(user -> new UsuarioResponse(
+                        user.getCode(),
+                        user.getName(),
+                        user.getLastname(),
+                        user.getEmail(),
+                        user.getPhone(),
+                        user.getAddress(),
+                        user.getDNI(),
+                        user.getPassword(),
+                        user.getState(),
+                        user.getDateRegistered(),
+                        user.getRol().getIdRol()
+                )).toList();
 
-    public User addUser(User user) {
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            return null; // User with this email already exists
+        if (usuarioResponseList.isEmpty()) {
+            throw new RuntimeException("No hay usuarios disponibles");
         }
-        user.setDateRegistered(LocalDateTime.now());
-        user.setState(true);
-        return userRepository.save(user);
+
+        return usuarioResponseList;
     }
+
+    @Transactional
+    public void addUser(UsuarioRequest user) {
+        Rol rol = rolRepository.findByIdRol(user.getIdRol()).orElse(null);
+
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            throw new RuntimeException("El usuario ya está registrado");
+        }
+
+        if (rol == null) {
+            throw new RuntimeException("El rol no existe");
+        }
+
+        if (userRepository.findByDNI(user.getDNI()).isPresent()) {
+            throw new RuntimeException("El DNI ya está registrado");
+        }
+
+        User newUser = new User();
+        newUser.setName(user.getName());
+        newUser.setLastname(user.getLastname());
+        newUser.setEmail(user.getEmail());
+        newUser.setPhone(user.getPhone());
+        newUser.setAddress(user.getAddress());
+        newUser.setDNI(user.getDNI());
+        newUser.setPassword(this.passwordEncoder.encode(user.getPassword()));
+        newUser.setState(true);
+        newUser.setDateRegistered(LocalDateTime.now());
+        newUser.setRol(rol);
+        userRepository.save(newUser);
+    }
+
+    public void updateUser(UsuarioRequest user) {
+        User userToUpdate = userRepository.findById(user.getIdUsuario()).orElse(null);
+        if (userToUpdate == null) {
+            throw new RuntimeException("El usuario no existe");
+        }
+
+        if (user.getName() != null) {
+            userToUpdate.setName(user.getName());
+        }
+        if (user.getLastname() != null) {
+            userToUpdate.setLastname(user.getLastname());
+        }
+        if (user.getEmail() != null) {
+            userToUpdate.setEmail(user.getEmail());
+        }
+        if (user.getPhone() != null) {
+            userToUpdate.setPhone(user.getPhone());
+        }
+        if (user.getAddress() != null) {
+            userToUpdate.setAddress(user.getAddress());
+        }
+        if (user.getDNI() != null) {
+            userToUpdate.setDNI(user.getDNI());
+        }
+        if (user.getPassword() != null) {
+            userToUpdate.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+        if (user.getState() != null) {
+            userToUpdate.setState(user.getState());
+        }
+        if (user.getIdRol() != null) {
+            Rol rol = rolRepository.findByIdRol(user.getIdRol()).orElse(null);
+            if (rol == null) {
+                throw new RuntimeException("El rol no existe");
+            }
+            userToUpdate.setRol(rol);
+        }
+
+        userRepository.save(userToUpdate);
+    }
+
+
     /*
     public User loginUser(String email, String password ){
         User user = userRepository.getUserByEmail(email);
