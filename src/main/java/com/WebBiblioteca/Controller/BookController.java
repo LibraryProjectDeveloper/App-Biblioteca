@@ -3,7 +3,7 @@ package com.WebBiblioteca.Controller;
 import com.WebBiblioteca.DTO.Book.BookRequest;
 import com.WebBiblioteca.DTO.Book.BookResponse;
 import com.WebBiblioteca.Model.Book;
-import com.WebBiblioteca.Model.EstadoBook;
+import com.WebBiblioteca.Model.BookState;
 import com.WebBiblioteca.Service.BookService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -23,7 +23,7 @@ public class BookController {
     @GetMapping("/actives")
     public ResponseEntity<?> getAllBooks() {
         try {
-            List<BookResponse> bookList = bookService.getBookList(EstadoBook.ACTIVO);
+            List<BookResponse> bookList = bookService.getBookList(BookState.ACTIVO);
             return ResponseEntity.ok(bookList);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(e.getMessage());
@@ -33,7 +33,7 @@ public class BookController {
     @GetMapping("/inactives")
     public ResponseEntity<?> getAllInactivesBooks() {
         try {
-            List<BookResponse> bookList = bookService.getBookList(EstadoBook.INACTIVO);
+            List<BookResponse> bookList = bookService.getBookList(BookState.INACTIVO);
             return ResponseEntity.ok(bookList);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(e.getMessage());

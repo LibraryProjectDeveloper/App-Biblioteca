@@ -1,7 +1,7 @@
 package com.WebBiblioteca.Repository;
 
 import com.WebBiblioteca.Model.Book;
-import com.WebBiblioteca.Model.EstadoBook;
+import com.WebBiblioteca.Model.BookState;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,5 +13,5 @@ public interface BookReposity extends JpaRepository<Book,Long> {
    Optional<Book> findByCodeBook(Long id);
    Optional<Book> findByIsbn(String isbn);
 
-   List<Book> findByEstado(EstadoBook estado);
+   List<Book> findByEstado(BookState estado);
 }

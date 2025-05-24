@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class UsuarioResponse {
+public class UserResponse {
     private Long idUsuario;
     private String name;
     private String lastname;

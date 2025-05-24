@@ -44,7 +44,7 @@ public class Book {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private Categoria category;
+    private Category category;
 
     @NotNull(message = "El stock total es obligatorio")
     @Min(value = 0, message = "El stock total no puede ser negativo")
@@ -54,7 +54,7 @@ public class Book {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private EstadoBook estado;
+    private BookState estado;
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
     @JsonManagedReference
@@ -67,5 +67,5 @@ public class Book {
     @JoinTable(name = "libro_autor",
             joinColumns = @JoinColumn(name = "libro_id"),
             inverseJoinColumns = @JoinColumn(name = "autor_id"))
-    private Set<Autor> autores = new HashSet<>();
+    private Set<Author> autores = new HashSet<>();
 }

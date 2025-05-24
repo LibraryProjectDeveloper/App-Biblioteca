@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter @Setter
-public class UsuarioRequest {
+public class UserRequest {
     private Long idUsuario;
 
     @NotBlank(message = "El nombre es obligatorio")

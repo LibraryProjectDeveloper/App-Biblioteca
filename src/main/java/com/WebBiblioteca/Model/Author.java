@@ -1,6 +1,5 @@
 package com.WebBiblioteca.Model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
@@ -16,36 +15,40 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter @Setter
-public class Autor {
+@Table(name = "autor")
+public class Author {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private Long idAutor;
+    @Column(name = "id_autor")
+    private Long idAuthor;
 
-    @Column(columnDefinition = "VARCHAR(20)")
     @NotBlank(message = "El nombre es obligatorio")
     @Size(min = 2, max = 20, message = "El nombre debe tener entre 2 y 20 caracteres")
     @Pattern(regexp = "^[\\p{L} .'-]+$", message = "El nombre solo puede contener letras y caracteres válidos")
-    private String nombres;
+    @Column(name = "nombres")
+    private String names;
 
-    @Column(columnDefinition = "VARCHAR(20)")
     @NotBlank(message = "El apellido es obligatorio")
     @Size(min = 2, max = 20, message = "El nombre debe tener entre 2 y 50 caracteres")
     @Pattern(regexp = "^[\\p{L} .'-]+$", message = "El apellido solo puede contener letras y caracteres válidos")
-    private String apellidos;
+    @Column(name = "apellidos")
+    private String lastname;
 
-    @Column(columnDefinition = "VARCHAR(20)")
     @NotBlank(message = "La nacionalidad es obligatorio")
     @Size(min = 2, max = 20, message = "La nacionalidad debe tener entre 2 y 50 caracteres")
     @Pattern(regexp = "^[\\p{L} .'-]+$", message = "La nacionalidad solo puede contener letras y caracteres válidos")
-    private String nacionalidad;
+    @Column(name = "nacionalidad")
+    private String nationality;
 
-    @Column(columnDefinition = "DATE")
+
     @Past(message = "La fecha de nacimiento debe ser una fecha pasada")
-    private Date fechaNacimiento;
+    @Column(name = "fecha_nacimiento")
+    private Date birthdate;
 
     @Enumerated(EnumType.STRING)
-    private Genero genero;
+    @Column(name="genero")
+    private Genero gender;
 
     @ManyToMany(mappedBy = "autores")
-    private Set<Book> libros = new HashSet<>();
+    private Set<Book> books = new HashSet<>();
 }

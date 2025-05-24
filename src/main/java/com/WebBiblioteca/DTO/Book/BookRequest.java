@@ -1,8 +1,8 @@
 package com.WebBiblioteca.DTO.Book;
 
-import com.WebBiblioteca.DTO.Autor.AutorRequest;
-import com.WebBiblioteca.Model.Categoria;
-import com.WebBiblioteca.Model.EstadoBook;
+import com.WebBiblioteca.DTO.Autor.AuthorRequest;
+import com.WebBiblioteca.Model.Category;
+import com.WebBiblioteca.Model.BookState;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,7 +33,7 @@ public class BookRequest {
     private String publisher;
 
     @NotNull
-    private Categoria categoria;
+    private Category categoria;
 
     @NotNull(message = "El stock total es obligatorio")
     @Min(value = 0, message = "El stock total no puede ser negativo")
@@ -41,7 +41,7 @@ public class BookRequest {
     private Integer stockTotal;
 
     @NotNull
-    private EstadoBook estado;
+    private BookState estado;
 
-    private List<AutorRequest> listAutores;
+    private List<AuthorRequest> listAutores;
 }

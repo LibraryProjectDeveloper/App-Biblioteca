@@ -1,6 +1,6 @@
 package com.WebBiblioteca.Model;
 
-public enum Categoria {
+public enum Category {
     INFANTIL,
     CIENCIA_FICCION,
     FANTASIA,

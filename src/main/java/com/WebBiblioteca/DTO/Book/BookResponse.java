@@ -1,11 +1,10 @@
 package com.WebBiblioteca.DTO.Book;
 
-import com.WebBiblioteca.Model.Categoria;
-import com.WebBiblioteca.Model.EstadoBook;
+import com.WebBiblioteca.Model.Category;
+import com.WebBiblioteca.Model.BookState;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDate;
 
@@ -22,9 +21,9 @@ public class BookResponse {
 
     private String publisher;
 
-    private Categoria categoria;
+    private Category categoria;
 
     private Integer stockTotal;
 
-    private EstadoBook estado;
+    private BookState estado;
 }

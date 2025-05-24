@@ -8,7 +8,7 @@ import java.util.Date;
 
 @AllArgsConstructor @NoArgsConstructor
 @Getter
-public class AutorResponse {
+public class AuthorResponse {
     private Long idAutor;
     private String nombres;
     private String apellidos;

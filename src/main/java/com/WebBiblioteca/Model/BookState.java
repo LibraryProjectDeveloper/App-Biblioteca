@@ -1,6 +1,6 @@
 package com.WebBiblioteca.Model;
 
-public enum EstadoBook {
+public enum BookState {
     ACTIVO,
     INACTIVO
 }

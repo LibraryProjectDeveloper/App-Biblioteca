@@ -1,12 +1,17 @@
 package com.WebBiblioteca.Service;
 
-import com.WebBiblioteca.DTO.Usuario.UsuarioRequest;
-import com.WebBiblioteca.DTO.Usuario.UsuarioResponse;
+import com.WebBiblioteca.Config.EncodeConfig;
+import com.WebBiblioteca.DTO.Usuario.UserRequest;
+import com.WebBiblioteca.DTO.Usuario.UserResponse;
+import com.WebBiblioteca.Exception.DuplicateResourceException;
+import com.WebBiblioteca.Exception.ResourceNotFoundException;
 import com.WebBiblioteca.Model.Rol;
 import com.WebBiblioteca.Model.User;
 import com.WebBiblioteca.Repository.RolRepository;
 import com.WebBiblioteca.Repository.UserRepository;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,20 +19,20 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class UserService {
+public class UserService  implements UserDetailsService {
     private final UserRepository userRepository;
     private final RolRepository rolRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final EncodeConfig encodeConfig;
 
-    public UserService(UserRepository userRepository, RolRepository rolRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, RolRepository rolRepository, EncodeConfig encodeConfig) {
         this.userRepository = userRepository;
         this.rolRepository = rolRepository;
-        this.passwordEncoder = passwordEncoder;
+        this.encodeConfig = encodeConfig;
     }
 
-    public List<UsuarioResponse> getAllUsers() {
-        List<UsuarioResponse> usuarioResponseList =  userRepository.findAll().
-                stream().map(user -> new UsuarioResponse(
+    public List<UserResponse> getAllUsers() {
+        return userRepository.findAll().
+                stream().map(user -> new UserResponse(
                         user.getCode(),
                         user.getName(),
                         user.getLastname(),
@@ -40,30 +45,17 @@ public class UserService {
                         user.getDateRegistered(),
                         user.getRol().getIdRol()
                 )).toList();
-
-        if (usuarioResponseList.isEmpty()) {
-            throw new RuntimeException("No hay usuarios disponibles");
-        }
-
-        return usuarioResponseList;
     }
 
     @Transactional
-    public void addUser(UsuarioRequest user) {
-        Rol rol = rolRepository.findByIdRol(user.getIdRol()).orElse(null);
-
+    public void addUser(UserRequest user) {
+        Rol rol = rolRepository.findByIdRol(user.getIdRol()).orElseThrow(() -> new ResourceNotFoundException("Rol","id",user.getIdRol()));
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new RuntimeException("El usuario ya está registrado");
+            throw new DuplicateResourceException("Usuario", "email", user.getEmail());
         }
-
-        if (rol == null) {
-            throw new RuntimeException("El rol no existe");
-        }
-
         if (userRepository.findByDNI(user.getDNI()).isPresent()) {
-            throw new RuntimeException("El DNI ya está registrado");
+            throw new DuplicateResourceException("Usuario", "DNI", user.getDNI());
         }
-
         User newUser = new User();
         newUser.setName(user.getName());
         newUser.setLastname(user.getLastname());
@@ -71,19 +63,14 @@ public class UserService {
         newUser.setPhone(user.getPhone());
         newUser.setAddress(user.getAddress());
         newUser.setDNI(user.getDNI());
-        newUser.setPassword(this.passwordEncoder.encode(user.getPassword()));
+        newUser.setPassword(encodeConfig.passwordEncoder().encode(user.getPassword()));
         newUser.setState(true);
         newUser.setDateRegistered(LocalDateTime.now());
         newUser.setRol(rol);
         userRepository.save(newUser);
     }
-
-    public void updateUser(UsuarioRequest user) {
-        User userToUpdate = userRepository.findById(user.getIdUsuario()).orElse(null);
-        if (userToUpdate == null) {
-            throw new RuntimeException("El usuario no existe");
-        }
-
+    public void updateUser(UserRequest user) {
+        User userToUpdate = userRepository.findById(user.getIdUsuario()).orElseThrow(()-> new ResourceNotFoundException("Usuario","id",user.getIdUsuario()));
         if (user.getName() != null) {
             userToUpdate.setName(user.getName());
         }
@@ -103,76 +90,25 @@ public class UserService {
             userToUpdate.setDNI(user.getDNI());
         }
         if (user.getPassword() != null) {
-            userToUpdate.setPassword(passwordEncoder.encode(user.getPassword()));
+            userToUpdate.setPassword(encodeConfig.passwordEncoder().encode(user.getPassword()));
         }
         if (user.getState() != null) {
             userToUpdate.setState(user.getState());
         }
         if (user.getIdRol() != null) {
-            Rol rol = rolRepository.findByIdRol(user.getIdRol()).orElse(null);
-            if (rol == null) {
-                throw new RuntimeException("El rol no existe");
-            }
+            Rol rol = rolRepository.findByIdRol(user.getIdRol()).orElseThrow(() -> new ResourceNotFoundException("Rol","id",user.getIdRol()));
             userToUpdate.setRol(rol);
         }
-
         userRepository.save(userToUpdate);
     }
 
-
-    /*
-    public User loginUser(String email, String password ){
-        User user = userRepository.getUserByEmail(email);
-        if(user != null && user.getPassword().equals(password) && user.getRole().getNameRol() == Role.LIBRARIAN && user.getState()){
-            return user;
-        }
-        return null;
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(user.getEmail())
+                .password(user.getPassword())
+                .authorities("ROLE_"+user.getRol().getNameRol())
+                .build();
     }
-    public boolean deleteUser(Long id){
-        if(getAllUsers().get(id) !=null){
-            userRepository.deleteUser(id);
-            return true;
-        }else{
-            return false;
-        }
-    }
-    public User updateUser(User user,Long id){
-        User existingUser = userRepository.getUserById(id);
-        if ( existingUser != null){
-            if(user.getName() != null) {
-                existingUser.setName(user.getName());
-            }
-            if(user.getLastname() != null) {
-                existingUser.setLastname(user.getLastname());
-            }
-            if(user.getEmail() != null) {
-                existingUser.setEmail(user.getEmail());
-            }
-            if(user.getPhone() != null) {
-                existingUser.setPhone(user.getPhone());
-            }
-            if(user.getAddress() != null) {
-                existingUser.setAddress(user.getAddress());
-            }
-            if(user.getDNI() != null) {
-                existingUser.setDNI(user.getDNI());
-            }
-            if(user.getPassword() != null) {
-                existingUser.setPassword(user.getPassword());
-            }
-            if(user.getState() != null) {
-                existingUser.setState(user.getState());
-            }
-            if(user.getRole() != null) {
-                existingUser.setRole(user.getRole());
-            }
-            if(user.getDateRegistered() != null) {
-                existingUser.setDateRegistered(user.getDateRegistered());
-            }
-            return userRepository.updateUser(id,existingUser);
-        }else{
-            return null;
-        }
-    }
-     */
 }

@@ -2,14 +2,13 @@ package com.WebBiblioteca.Service;
 
 import com.WebBiblioteca.DTO.Book.BookRequest;
 import com.WebBiblioteca.DTO.Book.BookResponse;
-import com.WebBiblioteca.Model.Autor;
+import com.WebBiblioteca.Model.Author;
 import com.WebBiblioteca.Model.Book;
-import com.WebBiblioteca.Model.EstadoBook;
+import com.WebBiblioteca.Model.BookState;
 import com.WebBiblioteca.Repository.BookReposity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -23,7 +22,7 @@ public class BookService {
     }
 
     //listar libros
-    public List<BookResponse> getBookList(EstadoBook estadoBook) {
+    public List<BookResponse> getBookList(BookState estadoBook) {
         List<BookResponse> bookResponseList = bookReposity.findByEstado(estadoBook)
                 .stream().
                 map(book -> new BookResponse(
@@ -59,19 +58,19 @@ public class BookService {
         newBook.setCategory(book.getCategoria());
         newBook.setStockTotal(book.getStockTotal());
         newBook.setIsbn(book.getIsbn());
-        newBook.setEstado(EstadoBook.ACTIVO);
-        Set<Autor> autors = book.getListAutores().stream()
-                .map(autorDTO -> {
-                    Autor autor = new Autor();
-                    autor.setNombres(autorDTO.getNombres());
-                    autor.setApellidos(autorDTO.getApellidos());
-                    autor.setNacionalidad(autorDTO.getNacionalidad());
-                    autor.setFechaNacimiento(autorDTO.getFechaNacimiento());
-                    autor.setGenero(autorDTO.getGenero());
-                    return autor;
+        newBook.setEstado(BookState.ACTIVO);
+        Set<Author> authors = book.getListAutores().stream()
+                .map(authorDTO -> {
+                    Author author = new Author();
+                    author.setNames(authorDTO.getNames());
+                    author.setLastname(authorDTO.getLastname());
+                    author.setNationality(authorDTO.getNationality());
+                    author.setBirthdate(authorDTO.getBirthdate());
+                    author.setGender(authorDTO.getGender());
+                    return author;
                 })
                 .collect(Collectors.toSet());
-        newBook.setAutores(autors);
+        newBook.setAutores(authors);
         return bookReposity.save(newBook);
     }
 
