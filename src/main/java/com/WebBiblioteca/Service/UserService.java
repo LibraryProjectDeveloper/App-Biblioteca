@@ -46,6 +46,22 @@ public class UserService  implements UserDetailsService {
                         user.getRol().getIdRol()
                 )).toList();
     }
+    public List<UserResponse> getAllUsersByState(Boolean state) {
+        return userRepository.findByState(state).
+                stream().map(user -> new UserResponse(
+                        user.getCode(),
+                        user.getName(),
+                        user.getLastname(),
+                        user.getEmail(),
+                        user.getPhone(),
+                        user.getAddress(),
+                        user.getDNI(),
+                        user.getPassword(),
+                        user.getState(),
+                        user.getDateRegistered(),
+                        user.getRol().getIdRol()
+                )).toList();
+    }
 
     @Transactional
     public void addUser(UserRequest user) {

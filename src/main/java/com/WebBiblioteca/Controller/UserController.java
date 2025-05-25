@@ -20,6 +20,14 @@ public class UserController {
     public ResponseEntity<?> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
+    @GetMapping("/actives")
+    public ResponseEntity<?> getAllUsersActives() {
+        return ResponseEntity.ok(userService.getAllUsersByState(true));
+    }
+    @GetMapping("/inactives")
+    public ResponseEntity<?> getAllUsersInactives() {
+        return ResponseEntity.ok(userService.getAllUsersByState(false));
+    }
     @PostMapping("/add")
     public ResponseEntity<?> addUser(@Valid @RequestBody UserRequest user) {
         userService.addUser(user);
