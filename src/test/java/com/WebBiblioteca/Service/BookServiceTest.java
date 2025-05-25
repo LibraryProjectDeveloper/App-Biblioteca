@@ -8,6 +8,87 @@ import java.time.LocalDate;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class BookServiceTest {
+import com.WebBiblioteca.DTO.Book.BookRequest;
+import com.WebBiblioteca.DTO.Book.BookResponse;
+import com.WebBiblioteca.Model.BookState;
+import org.junit.jupiter.api.BeforeEach;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.List;
+import static org.mockito.Mockito.*;
 
+public class BookServiceTest {
+    @Mock
+    private BookReposity bookReposity;
+    @InjectMocks
+    private BookService bookService;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    void testGetBookList() {
+        BookState state = BookState.ACTIVO;
+        Book book = mock(Book.class);
+        when(book.getCodeBook()).thenReturn(1L);
+        when(book.getTitle()).thenReturn("Libro 1");
+        when(book.getIsbn()).thenReturn("123");
+        when(book.getPublicationDate()).thenReturn(null);
+        when(book.getPublisher()).thenReturn("Editorial");
+        when(book.getCategory()).thenReturn(null);
+        when(book.getStockTotal()).thenReturn(5);
+        when(book.getEstado()).thenReturn(state);
+        when(bookReposity.findByEstado(state)).thenReturn(List.of(book));
+        List<BookResponse> result = bookService.getBookList(state);
+        assertEquals(1, result.size());
+        assertEquals("Libro 1", result.get(0).getTitle());
+    }
+
+    @Test
+    void testGetBookById() {
+        Book book = mock(Book.class);
+        when(bookReposity.findByCodeBook(1L)).thenReturn(Optional.of(book));
+        when(book.getTitle()).thenReturn("Libro 1");
+        when(book.getIsbn()).thenReturn("123");
+        when(book.getPublicationDate()).thenReturn(null);
+        when(book.getPublisher()).thenReturn("Editorial");
+        when(book.getCategory()).thenReturn(null);
+        when(book.getStockTotal()).thenReturn(5);
+        when(book.getEstado()).thenReturn(BookState.ACTIVO);
+        when(book.getAutores()).thenReturn(Collections.emptySet());
+        BookRequest result = bookService.getBookById(1L);
+        assertEquals("Libro 1", result.getTitle());
+    }
+
+    @Test
+    void testAddBook() {
+        BookRequest req = mock(BookRequest.class);
+        when(req.getIsbn()).thenReturn("123");
+        when(req.getTitle()).thenReturn("Libro Nuevo");
+        when(req.getPublisher()).thenReturn("Editorial");
+        when(req.getPublicationDate()).thenReturn(null);
+        when(req.getCategory()).thenReturn(null);
+        when(req.getStockTotal()).thenReturn(10);
+        when(req.getAuthors()).thenReturn(Collections.emptyList());
+        when(bookReposity.findByIsbn("123")).thenReturn(Optional.empty());
+        Book book = new Book();
+        when(bookReposity.save(any(Book.class))).thenReturn(book);
+        Book result = bookService.addBook(req);
+        assertNotNull(result);
+    }
+
+    @Test
+    void testUpdateBook() {
+        BookRequest req = mock(BookRequest.class);
+        Book book = new Book();
+        when(bookReposity.findByCodeBook(1L)).thenReturn(Optional.of(book));
+        when(bookReposity.save(any(Book.class))).thenReturn(book);
+        Book result = bookService.updateBook(1L, req);
+        assertNotNull(result);
+    }
 }

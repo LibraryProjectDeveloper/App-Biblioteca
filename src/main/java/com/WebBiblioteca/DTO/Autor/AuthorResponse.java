@@ -9,10 +9,10 @@ import java.util.Date;
 @AllArgsConstructor @NoArgsConstructor
 @Getter
 public class AuthorResponse {
-    private Long idAutor;
-    private String nombres;
-    private String apellidos;
-    private String nacionalidad;
-    private Date fechaNacimiento;
-    private Genero genero;
+    private Long idAuthor;
+    private String names;
+    private String lastname;
+    private String nationality;
+    private Date birthdate;
+    private Genero gender;
 }
