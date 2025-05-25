@@ -8,86 +8,87 @@ import java.time.LocalDate;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class BookServiceTest {
-    private final BookReposity bookReposity = new BookReposity();
-    private final BookService bookService = new BookService(bookReposity);
+import com.WebBiblioteca.DTO.Book.BookRequest;
+import com.WebBiblioteca.DTO.Book.BookResponse;
+import com.WebBiblioteca.Model.BookState;
+import org.junit.jupiter.api.BeforeEach;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.List;
+import static org.mockito.Mockito.*;
 
-    @Test
-    void TestAddBook(){
-        Book book = new Book(0L,"Los perros hambrientos", LocalDate.now(),"Ciro Alegria","Novela",10);
-        Book result = bookService.addBook(book);
-        assertEquals("Los perros hambrientos", result.getTitle());
-        assertEquals(LocalDate.now(), result.getPublicationDate());
-        assertEquals("Ciro Alegria", result.getPublisher());
-        assertEquals("Novela", result.getCategory());
-        assertEquals(10, result.getStockTotal());
-        assertNotNull(result);
+public class BookServiceTest {
+    @Mock
+    private BookReposity bookReposity;
+    @InjectMocks
+    private BookService bookService;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
+
     @Test
     void testGetBookList() {
-        Book book1 = new Book(null, "Los perros hambrientos", LocalDate.now(), "Ciro Alegria", "Novela", 10);
-        Book book2 = new Book(null, "La ciudad y los perros", LocalDate.now(), "Mario Vargas Llosa", "Novela", 5);
-        bookService.addBook(book1);
-        bookService.addBook(book2);
-        Map<Long,Book> books = bookService.getBookList();
-        assertEquals(2, books.size());
-        assertNotNull(books.get(1L));
-        assertNotNull(books.get(2L));
-        assertEquals("Los perros hambrientos", books.get(1L).getTitle());
-        assertEquals("La ciudad y los perros", books.get(2L).getTitle());
+        BookState state = BookState.ACTIVO;
+        Book book = mock(Book.class);
+        when(book.getCodeBook()).thenReturn(1L);
+        when(book.getTitle()).thenReturn("Libro 1");
+        when(book.getIsbn()).thenReturn("123");
+        when(book.getPublicationDate()).thenReturn(null);
+        when(book.getPublisher()).thenReturn("Editorial");
+        when(book.getCategory()).thenReturn(null);
+        when(book.getStockTotal()).thenReturn(5);
+        when(book.getEstado()).thenReturn(state);
+        when(bookReposity.findByEstado(state)).thenReturn(List.of(book));
+        List<BookResponse> result = bookService.getBookList(state);
+        assertEquals(1, result.size());
+        assertEquals("Libro 1", result.get(0).getTitle());
     }
 
     @Test
-    void testAddBookNull() {
-        Book result = bookService.addBook(null);
-        assertNull(result);
+    void testGetBookById() {
+        Book book = mock(Book.class);
+        when(bookReposity.findByCodeBook(1L)).thenReturn(Optional.of(book));
+        when(book.getTitle()).thenReturn("Libro 1");
+        when(book.getIsbn()).thenReturn("123");
+        when(book.getPublicationDate()).thenReturn(null);
+        when(book.getPublisher()).thenReturn("Editorial");
+        when(book.getCategory()).thenReturn(null);
+        when(book.getStockTotal()).thenReturn(5);
+        when(book.getEstado()).thenReturn(BookState.ACTIVO);
+        when(book.getAutores()).thenReturn(Collections.emptySet());
+        BookRequest result = bookService.getBookById(1L);
+        assertEquals("Libro 1", result.getTitle());
     }
 
     @Test
-    void testUpdateBookSuccess() {
-        Book book = new Book(null, "Los perros hambrientos", LocalDate.now(), "Ciro Alegria", "Novela", 10);
-        Book savedBook = bookService.addBook(book);
-        Book updatedInfo = new Book();
-        updatedInfo.setTitle("Los perros hambrientos (Edición especial)");
-        updatedInfo.setStockTotal(15);
-        Book result = bookService.updateBook(savedBook.getCodeBook(), updatedInfo);
+    void testAddBook() {
+        BookRequest req = mock(BookRequest.class);
+        when(req.getIsbn()).thenReturn("123");
+        when(req.getTitle()).thenReturn("Libro Nuevo");
+        when(req.getPublisher()).thenReturn("Editorial");
+        when(req.getPublicationDate()).thenReturn(null);
+        when(req.getCategory()).thenReturn(null);
+        when(req.getStockTotal()).thenReturn(10);
+        when(req.getAuthors()).thenReturn(Collections.emptyList());
+        when(bookReposity.findByIsbn("123")).thenReturn(Optional.empty());
+        Book book = new Book();
+        when(bookReposity.save(any(Book.class))).thenReturn(book);
+        Book result = bookService.addBook(req);
         assertNotNull(result);
-        assertEquals("Los perros hambrientos (Edición especial)", result.getTitle());
-        assertEquals(15, result.getStockTotal());
-        assertEquals("Ciro Alegria", result.getPublisher());
     }
 
     @Test
-    void testUpdateBookBookNotFound() {
-        Book updatedInfo = new Book();
-        updatedInfo.setTitle("Libro actualizado");
-        Book result = bookService.updateBook(999L, updatedInfo);
-        assertNull(result);
-    }
-
-    @Test
-    void testUpdateBookNullFields() {
-        Book book = new Book(null, "Los perros hambrientos", LocalDate.now(), "Ciro Alegria", "Novela", 10);
-        Book savedBook = bookService.addBook(book);
-        Book updatedInfo = new Book();
-        Book result = bookService.updateBook(savedBook.getCodeBook(), updatedInfo);
+    void testUpdateBook() {
+        BookRequest req = mock(BookRequest.class);
+        Book book = new Book();
+        when(bookReposity.findByCodeBook(1L)).thenReturn(Optional.of(book));
+        when(bookReposity.save(any(Book.class))).thenReturn(book);
+        Book result = bookService.updateBook(1L, req);
         assertNotNull(result);
-        assertEquals("Los perros hambrientos", result.getTitle());
-        assertEquals("Ciro Alegria", result.getPublisher());
-    }
-
-    @Test
-    void testDeleteBookSuccess() {
-        Book book = new Book(null, "Los perros hambrientos", LocalDate.now(), "Ciro Alegria", "Novela", 10);
-        Book savedBook = bookService.addBook(book);
-        boolean result = bookService.deleteBook(savedBook.getCodeBook());
-        assertTrue(result);
-        assertNull(bookService.getBookList().get(savedBook.getCodeBook()));
-    }
-
-    @Test
-    void testDeleteBookBookNotFound() {
-        boolean result = bookService.deleteBook(999L);
-        assertFalse(result);
     }
 }

@@ -17,21 +17,26 @@ public class ReserveBookController {
         this.reserveBookService = reserveBookService;
     }
     @GetMapping("/")
-    public Map<Long, ReserveBook> getReservationAll() {
+    public List<ReserveBook> getReservationAll() {
         return reserveBookService.getReservationList();
     }
+
     @GetMapping("/actives")
-    public Map<Long, ReserveBook> getReservationActives() {
+    public List<ReserveBook> getReservationActives() {
         return reserveBookService.getReservationActives();
     }
+
+    /*
     @GetMapping("/user/{idUser}")
     public List<ReserveBook> getReservationByUserId(@PathVariable Long idUser) {
         return reserveBookService.getReservationByUserId(idUser);
     }
+
     @GetMapping("/book/{idBook}")
     public List<ReserveBook> getReservationByBookId(@PathVariable Long idBook) {
         return reserveBookService.getReservationByBookId(idBook);
     }
+
     @PostMapping("/add")
     public ResponseEntity<?> addReservation(@Valid @RequestBody ReserveBook reserveBook){
         ReserveBook reserveBook1 = reserveBookService.addReservation(reserveBook);
@@ -41,6 +46,7 @@ public class ReserveBookController {
             return ResponseEntity.badRequest().body("Error adding reservation");
         }
     }
+
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateReservation(@PathVariable Long id, @Valid @RequestBody ReserveBook reserveBook) {
         ReserveBook updatedReservation = reserveBookService.updateReservation(id, reserveBook);
@@ -50,6 +56,7 @@ public class ReserveBookController {
             return ResponseEntity.notFound().build();
         }
     }
+
     @PatchMapping("/update/{id}")
     public ResponseEntity<?> updatePartialReservation(@PathVariable Long id, @RequestBody ReserveBook reserveBook) {
         ReserveBook updatedReservation = reserveBookService.updateReservation(id, reserveBook);
@@ -59,6 +66,7 @@ public class ReserveBookController {
             return ResponseEntity.notFound().build();
         }
     }
+
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteReservation(@PathVariable Long id) {
         boolean isDeleted = reserveBookService.deleteReservation(id);
@@ -68,5 +76,7 @@ public class ReserveBookController {
             return ResponseEntity.notFound().build();
         }
     }
+
+     */
 }
 
