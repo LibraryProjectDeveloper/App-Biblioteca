@@ -33,7 +33,7 @@ public class BookRequest {
     private String publisher;
 
     @NotNull
-    private Category categoria;
+    private Category category;
 
     @NotNull(message = "El stock total es obligatorio")
     @Min(value = 0, message = "El stock total no puede ser negativo")
@@ -41,7 +41,7 @@ public class BookRequest {
     private Integer stockTotal;
 
     @NotNull
-    private BookState estado;
+    private BookState state;
 
-    private List<AuthorRequest> listAutores;
+    private List<AuthorRequest> authors;
 }

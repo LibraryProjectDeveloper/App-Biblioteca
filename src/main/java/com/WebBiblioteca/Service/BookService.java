@@ -1,7 +1,10 @@
 package com.WebBiblioteca.Service;
 
+import com.WebBiblioteca.DTO.Autor.AuthorRequest;
 import com.WebBiblioteca.DTO.Book.BookRequest;
 import com.WebBiblioteca.DTO.Book.BookResponse;
+import com.WebBiblioteca.Exception.DuplicateResourceException;
+import com.WebBiblioteca.Exception.ResourceNotFoundException;
 import com.WebBiblioteca.Model.Author;
 import com.WebBiblioteca.Model.Book;
 import com.WebBiblioteca.Model.BookState;
@@ -22,8 +25,8 @@ public class BookService {
     }
 
     //listar libros
-    public List<BookResponse> getBookList(BookState estadoBook) {
-        List<BookResponse> bookResponseList = bookReposity.findByEstado(estadoBook)
+    public List<BookResponse> getBookList(BookState bookState) {
+        return bookReposity.findByEstado(bookState)
                 .stream().
                 map(book -> new BookResponse(
                         book.getCodeBook(),
@@ -35,31 +38,44 @@ public class BookService {
                         book.getStockTotal(),
                         book.getEstado()
                 )).collect(Collectors.toList());
-        if (bookResponseList.isEmpty()) {
-            throw new RuntimeException("No hay libros disponibles");
-        }
-        return bookResponseList;
     }
 
-    public Book getBookById(Long id) {
-        return bookReposity.findByCodeBook(id).orElse(null);
+    public BookRequest getBookById(Long id) {
+        Book book = bookReposity.findByCodeBook(id).orElseThrow(() -> new ResourceNotFoundException("Book not found", "id", id));
+        return new BookRequest(
+                book.getTitle(),
+                book.getIsbn(),
+                book.getPublicationDate(),
+                book.getPublisher(),
+                book.getCategory(),
+                book.getStockTotal(),
+                book.getEstado(),
+                book.getAutores().stream()
+                        .map(author -> new AuthorRequest(
+                                author.getIdAuthor(),
+                                author.getNames(),
+                                author.getLastname(),
+                                author.getNationality(),
+                                author.getBirthdate(),
+                                author.getGender()
+                        )).collect(Collectors.toList())
+        );
     }
 
     @Transactional
     public Book addBook(BookRequest book) {
         if (bookReposity.findByIsbn(book.getIsbn()).isPresent()) {
-            return null;
+            throw new DuplicateResourceException("Book with this ISBN already exists", "ISBN", book.getIsbn());
         }
-
         Book newBook = new Book();
         newBook.setTitle(book.getTitle());
         newBook.setPublisher(book.getPublisher());
         newBook.setPublicationDate(book.getPublicationDate());
-        newBook.setCategory(book.getCategoria());
+        newBook.setCategory(book.getCategory());
         newBook.setStockTotal(book.getStockTotal());
         newBook.setIsbn(book.getIsbn());
         newBook.setEstado(BookState.ACTIVO);
-        Set<Author> authors = book.getListAutores().stream()
+        Set<Author> authors = book.getAuthors().stream()
                 .map(authorDTO -> {
                     Author author = new Author();
                     author.setNames(authorDTO.getNames());
@@ -75,31 +91,28 @@ public class BookService {
     }
 
     public Book updateBook(Long id, BookRequest book) {
-        Book bookToUpdate = bookReposity.findByCodeBook(id).orElse(null);
-        if (bookToUpdate != null) {
-            if (book.getTitle() != null) {
-                bookToUpdate.setTitle(book.getTitle());
-            }
-            if (book.getPublisher() != null) {
-                bookToUpdate.setPublisher(book.getPublisher());
-            }
-            if (book.getPublicationDate() != null) {
-                bookToUpdate.setPublicationDate(book.getPublicationDate());
-            }
-            if (book.getCategoria() != null) {
-                bookToUpdate.setCategory(book.getCategoria());
-            }
-            if (book.getStockTotal() != null) {
-                bookToUpdate.setStockTotal(book.getStockTotal());
-            }
-            if (book.getIsbn() != null) {
-                bookToUpdate.setIsbn(book.getIsbn());
-            }
-            if (book.getEstado() != null) {
-                bookToUpdate.setEstado(book.getEstado());
-            }
-            return bookReposity.save(bookToUpdate);
+        Book bookToUpdate = bookReposity.findByCodeBook(id).orElseThrow(() -> new ResourceNotFoundException("Book", "id", id));
+        if (book.getTitle() != null) {
+            bookToUpdate.setTitle(book.getTitle());
         }
-        return null;
+        if (book.getPublisher() != null) {
+            bookToUpdate.setPublisher(book.getPublisher());
+        }
+        if (book.getPublicationDate() != null) {
+            bookToUpdate.setPublicationDate(book.getPublicationDate());
+        }
+        if (book.getCategory() != null) {
+            bookToUpdate.setCategory(book.getCategory());
+        }
+        if (book.getStockTotal() != null) {
+            bookToUpdate.setStockTotal(book.getStockTotal());
+        }
+        if (book.getIsbn() != null) {
+            bookToUpdate.setIsbn(book.getIsbn());
+        }
+        if (book.getState() != null) {
+            bookToUpdate.setEstado(book.getState());
+        }
+        return bookReposity.save(bookToUpdate);
     }
 }

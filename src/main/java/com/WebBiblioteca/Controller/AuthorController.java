@@ -29,9 +29,9 @@ public class AuthorController {
     public ResponseEntity<?> updatePartialAuthor(@RequestBody AuthorRequest author){
         return ResponseEntity.ok(authorService.updateAuthor(author));
     }
-    @DeleteMapping("/delete")
+    @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> deleteAuthor(@RequestParam Long id){
+    public ResponseEntity<?> deleteAuthor(@PathVariable Long id){
         authorService.deleteAuthor(id);
         return ResponseEntity.ok("Autor eliminado correctamente");
     }
