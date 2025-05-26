@@ -68,7 +68,7 @@ Antes de comenzar, asegúrate de tener instalado lo siguiente:
 		logging.level.org.springframework.security=DEBUG
     ```
 
-2.  **(Opcional) Configuración de Spring Security:**
+2.  ** Configuración de Spring Security:**
     * Si utilizas JWT, puede que necesites configurar un secreto para firmar los tokens en `application.properties`:
         ```properties
         # Ejemplo para JWT
