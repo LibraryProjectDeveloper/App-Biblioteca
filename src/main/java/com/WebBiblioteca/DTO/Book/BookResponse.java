@@ -21,9 +21,9 @@ public class BookResponse {
 
     private String publisher;
 
-    private Category categoria;
+    private Category category;
 
     private Integer stockTotal;
 
-    private BookState estado;
+    private BookState state ;
 }

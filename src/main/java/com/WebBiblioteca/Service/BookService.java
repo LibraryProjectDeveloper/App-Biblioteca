@@ -90,7 +90,7 @@ public class BookService {
         return bookReposity.save(newBook);
     }
 
-    public Book updateBook(Long id, BookRequest book) {
+    public BookResponse updateBook(Long id, BookRequest book) {
         Book bookToUpdate = bookReposity.findByCodeBook(id).orElseThrow(() -> new ResourceNotFoundException("Book", "id", id));
         if (book.getTitle() != null) {
             bookToUpdate.setTitle(book.getTitle());
@@ -113,6 +113,21 @@ public class BookService {
         if (book.getState() != null) {
             bookToUpdate.setEstado(book.getState());
         }
-        return bookReposity.save(bookToUpdate);
+        Book bookUpdate = bookReposity.save(bookToUpdate);
+        return new BookResponse(
+                bookUpdate.getCodeBook(),
+                bookUpdate.getTitle(),
+                bookUpdate.getIsbn(),
+                bookUpdate.getPublicationDate(),
+                bookUpdate.getPublisher(),
+                bookUpdate.getCategory(),
+                bookUpdate.getStockTotal(),
+                bookUpdate.getEstado()
+        );
+    }
+    public void deleteBook(Long id) {
+        Book book = bookReposity.findByCodeBook(id).orElseThrow(() -> new ResourceNotFoundException("Book", "id", id));
+        book.setEstado(BookState.INACTIVO);
+        bookReposity.save(book);
     }
 }

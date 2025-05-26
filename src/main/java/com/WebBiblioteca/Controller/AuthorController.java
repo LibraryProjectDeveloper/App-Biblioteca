@@ -21,11 +21,13 @@ public class AuthorController {
         return ResponseEntity.ok(authorService.getAllAuthors());
     }
     @PutMapping("/update")
+    @PreAuthorize("hasAnyRole('ADMIN','LIBRARIAN')")
     public ResponseEntity<?> updateAuthor(@Valid @RequestBody AuthorRequest author){
         return ResponseEntity.ok(authorService.updateAuthor(author));
     }
 
     @PatchMapping("/update")
+    @PreAuthorize("hasAnyRole('ADMIN','LIBRARIAN')")
     public ResponseEntity<?> updatePartialAuthor(@RequestBody AuthorRequest author){
         return ResponseEntity.ok(authorService.updateAuthor(author));
     }

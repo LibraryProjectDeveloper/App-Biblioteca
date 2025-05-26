@@ -52,4 +52,9 @@ public class BookController {
     public ResponseEntity<?> updatePartialBook(@PathVariable Long id, @RequestBody BookRequest book) {
         return ResponseEntity.ok(bookService.updateBook(id, book));
     }
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteBook(@PathVariable Long id) {
+        bookService.deleteBook(id);
+        return ResponseEntity.noContent().build();
+    }
 }
