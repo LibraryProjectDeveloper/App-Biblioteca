@@ -46,7 +46,7 @@ Este proyecto es una API RESTful que provee servicios para la administración de
 Antes de comenzar, asegúrate de tener instalado lo siguiente:
 
 - JDK 21
-- Maven [Tu versión, ej: 3.6 o superior] / Gradle [Tu versión]
+- Maven 3.9.7
 - Crea una base de datos en mysql bd_biblioteca.
 - Un cliente API como Postman, Insomnia o curl para probar los endpoints.
 - (Opcional) Un IDE como IntelliJ IDEA, Eclipse o VS Code.
