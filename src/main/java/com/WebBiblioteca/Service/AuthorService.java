@@ -30,8 +30,26 @@ public class AuthorService {
                 .toList();
     }
     @Transactional
-    public AuthorRequest updateAuthor(AuthorRequest author) {
-        Author authorToUpdate = authorRepository.findByIdAuthor(author.getIdAuthor()).orElseThrow(() -> new ResourceNotFoundException("Author","id",author.getIdAuthor()));
+    public AuthorResponse addAuthor(AuthorRequest author) {
+        Author newAuthor = new Author();
+        newAuthor.setNames(author.getNames());
+        newAuthor.setLastname(author.getLastname());
+        newAuthor.setNationality(author.getNationality());
+        newAuthor.setBirthdate(author.getBirthdate());
+        newAuthor.setGender(author.getGender());
+        Author savedAuthor = authorRepository.save(newAuthor);
+        return new AuthorResponse(
+                savedAuthor.getIdAuthor(),
+                savedAuthor.getNames(),
+                savedAuthor.getLastname(),
+                savedAuthor.getNationality(),
+                savedAuthor.getBirthdate(),
+                savedAuthor.getGender()
+        );
+    }
+    @Transactional
+    public AuthorRequest updateAuthor(AuthorRequest author,Long id) {
+        Author authorToUpdate = authorRepository.findByIdAuthor(id).orElseThrow(() -> new ResourceNotFoundException("Author","id",id));
         if (author.getNames() != null) {
             authorToUpdate.setNames(author.getNames());
         }
@@ -47,11 +65,18 @@ public class AuthorService {
         if (author.getGender() != null) {
             authorToUpdate.setGender(author.getGender());
         }
-        authorRepository.save(authorToUpdate);
-        return author;
+        Author authorUpdate = authorRepository.save(authorToUpdate);
+        return new AuthorRequest(
+                authorUpdate.getIdAuthor(),
+                authorUpdate.getNames(),
+                authorUpdate.getLastname(),
+                authorUpdate.getNationality(),
+                authorUpdate.getBirthdate(),
+                authorUpdate.getGender()
+        );
     }
     public void deleteAuthor(Long id){
-        Author author = authorRepository.findByIdAuthor(id).orElseThrow(()->new ResourceNotFoundException("Author","id",id));
+        authorRepository.findByIdAuthor(id).orElseThrow(()->new ResourceNotFoundException("Author","id",id));
         authorRepository.deleteById(id);
     }
 }
