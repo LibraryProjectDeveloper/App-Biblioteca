@@ -31,14 +31,14 @@ public class BookController {
         List<BookResponse> bookList = bookService.getBookList(BookState.INACTIVO);
         return ResponseEntity.ok(bookList);
     }
-    @GetMapping("/{id}")
+    @GetMapping("/book-info/{id}")
     public ResponseEntity<?> getBookById(@PathVariable Long id) {
         return ResponseEntity.ok(bookService.getBookById(id));
     }
 
     @PostMapping("/add")
     public ResponseEntity<?> addBook(@Valid @RequestBody BookRequest book){
-        Book bookCreated = bookService.addBook(book);
+        BookResponse bookCreated = bookService.addBook(book);
         URI location = URI.create("/api/LIBRARIAN/books/" + bookCreated.getCodeBook());
         return ResponseEntity.created(location).body(bookCreated);
     }

@@ -3,9 +3,6 @@ package com.WebBiblioteca.Service;
 import com.WebBiblioteca.Model.Book;
 import com.WebBiblioteca.Repository.BookReposity;
 import org.junit.jupiter.api.Test;
-
-import java.time.LocalDate;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.WebBiblioteca.DTO.Book.BookRequest;
@@ -46,7 +43,7 @@ public class BookServiceTest {
         when(bookReposity.findByEstado(state)).thenReturn(List.of(book));
         List<BookResponse> result = bookService.getBookList(state);
         assertEquals(1, result.size());
-        assertEquals("Libro 1", result.get(0).getTitle());
+        assertEquals("Libro 1", result.getFirst().getTitle());
     }
 
     @Test
@@ -78,7 +75,7 @@ public class BookServiceTest {
         when(bookReposity.findByIsbn("123")).thenReturn(Optional.empty());
         Book book = new Book();
         when(bookReposity.save(any(Book.class))).thenReturn(book);
-        Book result = bookService.addBook(req);
+        BookResponse result = bookService.addBook(req);
         assertNotNull(result);
     }
 
@@ -88,7 +85,7 @@ public class BookServiceTest {
         Book book = new Book();
         when(bookReposity.findByCodeBook(1L)).thenReturn(Optional.of(book));
         when(bookReposity.save(any(Book.class))).thenReturn(book);
-        Book result = bookService.updateBook(1L, req);
+        BookResponse result = bookService.updateBook(1L, req);
         assertNotNull(result);
     }
 }

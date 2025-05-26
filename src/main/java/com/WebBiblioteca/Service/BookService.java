@@ -20,11 +20,11 @@ import java.util.stream.Collectors;
 public class BookService {
 
     private final BookReposity bookReposity;
-    public BookService(BookReposity bookReposity) {
+    private final AuthorService authorService;
+    public BookService(BookReposity bookReposity, AuthorService authorService) {
+        this.authorService = authorService;
         this.bookReposity = bookReposity;
     }
-
-    //listar libros
     public List<BookResponse> getBookList(BookState bookState) {
         return bookReposity.findByEstado(bookState)
                 .stream().
@@ -63,7 +63,7 @@ public class BookService {
     }
 
     @Transactional
-    public Book addBook(BookRequest book) {
+    public BookResponse addBook(BookRequest book) {
         if (bookReposity.findByIsbn(book.getIsbn()).isPresent()) {
             throw new DuplicateResourceException("Book with this ISBN already exists", "ISBN", book.getIsbn());
         }
@@ -78,6 +78,7 @@ public class BookService {
         Set<Author> authors = book.getAuthors().stream()
                 .map(authorDTO -> {
                     Author author = new Author();
+                    author.setIdAuthor(authorDTO.getIdAuthor());
                     author.setNames(authorDTO.getNames());
                     author.setLastname(authorDTO.getLastname());
                     author.setNationality(authorDTO.getNationality());
@@ -86,8 +87,25 @@ public class BookService {
                     return author;
                 })
                 .collect(Collectors.toSet());
-        newBook.setAutores(authors);
-        return bookReposity.save(newBook);
+        Set<Author> listAuthors = authorService.castAuthorResponseListToAuthor(authorService.getAllAuthors());
+        Set<Long> existingAuthorIds = listAuthors.stream()
+                .map(Author::getIdAuthor)
+                .collect(Collectors.toSet());
+        Set<Author> noExistingAuthors = authors.stream()
+                .filter(author -> !existingAuthorIds.contains(author.getIdAuthor()))
+                .collect(Collectors.toSet());
+        newBook.setAutores(noExistingAuthors);
+        Book savedBook = bookReposity.save(newBook);
+        return new BookResponse(
+                savedBook.getCodeBook(),
+                savedBook.getTitle(),
+                savedBook.getIsbn(),
+                savedBook.getPublicationDate(),
+                savedBook.getPublisher(),
+                savedBook.getCategory(),
+                savedBook.getStockTotal(),
+                savedBook.getEstado()
+        );
     }
 
     public BookResponse updateBook(Long id, BookRequest book) {

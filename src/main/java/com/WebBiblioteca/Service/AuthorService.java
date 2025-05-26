@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -78,5 +80,19 @@ public class AuthorService {
     public void deleteAuthor(Long id){
         authorRepository.findByIdAuthor(id).orElseThrow(()->new ResourceNotFoundException("Author","id",id));
         authorRepository.deleteById(id);
+    }
+    public Set<Author> castAuthorResponseListToAuthor(List<AuthorResponse> authorResponses) {
+        return authorResponses.stream()
+                .map(resp -> {
+                    Author author = new Author();
+                    author.setIdAuthor(resp.getIdAuthor());
+                    author.setNames(resp.getNames());
+                    author.setLastname(resp.getLastname());
+                    author.setNationality(resp.getNationality());
+                    author.setBirthdate(resp.getBirthdate());
+                    author.setGender(resp.getGender());
+                    return author;
+                })
+                .collect(Collectors.toSet());
     }
 }

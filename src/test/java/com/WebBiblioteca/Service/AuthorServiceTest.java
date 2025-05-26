@@ -48,7 +48,7 @@ public class AuthorServiceTest {
         Author author = new Author();
         when(authorRepository.findByIdAuthor(1L)).thenReturn(Optional.of(author));
         when(authorRepository.save(any(Author.class))).thenReturn(author);
-        AuthorRequest result = authorService.updateAuthor(req);
+        AuthorRequest result = authorService.updateAuthor(req, 1L);
         assertNotNull(result);
     }
 
