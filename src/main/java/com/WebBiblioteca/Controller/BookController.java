@@ -2,7 +2,6 @@ package com.WebBiblioteca.Controller;
 
 import com.WebBiblioteca.DTO.Book.BookRequest;
 import com.WebBiblioteca.DTO.Book.BookResponse;
-import com.WebBiblioteca.Model.Book;
 import com.WebBiblioteca.Model.BookState;
 import com.WebBiblioteca.Service.BookService;
 import jakarta.validation.Valid;

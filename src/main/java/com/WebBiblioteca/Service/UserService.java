@@ -64,7 +64,7 @@ public class UserService  implements UserDetailsService {
     }
 
     @Transactional
-    public void addUser(UserRequest user) {
+    public UserResponse addUser(UserRequest user) {
         Rol rol = rolRepository.findByIdRol(user.getIdRol()).orElseThrow(() -> new ResourceNotFoundException("Rol","id",user.getIdRol()));
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new DuplicateResourceException("Usuario", "email", user.getEmail());
@@ -83,10 +83,24 @@ public class UserService  implements UserDetailsService {
         newUser.setState(true);
         newUser.setDateRegistered(LocalDateTime.now());
         newUser.setRol(rol);
-        userRepository.save(newUser);
+        User userCreating = userRepository.save(newUser);
+        return new UserResponse(
+                userCreating.getCode(),
+                userCreating.getName(),
+                userCreating.getLastname(),
+                userCreating.getEmail(),
+                userCreating.getPhone(),
+                userCreating.getAddress(),
+                userCreating.getDNI(),
+                userCreating.getPassword(),
+                userCreating.getState(),
+                userCreating.getDateRegistered(),
+                userCreating.getRol().getIdRol()
+        );
     }
-    public void updateUser(UserRequest user) {
-        User userToUpdate = userRepository.findById(user.getIdUsuario()).orElseThrow(()-> new ResourceNotFoundException("Usuario","id",user.getIdUsuario()));
+    @Transactional
+    public UserResponse updateUser(UserRequest user,Long id) {
+        User userToUpdate = userRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Usuario","id",id));
         if (user.getName() != null) {
             userToUpdate.setName(user.getName());
         }
@@ -115,7 +129,25 @@ public class UserService  implements UserDetailsService {
             Rol rol = rolRepository.findByIdRol(user.getIdRol()).orElseThrow(() -> new ResourceNotFoundException("Rol","id",user.getIdRol()));
             userToUpdate.setRol(rol);
         }
-        userRepository.save(userToUpdate);
+        User userUpdate = userRepository.save(userToUpdate);
+        return new UserResponse(
+                userUpdate.getCode(),
+                userUpdate.getName(),
+                userUpdate.getLastname(),
+                userUpdate.getEmail(),
+                userUpdate.getPhone(),
+                userUpdate.getAddress(),
+                userUpdate.getDNI(),
+                userUpdate.getPassword(),
+                userUpdate.getState(),
+                userUpdate.getDateRegistered(),
+                userUpdate.getRol().getIdRol()
+        );
+    }
+    public void deleteUser(Long id) {
+        User userToDelete = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Usuario","id",id));
+        userToDelete.setState(false);
+        userRepository.save(userToDelete);
     }
 
     @Override
