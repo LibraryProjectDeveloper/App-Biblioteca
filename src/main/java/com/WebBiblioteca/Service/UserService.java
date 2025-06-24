@@ -43,7 +43,7 @@ public class UserService  implements UserDetailsService {
                         user.getPassword(),
                         user.getState(),
                         user.getDateRegistered(),
-                        user.getRol().getIdRol()
+                        user.getRol().getNameRol().name()
                 )).toList();
     }
     public List<UserResponse> getAllUsersByState(Boolean state) {
@@ -59,7 +59,7 @@ public class UserService  implements UserDetailsService {
                         user.getPassword(),
                         user.getState(),
                         user.getDateRegistered(),
-                        user.getRol().getIdRol()
+                        user.getRol().getNameRol().name()
                 )).toList();
     }
 
@@ -95,7 +95,7 @@ public class UserService  implements UserDetailsService {
                 userCreating.getPassword(),
                 userCreating.getState(),
                 userCreating.getDateRegistered(),
-                userCreating.getRol().getIdRol()
+                userCreating.getRol().getNameRol().name()
         );
     }
     @Transactional
@@ -141,7 +141,7 @@ public class UserService  implements UserDetailsService {
                 userUpdate.getPassword(),
                 userUpdate.getState(),
                 userUpdate.getDateRegistered(),
-                userUpdate.getRol().getIdRol()
+                userUpdate.getRol().getNameRol().name()
         );
     }
     public void deleteUser(Long id) {

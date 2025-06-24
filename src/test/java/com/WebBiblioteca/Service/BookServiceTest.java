@@ -22,6 +22,8 @@ public class BookServiceTest {
     private BookReposity bookReposity;
     @InjectMocks
     private BookService bookService;
+    @InjectMocks
+    private AuthorService authorService;
 
     @BeforeEach
     void setUp() {
@@ -62,22 +64,27 @@ public class BookServiceTest {
         assertEquals("Libro 1", result.getTitle());
     }
 
-    @Test
-    void testAddBook() {
-        BookRequest req = mock(BookRequest.class);
-        when(req.getIsbn()).thenReturn("123");
-        when(req.getTitle()).thenReturn("Libro Nuevo");
-        when(req.getPublisher()).thenReturn("Editorial");
-        when(req.getPublicationDate()).thenReturn(null);
-        when(req.getCategory()).thenReturn(null);
-        when(req.getStockTotal()).thenReturn(10);
-        when(req.getAuthors()).thenReturn(Collections.emptyList());
-        when(bookReposity.findByIsbn("123")).thenReturn(Optional.empty());
-        Book book = new Book();
-        when(bookReposity.save(any(Book.class))).thenReturn(book);
-        BookResponse result = bookService.addBook(req);
-        assertNotNull(result);
-    }
+@Test
+void testAddBook() {
+    BookRequest req = mock(BookRequest.class);
+    when(req.getIsbn()).thenReturn("123");
+    when(req.getTitle()).thenReturn("Libro Nuevo");
+    when(req.getPublisher()).thenReturn("Editorial");
+    when(req.getPublicationDate()).thenReturn(null);
+    when(req.getCategory()).thenReturn(null);
+    when(req.getStockTotal()).thenReturn(10);
+    when(req.getAuthors()).thenReturn(Collections.emptyList());
+    when(bookReposity.findByIsbn("123")).thenReturn(Optional.empty());
+
+    AuthorService mockAuthorService = mock(AuthorService.class);
+    when(mockAuthorService.getAllAuthors()).thenReturn(Collections.emptyList());
+    when(mockAuthorService.castAuthorResponseListToAuthor(anyList())).thenReturn(Collections.emptySet());
+    BookService bookServiceWithMock = new BookService(bookReposity, mockAuthorService);
+    Book book = new Book();
+    when(bookReposity.save(any(Book.class))).thenReturn(book);
+    BookResponse result = bookServiceWithMock.addBook(req);
+    assertNotNull(result);
+}
 
     @Test
     void testUpdateBook() {

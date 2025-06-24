@@ -8,6 +8,7 @@ import com.WebBiblioteca.Exception.ResourceNotFoundException;
 import com.WebBiblioteca.Model.Author;
 import com.WebBiblioteca.Model.Book;
 import com.WebBiblioteca.Model.BookState;
+import com.WebBiblioteca.Model.Category;
 import com.WebBiblioteca.Repository.BookReposity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,20 @@ public class BookService {
     public BookService(BookReposity bookReposity, AuthorService authorService) {
         this.authorService = authorService;
         this.bookReposity = bookReposity;
+    }
+    public List<BookResponse> getBookList() {
+        return bookReposity.findAll()
+                .stream()
+                .map(book -> new BookResponse(
+                        book.getCodeBook(),
+                        book.getTitle(),
+                        book.getIsbn(),
+                        book.getPublicationDate(),
+                        book.getPublisher(),
+                        book.getCategory(),
+                        book.getStockTotal(),
+                        book.getEstado()
+                )).collect(Collectors.toList());
     }
     public List<BookResponse> getBookList(BookState bookState) {
         return bookReposity.findByEstado(bookState)
@@ -60,6 +75,13 @@ public class BookService {
                                 author.getGender()
                         )).collect(Collectors.toList())
         );
+    }
+    public List<Category> getAllCategories() {
+        return bookReposity.findAll()
+                .stream()
+                .map(Book::getCategory)
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     @Transactional

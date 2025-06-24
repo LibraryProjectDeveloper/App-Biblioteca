@@ -63,6 +63,7 @@ public class UserServiceTest {
         var encoder = mock(org.springframework.security.crypto.password.PasswordEncoder.class);
         UserRequest req = mock(UserRequest.class);
         Rol rol = new Rol();
+        rol.setIdRol(1L);
         when(req.getIdRol()).thenReturn(1L);
         when(req.getEmail()).thenReturn("test@mail.com");
         when(req.getDNI()).thenReturn("12345678");
@@ -71,7 +72,9 @@ public class UserServiceTest {
         when(userRepository.findByDNI("12345678")).thenReturn(Optional.empty());
         when(encodeConfig.passwordEncoder()).thenReturn(encoder);
         when(encoder.encode(anyString())).thenReturn("encodedPass");
-        when(userRepository.save(any(User.class))).thenReturn(new User());
+        User savedUser = new User();
+        savedUser.setRol(rol);
+        when(userRepository.save(any(User.class))).thenReturn(savedUser);
         assertDoesNotThrow(() -> userService.addUser(req));
     }
 
@@ -80,6 +83,8 @@ public class UserServiceTest {
         var encoder = mock(org.springframework.security.crypto.password.PasswordEncoder.class);
         UserRequest req = mock(UserRequest.class);
         User user = new User();
+        Rol rol = new Rol();
+        rol.setIdRol(1L);
         when(req.getIdUsuario()).thenReturn(1L);
         when(req.getName()).thenReturn("NuevoNombre");
         when(req.getLastname()).thenReturn("NuevoApellido");
@@ -89,11 +94,13 @@ public class UserServiceTest {
         when(req.getDNI()).thenReturn("87654321");
         when(req.getPassword()).thenReturn("nuevaPass");
         when(req.getState()).thenReturn(true);
-        when(req.getIdRol()).thenReturn(null);
+        when(req.getIdRol()).thenReturn(1L);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(rolRepository.findByIdRol(1L)).thenReturn(Optional.of(rol));
         when(userRepository.save(any(User.class))).thenReturn(user);
         when(encodeConfig.passwordEncoder()).thenReturn(encoder);
-        assertDoesNotThrow(() -> userService.updateUser(req));
+        when(encoder.encode(anyString())).thenReturn("encodedPass");
+        assertDoesNotThrow(() -> userService.updateUser(req, 1L));
         assertEquals("NuevoNombre", user.getName());
         assertEquals("NuevoApellido", user.getLastname());
         assertEquals("nuevo@mail.com", user.getEmail());

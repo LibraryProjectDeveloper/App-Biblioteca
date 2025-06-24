@@ -19,8 +19,13 @@ public class BookController {
         this.bookService = bookService;
     }
 
-    @GetMapping("/actives")
+    @GetMapping("")
     public ResponseEntity<?> getAllBooks() {
+        List<BookResponse> bookList = bookService.getBookList();
+        return ResponseEntity.ok(bookList);
+    }
+    @GetMapping("/actives")
+    public ResponseEntity<?> getAllActiveBooks() {
         List<BookResponse> bookList = bookService.getBookList(BookState.ACTIVO);
         return ResponseEntity.ok(bookList);
     }
@@ -33,6 +38,10 @@ public class BookController {
     @GetMapping("/book-info/{id}")
     public ResponseEntity<?> getBookById(@PathVariable Long id) {
         return ResponseEntity.ok(bookService.getBookById(id));
+    }
+    @GetMapping("/categories")
+    public ResponseEntity<?> getAllCategories() {
+        return ResponseEntity.ok(bookService.getAllCategories());
     }
 
     @PostMapping("/add")
