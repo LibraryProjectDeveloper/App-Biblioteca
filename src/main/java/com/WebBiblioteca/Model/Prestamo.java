@@ -42,6 +42,10 @@ public class Prestamo {
     @JoinColumn(name = "usuario_id")
     private User user;
 
+    @ManyToOne
+    @JoinColumn(name = "bibliotecario_id")
+    private User librarian;
+
     @OneToMany(mappedBy = "prestamo", cascade = CascadeType.ALL)
     List<Multa> multas = new ArrayList<>();
 

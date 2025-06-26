@@ -23,13 +23,13 @@ public class Book {
     private Long codeBook;
 
     @NotBlank(message = "El título es obligatorio")
-    @Size(min = 2, max = 200, message = "El título debe tener entre 2 y 90 caracteres")
-    @Column(name = "titulo_libro", columnDefinition = "VARCHAR(90)")
+    @Size(min = 2, max = 255, message = "El título debe tener entre 2 y 255 caracteres")
+    @Column(name = "titulo_libro", columnDefinition = "VARCHAR(255)")
     private String title;
 
     @NotNull(message = "El isbn no puede ser nulo")
     @NotBlank
-    @Column(unique = true)
+    @Column(name = "isbn",unique = true,columnDefinition = "VARCHAR(17)")
     private String isbn;
 
     @NotNull(message = "La fecha de publicación es obligatoria")

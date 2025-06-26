@@ -3,6 +3,7 @@ package com.WebBiblioteca.Controller;
 import com.WebBiblioteca.DTO.Book.BookRequest;
 import com.WebBiblioteca.DTO.Book.BookResponse;
 import com.WebBiblioteca.Model.BookState;
+import com.WebBiblioteca.Model.Category;
 import com.WebBiblioteca.Service.BookService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -24,17 +25,17 @@ public class BookController {
         List<BookResponse> bookList = bookService.getBookList();
         return ResponseEntity.ok(bookList);
     }
-    @GetMapping("/actives")
-    public ResponseEntity<?> getAllActiveBooks() {
-        List<BookResponse> bookList = bookService.getBookList(BookState.ACTIVO);
+    @GetMapping("/state/{value}")
+    public ResponseEntity<?> getAllActiveBooks(@PathVariable BookState value) {
+        List<BookResponse> bookList = bookService.getBookList(value);
         return ResponseEntity.ok(bookList);
     }
 
-    @GetMapping("/inactives")
-    public ResponseEntity<?> getAllInactivesBooks() {
-        List<BookResponse> bookList = bookService.getBookList(BookState.INACTIVO);
-        return ResponseEntity.ok(bookList);
+    @GetMapping("/year/{year}")
+    public ResponseEntity<?> getBooksByPublicationYear(@PathVariable Integer year) {
+        return ResponseEntity.ok(bookService.getBooksByPublicationYear(year));
     }
+
     @GetMapping("/book-info/{id}")
     public ResponseEntity<?> getBookById(@PathVariable Long id) {
         return ResponseEntity.ok(bookService.getBookById(id));
@@ -44,6 +45,10 @@ public class BookController {
         return ResponseEntity.ok(bookService.getAllCategories());
     }
 
+    @GetMapping("/categoria/{category}")
+    public ResponseEntity<?> getBooksByCategory(@PathVariable Category category) {
+        return ResponseEntity.ok(bookService.filterBookCategory(category));
+    }
     @PostMapping("/add")
     public ResponseEntity<?> addBook(@Valid @RequestBody BookRequest book){
         BookResponse bookCreated = bookService.addBook(book);

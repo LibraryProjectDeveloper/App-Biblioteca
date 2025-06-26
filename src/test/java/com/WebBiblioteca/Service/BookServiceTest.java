@@ -73,7 +73,7 @@ void testAddBook() {
     when(req.getPublicationDate()).thenReturn(null);
     when(req.getCategory()).thenReturn(null);
     when(req.getStockTotal()).thenReturn(10);
-    when(req.getAuthors()).thenReturn(Collections.emptyList());
+    when(req.getAuthor()).thenReturn(Collections.emptyList());
     when(bookReposity.findByIsbn("123")).thenReturn(Optional.empty());
 
     AuthorService mockAuthorService = mock(AuthorService.class);

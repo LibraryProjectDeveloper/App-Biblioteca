@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/author")
@@ -21,6 +22,19 @@ public class AuthorController {
     public ResponseEntity<?> getAuthors(){
         return ResponseEntity.ok(authorService.getAllAuthors());
     }
+
+    @GetMapping("/buscar")
+    @PreAuthorize("hasAnyRole('ADMIN','LIBRARIAN')")
+    public ResponseEntity<?> getAuthorsByNameOrLastname(
+            @RequestParam(required = false) String names,
+            @RequestParam(required = false) String lastname){
+        List<AuthorResponse> listAutores = authorService.autoresByNameOrApellidos(names, lastname);
+        if (!listAutores.isEmpty()) {
+            return ResponseEntity.ok(listAutores);
+        }
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping("/add")
     @PreAuthorize("hasAnyRole('ADMIN','LIBRARIAN')")
     public ResponseEntity<?> addAuthor(@Valid @RequestBody AuthorRequest author){
@@ -45,5 +59,7 @@ public class AuthorController {
         authorService.deleteAuthor(id);
         return ResponseEntity.noContent().build();
     }
+
+
 
 }

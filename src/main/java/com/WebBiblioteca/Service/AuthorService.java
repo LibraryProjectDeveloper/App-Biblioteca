@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -94,5 +96,33 @@ public class AuthorService {
                     return author;
                 })
                 .collect(Collectors.toSet());
+    }
+
+    public List<AuthorResponse> autoresByNameOrApellidos(String names, String lastname) {
+        List<Author> authorList;
+
+        boolean nombreValido = names != null && !names.isBlank();
+        boolean apellidoValido = lastname != null && !lastname.isBlank();
+
+        if (nombreValido && !apellidoValido) {
+            authorList = authorRepository.findByNamesContainingIgnoreCase(names);
+        } else if (!nombreValido && apellidoValido) {
+            authorList = authorRepository.findByLastnameContainingIgnoreCase(lastname);
+        } else if (nombreValido && apellidoValido) {
+            authorList = authorRepository.findByNamesContainingIgnoreCaseOrLastnameContainingIgnoreCase(names, lastname);
+        } else {
+            authorList = Collections.emptyList(); // o lanza una excepción si lo prefieres
+        }
+
+        return authorList.stream()
+                .map(author -> new AuthorResponse(
+                        author.getIdAuthor(),
+                        author.getNames(),
+                        author.getLastname(),
+                        author.getNationality(),
+                        author.getBirthdate(),
+                        author.getGender()
+                ))
+                .toList();
     }
 }

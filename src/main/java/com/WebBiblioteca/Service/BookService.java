@@ -1,6 +1,7 @@
 package com.WebBiblioteca.Service;
 
 import com.WebBiblioteca.DTO.Autor.AuthorRequest;
+import com.WebBiblioteca.DTO.Autor.AuthorResponse;
 import com.WebBiblioteca.DTO.Book.BookRequest;
 import com.WebBiblioteca.DTO.Book.BookResponse;
 import com.WebBiblioteca.Exception.DuplicateResourceException;
@@ -37,7 +38,16 @@ public class BookService {
                         book.getPublisher(),
                         book.getCategory(),
                         book.getStockTotal(),
-                        book.getEstado()
+                        book.getEstado(),
+                        book.getAutores().stream()
+                                .map(author -> new AuthorResponse(
+                                        author.getIdAuthor(),
+                                        author.getNames(),
+                                        author.getLastname(),
+                                        author.getNationality(),
+                                        author.getBirthdate(),
+                                        author.getGender()
+                                )).collect(Collectors.toList())
                 )).collect(Collectors.toList());
     }
     public List<BookResponse> getBookList(BookState bookState) {
@@ -51,7 +61,16 @@ public class BookService {
                         book.getPublisher(),
                         book.getCategory(),
                         book.getStockTotal(),
-                        book.getEstado()
+                        book.getEstado(),
+                        book.getAutores().stream()
+                                .map(author -> new AuthorResponse(
+                                        author.getIdAuthor(),
+                                        author.getNames(),
+                                        author.getLastname(),
+                                        author.getNationality(),
+                                        author.getBirthdate(),
+                                        author.getGender()
+                                )).collect(Collectors.toList())
                 )).collect(Collectors.toList());
     }
 
@@ -84,6 +103,29 @@ public class BookService {
                 .collect(Collectors.toList());
     }
 
+    public List<BookResponse> getBooksByPublicationYear(Integer year) {
+        return bookReposity.findByPublicationDateYear(year)
+                .stream()
+                .map(book -> new BookResponse(
+                        book.getCodeBook(),
+                        book.getTitle(),
+                        book.getIsbn(),
+                        book.getPublicationDate(),
+                        book.getPublisher(),
+                        book.getCategory(),
+                        book.getStockTotal(),
+                        book.getEstado(),
+                        book.getAutores().stream()
+                                .map(author -> new AuthorResponse(
+                                        author.getIdAuthor(),
+                                        author.getNames(),
+                                        author.getLastname(),
+                                        author.getNationality(),
+                                        author.getBirthdate(),
+                                        author.getGender()
+                                )).collect(Collectors.toList())
+                )).collect(Collectors.toList());
+    }
     @Transactional
     public BookResponse addBook(BookRequest book) {
         if (bookReposity.findByIsbn(book.getIsbn()).isPresent()) {
@@ -97,7 +139,7 @@ public class BookService {
         newBook.setStockTotal(book.getStockTotal());
         newBook.setIsbn(book.getIsbn());
         newBook.setEstado(BookState.ACTIVO);
-        Set<Author> authors = book.getAuthors().stream()
+        Set<Author> authors = book.getAuthor().stream()
                 .map(authorDTO -> {
                     Author author = new Author();
                     author.setIdAuthor(authorDTO.getIdAuthor());
@@ -126,7 +168,16 @@ public class BookService {
                 savedBook.getPublisher(),
                 savedBook.getCategory(),
                 savedBook.getStockTotal(),
-                savedBook.getEstado()
+                savedBook.getEstado(),
+                savedBook.getAutores().stream()
+                        .map(author -> new AuthorResponse(
+                                author.getIdAuthor(),
+                                author.getNames(),
+                                author.getLastname(),
+                                author.getNationality(),
+                                author.getBirthdate(),
+                                author.getGender()
+                        )).collect(Collectors.toList())
         );
     }
 
@@ -162,12 +213,45 @@ public class BookService {
                 bookUpdate.getPublisher(),
                 bookUpdate.getCategory(),
                 bookUpdate.getStockTotal(),
-                bookUpdate.getEstado()
+                bookUpdate.getEstado(),
+                bookUpdate.getAutores().stream()
+                        .map(author -> new AuthorResponse(
+                                author.getIdAuthor(),
+                                author.getNames(),
+                                author.getLastname(),
+                                author.getNationality(),
+                                author.getBirthdate(),
+                                author.getGender()
+                        )).collect(Collectors.toList())
         );
     }
     public void deleteBook(Long id) {
         Book book = bookReposity.findByCodeBook(id).orElseThrow(() -> new ResourceNotFoundException("Book", "id", id));
         book.setEstado(BookState.INACTIVO);
         bookReposity.save(book);
+    }
+
+    public List<BookResponse> filterBookCategory(Category category) {
+        return bookReposity.findByCategory(category)
+                .stream()
+                .map(book -> new BookResponse(
+                        book.getCodeBook(),
+                        book.getTitle(),
+                        book.getIsbn(),
+                        book.getPublicationDate(),
+                        book.getPublisher(),
+                        book.getCategory(),
+                        book.getStockTotal(),
+                        book.getEstado(),
+                        book.getAutores().stream()
+                                .map(author -> new AuthorResponse(
+                                        author.getIdAuthor(),
+                                        author.getNames(),
+                                        author.getLastname(),
+                                        author.getNationality(),
+                                        author.getBirthdate(),
+                                        author.getGender()
+                                )).collect(Collectors.toList())
+                )).collect(Collectors.toList());
     }
 }
