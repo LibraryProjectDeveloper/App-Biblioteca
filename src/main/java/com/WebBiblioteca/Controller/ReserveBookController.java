@@ -1,8 +1,14 @@
 package com.WebBiblioteca.Controller;
 
+import com.WebBiblioteca.DTO.ReserveBook.ReserveBookRequest;
+import com.WebBiblioteca.DTO.ReserveBook.ReserveBookResponse;
+import com.WebBiblioteca.DTO.ReserveBook.ReserveBookUpdate;
 import com.WebBiblioteca.Service.ReserveBookService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
+
 @RestController
 @RequestMapping("/api/reserve")
 public class ReserveBookController {
@@ -30,6 +36,21 @@ public class ReserveBookController {
     @GetMapping("/user/{id}")
     public ResponseEntity<?> getReservationByUser(@PathVariable Long id){
         return ResponseEntity.ok(reserveBookService.getReservationByUser(id));
+    }
+    @PostMapping("/add")
+    public ResponseEntity<?> saveReservation(@RequestBody ReserveBookRequest reserveBookRequest) {
+        ReserveBookResponse reserveBookCreated = reserveBookService.saveReservation(reserveBookRequest);
+        URI location = URI.create("/api/reserve"+reserveBookCreated.getId());
+        return ResponseEntity.created(location).body(reserveBookCreated);
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateReservation(@PathVariable Long id, @RequestBody ReserveBookUpdate reserveBookUpdate){
+        return ResponseEntity.ok(reserveBookService.updateReservation(reserveBookUpdate,id));
+    }
+    @PatchMapping("/update/{id}")
+    public ResponseEntity<?> updatePartialReservation(@PathVariable Long id, @RequestBody ReserveBookUpdate reserveBookUpdate){
+        return ResponseEntity.ok(reserveBookService.updateReservation(reserveBookUpdate,id));
     }
 }
 

@@ -231,6 +231,7 @@ public class BookService {
         bookReposity.save(book);
     }
 
+
     public List<BookResponse> filterBookCategory(Category category) {
         return bookReposity.findByCategory(category)
                 .stream()
@@ -253,5 +254,11 @@ public class BookService {
                                         author.getGender()
                                 )).collect(Collectors.toList())
                 )).collect(Collectors.toList());
+    }
+    public boolean isAvailable(Long id){
+        return bookReposity.findById(id).isPresent();
+    }
+    public Book getBook(Long id) {
+        return bookReposity.findById(id).orElseThrow(() -> new ResourceNotFoundException("Book", "id", id));
     }
 }

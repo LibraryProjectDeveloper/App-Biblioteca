@@ -30,6 +30,10 @@ public class UserService  implements UserDetailsService {
         this.encodeConfig = encodeConfig;
     }
 
+    public User getUser(Long id){
+        return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User","id",id));
+    }
+
     public List<UserResponse> getAllUsers() {
         return userRepository.findAll().
                 stream().map(user -> new UserResponse(
