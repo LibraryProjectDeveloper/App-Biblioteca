@@ -76,7 +76,9 @@ public class User {
 
         @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
         @JsonManagedReference
-        private Set<ReserveBook> listReservasUser = new HashSet<>();
+        private Set<ReserveBook> listReservesUser = new HashSet<>();
+        @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+        private Set<ReserveBook> listReservesLibrarian = new HashSet<>();
 
         @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
         private Set<Prestamo> listPrestamosUser = new HashSet<>();

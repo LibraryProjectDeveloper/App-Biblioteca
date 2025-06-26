@@ -170,4 +170,10 @@ public class BookService {
         book.setEstado(BookState.INACTIVO);
         bookReposity.save(book);
     }
+    public boolean isAvailable(Long id){
+        return bookReposity.findById(id).isPresent();
+    }
+    public Book getBook(Long id){
+        return bookReposity.findById(id).orElseThrow(() -> new ResourceNotFoundException("Book","id",id));
+    }
 }
