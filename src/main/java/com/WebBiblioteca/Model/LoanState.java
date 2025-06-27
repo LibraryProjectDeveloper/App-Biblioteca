@@ -1,6 +1,6 @@
 package com.WebBiblioteca.Model;
 
-public enum EstadoPrestamo {
+public enum LoanState {
     PRESTADO,
     NO_PRESTADO,
     DEVUELTO

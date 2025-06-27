@@ -17,41 +17,45 @@ import java.util.*;
 @Getter
 @Setter
 @Entity
-public class Prestamo {
+@Table(name = "prestamo")
+public class Loan {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private Long idPrestamo;
+    @Column(name = "id_prestamo")
+    private Long idLoan;
 
-    @Column(columnDefinition = "TIMESTAMP")
+    @Column(columnDefinition = "TIMESTAMP",name="fecha_prestamo")
     @NotNull(message = "La fecha de préstamo es obligatoria")
     @PastOrPresent(message = "La fecha de préstamo no puede ser futura")
-    private LocalDateTime fechaPrestamo;
+    private LocalDateTime loanDate;
 
-    @Column(columnDefinition = "DATE")
+    @Column(columnDefinition = "DATE",name="fecha_devolucion")
     @NotNull(message = "La fecha de devolución es obligatoria")
     @Future(message = "La fecha de devolución debe ser una fecha futura")
-    private Date fechaDevolucion;
+    private Date devolutionDate;
 
     @Enumerated(EnumType.STRING)
-    private EstadoPrestamo estado;
+    @Column(name = "estado")
+    private LoanState state;
 
     @Positive(message = "La cantidad de libros debe ser positiva")
-    private Integer cantidadLibros;
+    @Column(name = "cantidad_libros")
+    private Integer booksQuantity;
 
     @ManyToOne
     @JoinColumn(name = "usuario_id")
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "bibliotecario_id")
+    @JoinColumn(name = "librarian_id")
     private User librarian;
 
     @OneToMany(mappedBy = "prestamo", cascade = CascadeType.ALL)
-    List<Multa> multas = new ArrayList<>();
+    List<LateFee> lateFees = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(name = "prestamo_libro",
             joinColumns = @JoinColumn(name = "prestamo_id"),
             inverseJoinColumns = @JoinColumn(name = "libro_id"))
-    private Set<Book> libros = new HashSet<>();
+    private Set<Book> books = new HashSet<>();
 }

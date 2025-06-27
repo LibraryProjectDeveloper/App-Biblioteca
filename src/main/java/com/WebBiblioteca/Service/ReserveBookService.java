@@ -140,6 +140,12 @@ public class ReserveBookService {
         );
     }
 
+    public void deleteReservation(Long id){
+        ReserveBook reserveBook = reserveBookRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Reservation","id",id));
+        reserveBook.setState(false);
+        reserveBookRepository.save(reserveBook);
+    }
+
     private boolean verifyStockBooks(List<Long> booklist){
         for(Long book : booklist){
             if(!bookService.isAvailable(book)){

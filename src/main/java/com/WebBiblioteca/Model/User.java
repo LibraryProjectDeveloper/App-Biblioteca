@@ -81,7 +81,7 @@ public class User {
         private Set<ReserveBook> listReservesLibrarian = new HashSet<>();
 
         @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-        private Set<Prestamo> listPrestamosUser = new HashSet<>();
+        private Set<Loan> listLoanUser = new HashSet<>();
 
 }
 

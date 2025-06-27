@@ -1,6 +1,6 @@
 package com.WebBiblioteca.Model;
 
-public enum Genero {
+public enum Gender {
     MASCULINO,
     FEMENINO
 }

@@ -1,6 +1,6 @@
 package com.WebBiblioteca.Model;
 
-public enum EstadoMulta {
+public enum LateFeeState {
     PAGADA,
     PENDIENTE,
     ANULADA,

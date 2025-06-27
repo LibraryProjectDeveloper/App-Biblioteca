@@ -1,6 +1,6 @@
 package com.WebBiblioteca.DTO.Autor;
 
-import com.WebBiblioteca.Model.Genero;
+import com.WebBiblioteca.Model.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,5 +14,5 @@ public class AuthorResponse {
     private String lastname;
     private String nationality;
     private Date birthdate;
-    private Genero gender;
+    private Gender gender;
 }

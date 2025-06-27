@@ -52,5 +52,10 @@ public class ReserveBookController {
     public ResponseEntity<?> updatePartialReservation(@PathVariable Long id, @RequestBody ReserveBookUpdate reserveBookUpdate){
         return ResponseEntity.ok(reserveBookService.updateReservation(reserveBookUpdate,id));
     }
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteReservation(@PathVariable Long id){
+        reserveBookService.deleteReservation(id);
+        return ResponseEntity.noContent().build();
+    }
 }
 

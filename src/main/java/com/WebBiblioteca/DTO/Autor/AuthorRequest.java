@@ -1,6 +1,6 @@
 package com.WebBiblioteca.DTO.Autor;
 
-import com.WebBiblioteca.Model.Genero;
+import com.WebBiblioteca.Model.Gender;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,5 +33,5 @@ public class AuthorRequest {
     private Date birthdate;
 
     @NotNull
-    private Genero gender;
+    private Gender gender;
 }

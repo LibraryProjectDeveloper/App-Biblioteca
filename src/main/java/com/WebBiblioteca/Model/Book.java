@@ -61,7 +61,7 @@ public class Book {
     private List<ReserveBook> listReservasBook = new ArrayList<>();
 
     @ManyToMany(mappedBy = "libros")
-    private Set<Prestamo> prestamos = new HashSet<>();
+    private Set<Loan> loans = new HashSet<>();
 
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "libro_autor",
