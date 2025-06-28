@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @AllArgsConstructor @NoArgsConstructor
@@ -23,7 +24,7 @@ public class LateFee {
     @Column(columnDefinition = "DECIMAL(10,2)",name = "monto")
     @NotNull(message = "El monto es obligatorio")
     @DecimalMin(value = "0.01", message = "El monto debe ser mayor o igual a 0.01")
-    private BigDecimal amount;
+    private double amount;
 
     @Column(columnDefinition = "VARCHAR(100)",name = "motivo")
     @NotBlank(message = "El motivo es obligatorio")
@@ -33,7 +34,7 @@ public class LateFee {
     @Column(columnDefinition = "DATE",name = "fecha_multa")
     @NotNull(message = "La fecha de la multa es obligatoria")
     @PastOrPresent(message = "La fecha de la multa debe ser en el pasado o presente")
-    private Date lateFeeDate;
+    private LocalDateTime lateFeeDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "estado")

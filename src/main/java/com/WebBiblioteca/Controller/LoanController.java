@@ -43,6 +43,10 @@ public class LoanController {
     public ResponseEntity<?> updateLoan(@PathVariable Long id, @RequestBody LoanUpdateRequest loanRequest) {
         return ResponseEntity.ok(loanService.updateLoan(id, loanRequest));
     }
+    @PutMapping("/updateState/{id}")
+    public ResponseEntity<?> updateLoanState(@PathVariable Long id, @RequestParam String state) {
+        return ResponseEntity.ok(loanService.updateState(id, state));
+    }
     @PatchMapping("/update/{id}")
     public ResponseEntity<?> updatePartialLoan(@PathVariable Long id, @RequestBody LoanUpdateRequest loanUpdateRequest) {
         return ResponseEntity.ok(loanService.updateLoan(id, loanUpdateRequest));

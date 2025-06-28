@@ -272,6 +272,49 @@ public class LoanService {
         );
     }
     @Transactional
+    public LoanResponse updateState(Long id, String state) {
+        Loan loan = loanRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Loan", "id", id));
+        LoanState loanState;
+        try {
+            loanState = LoanState.valueOf(state.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid loan state: " + state);
+        }
+        loan.setState(loanState);
+        Loan updatedLoan = loanRepository.save(loan);
+        return new LoanResponse(
+                updatedLoan.getIdLoan(),
+                updatedLoan.getLoanDate(),
+                updatedLoan.getDevolutionDate(),
+                updatedLoan.getState().name(),
+                updatedLoan.getBooksQuantity(),
+                updatedLoan.getUser().getCode(),
+                updatedLoan.getUser().getName()+" "+updatedLoan.getUser().getLastname(),
+                updatedLoan.getLibrarian().getCode(),
+                updatedLoan.getLibrarian().getName()+" "+updatedLoan.getLibrarian().getLastname(),
+                updatedLoan.getBooks().stream().map(book -> new BookResponse(
+                        book.getCodeBook(),
+                        book.getTitle(),
+                        book.getIsbn(),
+                        book.getPublicationDate(),
+                        book.getPublisher(),
+                        book.getCategory(),
+                        book.getStockTotal(),
+                        book.getEstado(),
+                        book.getAutores().stream()
+                                .map(author -> new AuthorResponse(
+                                        author.getIdAuthor(),
+                                        author.getNames(),
+                                        author.getLastname(),
+                                        author.getNationality(),
+                                        author.getBirthdate(),
+                                        author.getGender()
+                                )).toList()
+                )).toList()
+        );
+    }
+    @Transactional
     public void deleteLoan(Long id) {
         Loan loan = loanRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Loan", "id", id));
