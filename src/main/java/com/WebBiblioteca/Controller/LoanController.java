@@ -1,11 +1,13 @@
 package com.WebBiblioteca.Controller;
 
+import com.WebBiblioteca.DTO.Loan.LoanRequest;
+import com.WebBiblioteca.DTO.Loan.LoanResponse;
+import com.WebBiblioteca.DTO.Loan.LoanUpdateRequest;
 import com.WebBiblioteca.Service.LoanService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("/api/loan")
@@ -27,5 +29,29 @@ public class LoanController {
     public ResponseEntity<?> getLoansByUserId(@PathVariable Long userId) {
         return ResponseEntity.ok(loanService.getLoansByUserId(userId));
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getLoanById(@PathVariable Long id) {
+        return ResponseEntity.ok(loanService.getLoanById(id));
+    }
+    @PostMapping("/add")
+    public ResponseEntity<?> addLoan(@RequestBody LoanRequest loanRequest) {
+        LoanResponse loanResponse = loanService.saveLoan(loanRequest);
+        URI location = URI.create("/api/loan/" + loanResponse.getIdLean());
+        return ResponseEntity.created(location).body(loanResponse);
+    }
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateLoan(@PathVariable Long id, @RequestBody LoanUpdateRequest loanRequest) {
+        return ResponseEntity.ok(loanService.updateLoan(id, loanRequest));
+    }
+    @PatchMapping("/update/{id}")
+    public ResponseEntity<?> updatePartialLoan(@PathVariable Long id, @RequestBody LoanUpdateRequest loanUpdateRequest) {
+        return ResponseEntity.ok(loanService.updateLoan(id, loanUpdateRequest));
+    }
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteLoan(@PathVariable Long id) {
+        loanService.deleteLoan(id);
+        return ResponseEntity.noContent().build();
+    }
+
 
 }

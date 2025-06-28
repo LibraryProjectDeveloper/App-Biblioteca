@@ -14,6 +14,7 @@ import com.WebBiblioteca.Repository.BookReposity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -255,10 +256,27 @@ public class BookService {
                                 )).collect(Collectors.toList())
                 )).collect(Collectors.toList());
     }
+    public boolean verifyBooks(List<Long> booklist){
+        for(Long book : booklist){
+            if(bookReposity.findById(book).isEmpty()){
+                return false;
+            }
+            if(!isAvailable(book)){
+                return false;
+            }
+            if(getBookById(book).getStockTotal() <=0){
+                return false;
+            }
+        }
+        return true;
+    }
     public boolean isAvailable(Long id){
         return bookReposity.findById(id).isPresent();
     }
     public Book getBook(Long id) {
         return bookReposity.findById(id).orElseThrow(() -> new ResourceNotFoundException("Book", "id", id));
+    }
+    public Set<Book> getBooksByIds(List<Long> bookIds) {
+        return new HashSet<>(bookReposity.findAllById(bookIds));
     }
 }

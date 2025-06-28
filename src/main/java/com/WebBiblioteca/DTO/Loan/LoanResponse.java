@@ -11,7 +11,7 @@ import java.util.List;
 public class LoanResponse {
     private Long idLean;
     private LocalDateTime loanDate;
-    private Date devolutionDate;
+    private LocalDateTime devolutionDate;
     private String state;
     private int booksQuantity;
     private Long userId;

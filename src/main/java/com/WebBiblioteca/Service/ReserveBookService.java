@@ -146,15 +146,4 @@ public class ReserveBookService {
         reserveBookRepository.save(reserveBook);
     }
 
-    private boolean verifyStockBooks(List<Long> booklist){
-        for(Long book : booklist){
-            if(!bookService.isAvailable(book)){
-                return false;
-            }
-            if(bookService.getBookById(book).getStockTotal() <=0){
-                return false;
-            }
-        }
-        return true;
-    }
 }
