@@ -44,10 +44,6 @@ public class ReserveBook {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "librarian_id")
-    private User librarian;
-
-    @ManyToOne
     @JoinColumn(name = "book_id")
     @JsonBackReference
     private Book book;

@@ -47,7 +47,7 @@ public class Author {
 
     @Enumerated(EnumType.STRING)
     @Column(name="genero")
-    private Gender gender;
+    private Genero gender;
 
     @ManyToMany(mappedBy = "autores")
     private Set<Book> books = new HashSet<>();

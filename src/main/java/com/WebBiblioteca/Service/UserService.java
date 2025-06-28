@@ -30,10 +30,6 @@ public class UserService  implements UserDetailsService {
         this.encodeConfig = encodeConfig;
     }
 
-    public User getUser(Long id){
-        return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User","id",id));
-    }
-
     public List<UserResponse> getAllUsers() {
         return userRepository.findAll().
                 stream().map(user -> new UserResponse(
@@ -47,7 +43,7 @@ public class UserService  implements UserDetailsService {
                         user.getPassword(),
                         user.getState(),
                         user.getDateRegistered(),
-                        user.getRol().getNameRol().name()
+                        user.getRol().getIdRol()
                 )).toList();
     }
     public List<UserResponse> getAllUsersByState(Boolean state) {
@@ -63,12 +59,12 @@ public class UserService  implements UserDetailsService {
                         user.getPassword(),
                         user.getState(),
                         user.getDateRegistered(),
-                        user.getRol().getNameRol().name()
+                        user.getRol().getIdRol()
                 )).toList();
     }
 
     @Transactional
-    public UserResponse addUser(UserRequest user) {
+    public void addUser(UserRequest user) {
         Rol rol = rolRepository.findByIdRol(user.getIdRol()).orElseThrow(() -> new ResourceNotFoundException("Rol","id",user.getIdRol()));
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new DuplicateResourceException("Usuario", "email", user.getEmail());
@@ -87,24 +83,10 @@ public class UserService  implements UserDetailsService {
         newUser.setState(true);
         newUser.setDateRegistered(LocalDateTime.now());
         newUser.setRol(rol);
-        User userCreating = userRepository.save(newUser);
-        return new UserResponse(
-                userCreating.getCode(),
-                userCreating.getName(),
-                userCreating.getLastname(),
-                userCreating.getEmail(),
-                userCreating.getPhone(),
-                userCreating.getAddress(),
-                userCreating.getDNI(),
-                userCreating.getPassword(),
-                userCreating.getState(),
-                userCreating.getDateRegistered(),
-                userCreating.getRol().getNameRol().name()
-        );
+        userRepository.save(newUser);
     }
-    @Transactional
-    public UserResponse updateUser(UserRequest user,Long id) {
-        User userToUpdate = userRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Usuario","id",id));
+    public void updateUser(UserRequest user) {
+        User userToUpdate = userRepository.findById(user.getIdUsuario()).orElseThrow(()-> new ResourceNotFoundException("Usuario","id",user.getIdUsuario()));
         if (user.getName() != null) {
             userToUpdate.setName(user.getName());
         }
@@ -133,25 +115,7 @@ public class UserService  implements UserDetailsService {
             Rol rol = rolRepository.findByIdRol(user.getIdRol()).orElseThrow(() -> new ResourceNotFoundException("Rol","id",user.getIdRol()));
             userToUpdate.setRol(rol);
         }
-        User userUpdate = userRepository.save(userToUpdate);
-        return new UserResponse(
-                userUpdate.getCode(),
-                userUpdate.getName(),
-                userUpdate.getLastname(),
-                userUpdate.getEmail(),
-                userUpdate.getPhone(),
-                userUpdate.getAddress(),
-                userUpdate.getDNI(),
-                userUpdate.getPassword(),
-                userUpdate.getState(),
-                userUpdate.getDateRegistered(),
-                userUpdate.getRol().getNameRol().name()
-        );
-    }
-    public void deleteUser(Long id) {
-        User userToDelete = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Usuario","id",id));
-        userToDelete.setState(false);
-        userRepository.save(userToDelete);
+        userRepository.save(userToUpdate);
     }
 
     @Override

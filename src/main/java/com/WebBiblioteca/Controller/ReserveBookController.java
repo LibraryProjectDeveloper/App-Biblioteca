@@ -1,13 +1,13 @@
 package com.WebBiblioteca.Controller;
 
-import com.WebBiblioteca.DTO.ReserveBook.ReserveBookRequest;
-import com.WebBiblioteca.DTO.ReserveBook.ReserveBookResponse;
-import com.WebBiblioteca.DTO.ReserveBook.ReserveBookUpdate;
+import com.WebBiblioteca.Model.ReserveBook;
 import com.WebBiblioteca.Service.ReserveBookService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/reserve")
@@ -17,45 +17,66 @@ public class ReserveBookController {
         this.reserveBookService = reserveBookService;
     }
     @GetMapping("/")
-    public ResponseEntity<?> getReservationAll() {
-       return ResponseEntity.ok(reserveBookService.getReservationList());
+    public List<ReserveBook> getReservationAll() {
+        return reserveBookService.getReservationList();
     }
 
     @GetMapping("/actives")
-    public ResponseEntity<?> getReservationActives() {
-        return ResponseEntity.ok(reserveBookService.getReservationActives());
+    public List<ReserveBook> getReservationActives() {
+        return reserveBookService.getReservationActives();
     }
-    @GetMapping("/inactives")
-    public ResponseEntity<?> getReservationInactives() {
-        return ResponseEntity.ok(reserveBookService.gerReservationInactive());
+
+    /*
+    @GetMapping("/user/{idUser}")
+    public List<ReserveBook> getReservationByUserId(@PathVariable Long idUser) {
+        return reserveBookService.getReservationByUserId(idUser);
     }
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getReservationById(@PathVariable Long id) {
-        return ResponseEntity.ok(reserveBookService.getReservationById(id));
+
+    @GetMapping("/book/{idBook}")
+    public List<ReserveBook> getReservationByBookId(@PathVariable Long idBook) {
+        return reserveBookService.getReservationByBookId(idBook);
     }
-    @GetMapping("/user/{id}")
-    public ResponseEntity<?> getReservationByUser(@PathVariable Long id){
-        return ResponseEntity.ok(reserveBookService.getReservationByUser(id));
-    }
+
     @PostMapping("/add")
-    public ResponseEntity<?> saveReservation(@RequestBody ReserveBookRequest reserveBookRequest) {
-        ReserveBookResponse reserveBookCreated = reserveBookService.saveReservation(reserveBookRequest);
-        URI location = URI.create("/api/reserve"+reserveBookCreated.getId());
-        return ResponseEntity.created(location).body(reserveBookCreated);
+    public ResponseEntity<?> addReservation(@Valid @RequestBody ReserveBook reserveBook){
+        ReserveBook reserveBook1 = reserveBookService.addReservation(reserveBook);
+        if (reserveBook1 != null) {
+            return ResponseEntity.ok(reserveBook1);
+        } else {
+            return ResponseEntity.badRequest().body("Error adding reservation");
+        }
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> updateReservation(@PathVariable Long id, @RequestBody ReserveBookUpdate reserveBookUpdate){
-        return ResponseEntity.ok(reserveBookService.updateReservation(reserveBookUpdate,id));
+    public ResponseEntity<?> updateReservation(@PathVariable Long id, @Valid @RequestBody ReserveBook reserveBook) {
+        ReserveBook updatedReservation = reserveBookService.updateReservation(id, reserveBook);
+        if (updatedReservation != null) {
+            return ResponseEntity.ok(updatedReservation);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
+
     @PatchMapping("/update/{id}")
-    public ResponseEntity<?> updatePartialReservation(@PathVariable Long id, @RequestBody ReserveBookUpdate reserveBookUpdate){
-        return ResponseEntity.ok(reserveBookService.updateReservation(reserveBookUpdate,id));
+    public ResponseEntity<?> updatePartialReservation(@PathVariable Long id, @RequestBody ReserveBook reserveBook) {
+        ReserveBook updatedReservation = reserveBookService.updateReservation(id, reserveBook);
+        if (updatedReservation != null) {
+            return ResponseEntity.ok(updatedReservation);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
+
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteReservation(@PathVariable Long id){
-        reserveBookService.deleteReservation(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteReservation(@PathVariable Long id) {
+        boolean isDeleted = reserveBookService.deleteReservation(id);
+        if (isDeleted) {
+            return ResponseEntity.ok("Reservation deleted successfully");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
+
+     */
 }
 

@@ -1,6 +1,5 @@
 package com.WebBiblioteca.DTO.Book;
 
-import com.WebBiblioteca.DTO.Autor.AuthorResponse;
 import com.WebBiblioteca.Model.Category;
 import com.WebBiblioteca.Model.BookState;
 import lombok.AllArgsConstructor;
@@ -8,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,11 +21,9 @@ public class BookResponse {
 
     private String publisher;
 
-    private Category category;
+    private Category categoria;
 
     private Integer stockTotal;
 
-    private BookState state ;
-
-    private List<AuthorResponse> author;
+    private BookState estado;
 }

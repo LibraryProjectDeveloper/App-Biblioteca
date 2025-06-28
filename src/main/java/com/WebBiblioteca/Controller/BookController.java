@@ -2,8 +2,8 @@ package com.WebBiblioteca.Controller;
 
 import com.WebBiblioteca.DTO.Book.BookRequest;
 import com.WebBiblioteca.DTO.Book.BookResponse;
+import com.WebBiblioteca.Model.Book;
 import com.WebBiblioteca.Model.BookState;
-import com.WebBiblioteca.Model.Category;
 import com.WebBiblioteca.Service.BookService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -20,38 +20,25 @@ public class BookController {
         this.bookService = bookService;
     }
 
-    @GetMapping("")
+    @GetMapping("/actives")
     public ResponseEntity<?> getAllBooks() {
-        List<BookResponse> bookList = bookService.getBookList();
-        return ResponseEntity.ok(bookList);
-    }
-    @GetMapping("/state/{value}")
-    public ResponseEntity<?> getAllActiveBooks(@PathVariable BookState value) {
-        List<BookResponse> bookList = bookService.getBookList(value);
+        List<BookResponse> bookList = bookService.getBookList(BookState.ACTIVO);
         return ResponseEntity.ok(bookList);
     }
 
-    @GetMapping("/year/{year}")
-    public ResponseEntity<?> getBooksByPublicationYear(@PathVariable Integer year) {
-        return ResponseEntity.ok(bookService.getBooksByPublicationYear(year));
+    @GetMapping("/inactives")
+    public ResponseEntity<?> getAllInactivesBooks() {
+        List<BookResponse> bookList = bookService.getBookList(BookState.INACTIVO);
+        return ResponseEntity.ok(bookList);
     }
-
-    @GetMapping("/book-info/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> getBookById(@PathVariable Long id) {
         return ResponseEntity.ok(bookService.getBookById(id));
     }
-    @GetMapping("/categories")
-    public ResponseEntity<?> getAllCategories() {
-        return ResponseEntity.ok(bookService.getAllCategories());
-    }
 
-    @GetMapping("/categoria/{category}")
-    public ResponseEntity<?> getBooksByCategory(@PathVariable Category category) {
-        return ResponseEntity.ok(bookService.filterBookCategory(category));
-    }
     @PostMapping("/add")
     public ResponseEntity<?> addBook(@Valid @RequestBody BookRequest book){
-        BookResponse bookCreated = bookService.addBook(book);
+        Book bookCreated = bookService.addBook(book);
         URI location = URI.create("/api/LIBRARIAN/books/" + bookCreated.getCodeBook());
         return ResponseEntity.created(location).body(bookCreated);
     }
@@ -64,10 +51,5 @@ public class BookController {
     @PatchMapping("/update/{id}")
     public ResponseEntity<?> updatePartialBook(@PathVariable Long id, @RequestBody BookRequest book) {
         return ResponseEntity.ok(bookService.updateBook(id, book));
-    }
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteBook(@PathVariable Long id) {
-        bookService.deleteBook(id);
-        return ResponseEntity.noContent().build();
     }
 }

@@ -1,7 +1,6 @@
 package com.WebBiblioteca.Service;
 
 import com.WebBiblioteca.DTO.Autor.AuthorRequest;
-import com.WebBiblioteca.DTO.Autor.AuthorResponse;
 import com.WebBiblioteca.DTO.Book.BookRequest;
 import com.WebBiblioteca.DTO.Book.BookResponse;
 import com.WebBiblioteca.Exception.DuplicateResourceException;
@@ -9,7 +8,6 @@ import com.WebBiblioteca.Exception.ResourceNotFoundException;
 import com.WebBiblioteca.Model.Author;
 import com.WebBiblioteca.Model.Book;
 import com.WebBiblioteca.Model.BookState;
-import com.WebBiblioteca.Model.Category;
 import com.WebBiblioteca.Repository.BookReposity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,34 +21,11 @@ import java.util.stream.Collectors;
 public class BookService {
 
     private final BookReposity bookReposity;
-    private final AuthorService authorService;
-    public BookService(BookReposity bookReposity, AuthorService authorService) {
-        this.authorService = authorService;
+    public BookService(BookReposity bookReposity) {
         this.bookReposity = bookReposity;
     }
-    public List<BookResponse> getBookList() {
-        return bookReposity.findAll()
-                .stream()
-                .map(book -> new BookResponse(
-                        book.getCodeBook(),
-                        book.getTitle(),
-                        book.getIsbn(),
-                        book.getPublicationDate(),
-                        book.getPublisher(),
-                        book.getCategory(),
-                        book.getStockTotal(),
-                        book.getEstado(),
-                        book.getAutores().stream()
-                                .map(author -> new AuthorResponse(
-                                        author.getIdAuthor(),
-                                        author.getNames(),
-                                        author.getLastname(),
-                                        author.getNationality(),
-                                        author.getBirthdate(),
-                                        author.getGender()
-                                )).collect(Collectors.toList())
-                )).collect(Collectors.toList());
-    }
+
+    //listar libros
     public List<BookResponse> getBookList(BookState bookState) {
         return bookReposity.findByEstado(bookState)
                 .stream().
@@ -62,16 +37,7 @@ public class BookService {
                         book.getPublisher(),
                         book.getCategory(),
                         book.getStockTotal(),
-                        book.getEstado(),
-                        book.getAutores().stream()
-                                .map(author -> new AuthorResponse(
-                                        author.getIdAuthor(),
-                                        author.getNames(),
-                                        author.getLastname(),
-                                        author.getNationality(),
-                                        author.getBirthdate(),
-                                        author.getGender()
-                                )).collect(Collectors.toList())
+                        book.getEstado()
                 )).collect(Collectors.toList());
     }
 
@@ -96,39 +62,9 @@ public class BookService {
                         )).collect(Collectors.toList())
         );
     }
-    public List<Category> getAllCategories() {
-        return bookReposity.findAll()
-                .stream()
-                .map(Book::getCategory)
-                .distinct()
-                .collect(Collectors.toList());
-    }
 
-    public List<BookResponse> getBooksByPublicationYear(Integer year) {
-        return bookReposity.findByPublicationDateYear(year)
-                .stream()
-                .map(book -> new BookResponse(
-                        book.getCodeBook(),
-                        book.getTitle(),
-                        book.getIsbn(),
-                        book.getPublicationDate(),
-                        book.getPublisher(),
-                        book.getCategory(),
-                        book.getStockTotal(),
-                        book.getEstado(),
-                        book.getAutores().stream()
-                                .map(author -> new AuthorResponse(
-                                        author.getIdAuthor(),
-                                        author.getNames(),
-                                        author.getLastname(),
-                                        author.getNationality(),
-                                        author.getBirthdate(),
-                                        author.getGender()
-                                )).collect(Collectors.toList())
-                )).collect(Collectors.toList());
-    }
     @Transactional
-    public BookResponse addBook(BookRequest book) {
+    public Book addBook(BookRequest book) {
         if (bookReposity.findByIsbn(book.getIsbn()).isPresent()) {
             throw new DuplicateResourceException("Book with this ISBN already exists", "ISBN", book.getIsbn());
         }
@@ -140,10 +76,9 @@ public class BookService {
         newBook.setStockTotal(book.getStockTotal());
         newBook.setIsbn(book.getIsbn());
         newBook.setEstado(BookState.ACTIVO);
-        Set<Author> authors = book.getAuthor().stream()
+        Set<Author> authors = book.getAuthors().stream()
                 .map(authorDTO -> {
                     Author author = new Author();
-                    author.setIdAuthor(authorDTO.getIdAuthor());
                     author.setNames(authorDTO.getNames());
                     author.setLastname(authorDTO.getLastname());
                     author.setNationality(authorDTO.getNationality());
@@ -152,37 +87,11 @@ public class BookService {
                     return author;
                 })
                 .collect(Collectors.toSet());
-        Set<Author> listAuthors = authorService.castAuthorResponseListToAuthor(authorService.getAllAuthors());
-        Set<Long> existingAuthorIds = listAuthors.stream()
-                .map(Author::getIdAuthor)
-                .collect(Collectors.toSet());
-        Set<Author> noExistingAuthors = authors.stream()
-                .filter(author -> !existingAuthorIds.contains(author.getIdAuthor()))
-                .collect(Collectors.toSet());
-        newBook.setAutores(noExistingAuthors);
-        Book savedBook = bookReposity.save(newBook);
-        return new BookResponse(
-                savedBook.getCodeBook(),
-                savedBook.getTitle(),
-                savedBook.getIsbn(),
-                savedBook.getPublicationDate(),
-                savedBook.getPublisher(),
-                savedBook.getCategory(),
-                savedBook.getStockTotal(),
-                savedBook.getEstado(),
-                savedBook.getAutores().stream()
-                        .map(author -> new AuthorResponse(
-                                author.getIdAuthor(),
-                                author.getNames(),
-                                author.getLastname(),
-                                author.getNationality(),
-                                author.getBirthdate(),
-                                author.getGender()
-                        )).collect(Collectors.toList())
-        );
+        newBook.setAutores(authors);
+        return bookReposity.save(newBook);
     }
 
-    public BookResponse updateBook(Long id, BookRequest book) {
+    public Book updateBook(Long id, BookRequest book) {
         Book bookToUpdate = bookReposity.findByCodeBook(id).orElseThrow(() -> new ResourceNotFoundException("Book", "id", id));
         if (book.getTitle() != null) {
             bookToUpdate.setTitle(book.getTitle());

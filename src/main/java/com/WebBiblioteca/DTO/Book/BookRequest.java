@@ -43,5 +43,5 @@ public class BookRequest {
     @NotNull
     private BookState state;
 
-    private List<AuthorRequest> author;
+    private List<AuthorRequest> authors;
 }

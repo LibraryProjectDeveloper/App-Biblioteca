@@ -3,7 +3,7 @@ package com.WebBiblioteca.Service;
 import com.WebBiblioteca.DTO.Autor.AuthorRequest;
 import com.WebBiblioteca.DTO.Autor.AuthorResponse;
 import com.WebBiblioteca.Model.Author;
-import com.WebBiblioteca.Model.Gender;
+import com.WebBiblioteca.Model.Genero;
 import com.WebBiblioteca.Repository.AuthorRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ public class AuthorServiceTest {
         when(author.getLastname()).thenReturn("Apellido");
         when(author.getNationality()).thenReturn("PE");
         when(author.getBirthdate()).thenReturn(null);
-        when(author.getGender()).thenReturn(Gender.MASCULINO);
+        when(author.getGender()).thenReturn(Genero.MASCULINO);
         when(authorRepository.findAll()).thenReturn(List.of(author));
         List<AuthorResponse> result = authorService.getAllAuthors();
         assertEquals(1, result.size());
@@ -48,7 +48,7 @@ public class AuthorServiceTest {
         Author author = new Author();
         when(authorRepository.findByIdAuthor(1L)).thenReturn(Optional.of(author));
         when(authorRepository.save(any(Author.class))).thenReturn(author);
-        AuthorRequest result = authorService.updateAuthor(req, 1L);
+        AuthorRequest result = authorService.updateAuthor(req);
         assertNotNull(result);
     }
 

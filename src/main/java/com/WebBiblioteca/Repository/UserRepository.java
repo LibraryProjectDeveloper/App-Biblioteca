@@ -12,6 +12,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User,Long> {
     @Query("SELECT u FROM User u WHERE u.state = ?1")
     List<User> findByState(Boolean state);
+
     //buscar usuario por su email
     Optional<User> findByEmail(String email);
 

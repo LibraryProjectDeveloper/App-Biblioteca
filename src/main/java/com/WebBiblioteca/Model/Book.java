@@ -23,13 +23,13 @@ public class Book {
     private Long codeBook;
 
     @NotBlank(message = "El título es obligatorio")
-    @Size(min = 2, max = 255, message = "El título debe tener entre 2 y 255 caracteres")
-    @Column(name = "titulo_libro", columnDefinition = "VARCHAR(255)")
+    @Size(min = 2, max = 200, message = "El título debe tener entre 2 y 90 caracteres")
+    @Column(name = "titulo_libro", columnDefinition = "VARCHAR(90)")
     private String title;
 
     @NotNull(message = "El isbn no puede ser nulo")
     @NotBlank
-    @Column(name = "isbn",unique = true,columnDefinition = "VARCHAR(17)")
+    @Column(unique = true)
     private String isbn;
 
     @NotNull(message = "La fecha de publicación es obligatoria")
@@ -61,7 +61,7 @@ public class Book {
     private List<ReserveBook> listReservasBook = new ArrayList<>();
 
     @ManyToMany(mappedBy = "libros")
-    private Set<Loan> loans = new HashSet<>();
+    private Set<Prestamo> prestamos = new HashSet<>();
 
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "libro_autor",

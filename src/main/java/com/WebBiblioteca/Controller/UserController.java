@@ -1,13 +1,11 @@
 package com.WebBiblioteca.Controller;
 
 import com.WebBiblioteca.DTO.Usuario.UserRequest;
-import com.WebBiblioteca.DTO.Usuario.UserResponse;
 import com.WebBiblioteca.Service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.net.URI;
 
 
 @RestController
@@ -32,21 +30,18 @@ public class UserController {
     }
     @PostMapping("/add")
     public ResponseEntity<?> addUser(@Valid @RequestBody UserRequest user) {
-        UserResponse userResponse = userService.addUser(user);
-        URI location = URI.create("/api/user/" + userResponse.getIdUsuario());
-        return ResponseEntity.created(location).body(userResponse);
+        userService.addUser(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Usuario creado correctamente");
     }
-    @PutMapping("/update/{id}")
-    public ResponseEntity<?> updateUser(@Valid @RequestBody UserRequest user,@PathVariable Long id) {
-        return ResponseEntity.ok(userService.updateUser(user,id));
+
+    @PutMapping("/update")
+    public ResponseEntity<?> updateUser(@Valid @RequestBody UserRequest user){
+        userService.updateUser(user);
+        return ResponseEntity.ok("Usuario actualizado correctamente");
     }
-    @PatchMapping("/update/{id}")
-    public ResponseEntity<?> updatePartialUser( @RequestBody UserRequest partialUser, @PathVariable Long id) {
-        return ResponseEntity.ok(userService.updateUser(partialUser,id));
-    }
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
+    @PatchMapping("/update")
+    public ResponseEntity<?> updatePartialUser( @RequestBody UserRequest partialUser) {
+        userService.updateUser(partialUser);
+        return ResponseEntity.ok("Usuario actualizado correctamente");
     }
 }
