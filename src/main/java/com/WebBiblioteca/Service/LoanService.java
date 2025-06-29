@@ -63,8 +63,10 @@ public class LoanService {
                 )).toList()
         )).toList();
     }
+
     public List<LoanResponse> getLoansByState(LoanState state){
         return loanRepository.findByState(state).stream().map(loan -> new LoanResponse(
+
                 loan.getIdLoan(),
                 loan.getLoanDate(),
                 loan.getDevolutionDate(),
@@ -165,7 +167,7 @@ public class LoanService {
         User user = userService.getUser(loanRequest.getUserId());
         User librarian = userService.getUser(loanRequest.getLibrarianId());
         if(bookService.verifyBooks(loanRequest.getBookIds())){
-            Set<Book> books = bookService.getBooksByIds(loanRequest.getBookIds());
+            Set<Book> books = bookService.updateBooksStock(bookService.getBooksByIds(loanRequest.getBookIds()));
             Loan loan = new Loan();
             loan.setBooksQuantity(loanRequest.getBooksQuantity());
             loan.setUser(user);

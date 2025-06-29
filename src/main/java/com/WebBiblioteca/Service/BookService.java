@@ -261,7 +261,7 @@ public class BookService {
             if(bookReposity.findById(book).isEmpty()){
                 return false;
             }
-            if(!isAvailable(book)){
+            if(isAvailable(book)){
                 return false;
             }
             if(getBookById(book).getStockTotal() <=0){
@@ -270,13 +270,38 @@ public class BookService {
         }
         return true;
     }
+    public boolean verifyBook(Long bookId) {
+        if (bookReposity.findById(bookId).isEmpty()) {
+            return false;
+        }
+        if (isAvailable(bookId)) {
+            return false;
+        }
+        return getBookById(bookId).getStockTotal() > 0;
+    }
     public boolean isAvailable(Long id){
-        return bookReposity.findById(id).isPresent();
+        Book book = bookReposity.findByCodeBook(id).orElseThrow(() -> new ResourceNotFoundException("Book", "id", id));
+        return book.getEstado() != BookState.ACTIVO;
     }
     public Book getBook(Long id) {
         return bookReposity.findById(id).orElseThrow(() -> new ResourceNotFoundException("Book", "id", id));
     }
     public Set<Book> getBooksByIds(List<Long> bookIds) {
         return new HashSet<>(bookReposity.findAllById(bookIds));
+    }
+    public Set<Book> updateBooksStock(Set<Book> books) {
+        Set<Book> updatedBooks = new HashSet<>();
+        for (Book book : books) {
+            Book existingBook = bookReposity.findById(book.getCodeBook())
+                    .orElseThrow(() -> new ResourceNotFoundException("Book", "id", book.getCodeBook()));
+            existingBook.setStockTotal(existingBook.getStockTotal() - 1);
+            updatedBooks.add(bookReposity.save(existingBook));
+        }
+        return updatedBooks;
+    }
+    public Book updateBookStock(Long id, Integer stock) {
+        Book book = bookReposity.findByCodeBook(id).orElseThrow(() -> new ResourceNotFoundException("Book", "id", id));
+        book.setStockTotal(book.getStockTotal() + stock);
+        return bookReposity.save(book);
     }
 }

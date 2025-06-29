@@ -6,6 +6,7 @@ import com.WebBiblioteca.DTO.Loan.LoanUpdateRequest;
 import com.WebBiblioteca.Model.LoanState;
 import com.WebBiblioteca.Service.LoanService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -40,18 +41,22 @@ public class LoanController {
         URI location = URI.create("/api/loan/" + loanResponse.getIdLean());
         return ResponseEntity.created(location).body(loanResponse);
     }
+    @PreAuthorize("hasAnyRole('ADMIN','LIBRARIAN')")
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateLoan(@PathVariable Long id, @RequestBody LoanUpdateRequest loanRequest) {
         return ResponseEntity.ok(loanService.updateLoan(id, loanRequest));
     }
+    @PreAuthorize("hasAnyRole('ADMIN','LIBRARIAN')")
     @PutMapping("/updateState/{id}")
     public ResponseEntity<?> updateLoanState(@PathVariable Long id, @RequestParam String state) {
         return ResponseEntity.ok(loanService.updateState(id, state));
     }
+    @PreAuthorize("hasAnyRole('ADMIN','LIBRARIAN')")
     @PatchMapping("/update/{id}")
     public ResponseEntity<?> updatePartialLoan(@PathVariable Long id, @RequestBody LoanUpdateRequest loanUpdateRequest) {
         return ResponseEntity.ok(loanService.updateLoan(id, loanUpdateRequest));
     }
+    @PreAuthorize("hasAnyRole('ADMIN','LIBRARIAN')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteLoan(@PathVariable Long id) {
         loanService.deleteLoan(id);
