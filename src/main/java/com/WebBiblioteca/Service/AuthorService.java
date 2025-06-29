@@ -111,7 +111,7 @@ public class AuthorService {
         } else if (nombreValido && apellidoValido) {
             authorList = authorRepository.findByNamesContainingIgnoreCaseOrLastnameContainingIgnoreCase(names, lastname);
         } else {
-            authorList = Collections.emptyList(); // o lanza una excepción si lo prefieres
+            authorList = Collections.emptyList();
         }
 
         return authorList.stream()

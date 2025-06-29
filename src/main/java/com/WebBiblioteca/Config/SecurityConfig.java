@@ -50,12 +50,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/ADMIN/**").hasRole("ADMIN")
                         .requestMatchers("/api/user/**").hasRole("ADMIN")
-<<<<<<< HEAD
                         .requestMatchers("/api/user/").hasAnyRole("ADMIN", "LIBRARIAN")
-=======
                         .requestMatchers("/api/reserve/**").hasAnyRole("ADMIN", "LIBRARIAN", "USER")
                         .requestMatchers("/api/loan/**").hasAnyRole("ADMIN", "LIBRARIAN", "USER")
->>>>>>> 0d25aa5b56a7c3b4b0054d01db669fff5f6b30fa
                         .requestMatchers("/api/LIBRARIAN/books/actives", "/api/LIBRARIAN/books/inactives","/api/LIBRARIAN/books/book-info/**").hasAnyRole("LIBRARIAN", "ADMIN", "USER")
                         .requestMatchers("/api/LIBRARIAN/books/**").hasAnyRole("LIBRARIAN", "ADMIN")
                         .requestMatchers("/api/loan/**").hasAnyRole("LIBRARIAN", "ADMIN")
