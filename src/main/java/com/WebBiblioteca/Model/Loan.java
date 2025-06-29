@@ -50,7 +50,7 @@ public class Loan {
     @JoinColumn(name = "librarian_id")
     private User librarian;
 
-    @OneToMany(mappedBy = "prestamo", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "loan", cascade = CascadeType.ALL)
     List<LateFee> lateFees = new ArrayList<>();
 
     @ManyToMany

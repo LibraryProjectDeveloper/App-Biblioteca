@@ -3,6 +3,7 @@ package com.WebBiblioteca.Scheduler;
 import com.WebBiblioteca.Model.LateFee;
 import com.WebBiblioteca.Model.LateFeeState;
 import com.WebBiblioteca.Model.Loan;
+import com.WebBiblioteca.Model.LoanState;
 import com.WebBiblioteca.Repository.LateFeeRepository;
 import com.WebBiblioteca.Repository.LoanRepository;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -23,7 +24,7 @@ public class LoanMonitorScheduler {
     }
     @Scheduled(cron = "0 0 0 * * ?")
     public void checkOverdueLoans() {
-        List<Loan> overdueLoans = loanRepository.findByDevolutionDateBeforeAndState(LocalDateTime.now(), "PRESTADO");
+        List<Loan> overdueLoans = loanRepository.findByDevolutionDateBeforeAndState(LocalDateTime.now(), LoanState.PRESTADO);
         for (Loan loan : overdueLoans) {
             if(!lateFeeRepository.existsByLoanId(loan.getIdLoan())) {
                 LateFee lateFee = new LateFee();

@@ -60,7 +60,7 @@ public class Book {
     @JsonManagedReference
     private List<ReserveBook> listReservasBook = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "libros")
+    @ManyToMany(mappedBy = "books")
     private Set<Loan> loans = new HashSet<>();
 
     @ManyToMany(cascade = CascadeType.PERSIST)
