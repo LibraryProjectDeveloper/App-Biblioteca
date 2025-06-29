@@ -1,6 +1,7 @@
 package com.WebBiblioteca.Controller;
 
 import com.WebBiblioteca.Config.JwtUtil;
+import com.WebBiblioteca.DTO.CustomerUserDetails;
 import com.WebBiblioteca.DTO.JwtResponse;
 import com.WebBiblioteca.DTO.LoginRequest;
 import com.WebBiblioteca.Service.UserService;
@@ -38,8 +39,8 @@ public class AuthController {
                         loginRequest.getPassword()
                 )
         );
-        User user = (User) authentication.getPrincipal();
-        String token = jwtUtil.generateToken(user.getUsername(),user.getAuthorities().iterator().next().getAuthority());
+        CustomerUserDetails user = (CustomerUserDetails) authentication.getPrincipal();
+        String token = jwtUtil.generateToken(user.getUsername(),user.getAuthorities().iterator().next().getAuthority(),user.getId());
         SecurityContext context = SecurityContextHolder.getContext();
         context.setAuthentication(authentication);
         HttpSession session = httpRequest.getSession(true);

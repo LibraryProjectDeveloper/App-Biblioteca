@@ -1,6 +1,7 @@
 package com.WebBiblioteca.Service;
 
 import com.WebBiblioteca.Config.EncodeConfig;
+import com.WebBiblioteca.DTO.CustomerUserDetails;
 import com.WebBiblioteca.DTO.Usuario.UserRequest;
 import com.WebBiblioteca.DTO.Usuario.UserResponse;
 import com.WebBiblioteca.Exception.DuplicateResourceException;
@@ -9,6 +10,8 @@ import com.WebBiblioteca.Model.Rol;
 import com.WebBiblioteca.Model.User;
 import com.WebBiblioteca.Repository.RolRepository;
 import com.WebBiblioteca.Repository.UserRepository;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -157,10 +160,12 @@ public class UserService  implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        return org.springframework.security.core.userdetails.User.builder()
-                .username(user.getEmail())
-                .password(user.getPassword())
-                .authorities("ROLE_"+user.getRol().getNameRol())
-                .build();
+        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + user.getRol().getNameRol()));
+        return new CustomerUserDetails(
+                user.getCode(),
+                user.getEmail(),
+                user.getPassword(),
+                authorities
+        );
     }
 }

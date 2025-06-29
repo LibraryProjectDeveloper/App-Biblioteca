@@ -3,6 +3,7 @@ package com.WebBiblioteca.Controller;
 import com.WebBiblioteca.DTO.Loan.LoanRequest;
 import com.WebBiblioteca.DTO.Loan.LoanResponse;
 import com.WebBiblioteca.DTO.Loan.LoanUpdateRequest;
+import com.WebBiblioteca.Model.LoanState;
 import com.WebBiblioteca.Service.LoanService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,15 +22,15 @@ public class LoanController {
     public ResponseEntity<?> getAllLoans(){
         return ResponseEntity.ok(loanService.getAllLoans());
     }
-    @GetMapping("/{state}")
-    public ResponseEntity<?> getLoansByState(@PathVariable String state){
+    @GetMapping("/state/{state}")
+    public ResponseEntity<?> getLoansByState(@PathVariable LoanState state){
         return ResponseEntity.ok(loanService.getLoansByState(state));
     }
     @GetMapping("/user/{userId}")
     public ResponseEntity<?> getLoansByUserId(@PathVariable Long userId) {
         return ResponseEntity.ok(loanService.getLoansByUserId(userId));
     }
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public ResponseEntity<?> getLoanById(@PathVariable Long id) {
         return ResponseEntity.ok(loanService.getLoanById(id));
     }

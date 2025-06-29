@@ -63,7 +63,7 @@ public class LoanService {
                 )).toList()
         )).toList();
     }
-    public List<LoanResponse> getLoansByState(String state){
+    public List<LoanResponse> getLoansByState(LoanState state){
         return loanRepository.findByState(state).stream().map(loan -> new LoanResponse(
                 loan.getIdLoan(),
                 loan.getLoanDate(),
