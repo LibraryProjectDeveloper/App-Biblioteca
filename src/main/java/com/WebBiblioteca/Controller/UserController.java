@@ -5,6 +5,7 @@ import com.WebBiblioteca.DTO.Usuario.UserResponse;
 import com.WebBiblioteca.Service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -29,6 +30,11 @@ public class UserController {
     @GetMapping("/inactives")
     public ResponseEntity<?> getAllUsersInactives() {
         return ResponseEntity.ok(userService.getAllUsersByState(false));
+    }
+    @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN')")
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUserById(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getUser(id));
     }
     @PostMapping("/add")
     public ResponseEntity<?> addUser(@Valid @RequestBody UserRequest user) {

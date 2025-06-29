@@ -5,6 +5,7 @@ import com.WebBiblioteca.DTO.ReserveBook.ReserveBookResponse;
 import com.WebBiblioteca.DTO.ReserveBook.ReserveBookUpdate;
 import com.WebBiblioteca.Service.ReserveBookService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -16,6 +17,7 @@ public class ReserveBookController {
     public ReserveBookController(ReserveBookService reserveBookService) {
         this.reserveBookService = reserveBookService;
     }
+
     @GetMapping("/")
     public ResponseEntity<?> getReservationAll() {
        return ResponseEntity.ok(reserveBookService.getReservationList());
@@ -25,6 +27,7 @@ public class ReserveBookController {
     public ResponseEntity<?> getReservationActives() {
         return ResponseEntity.ok(reserveBookService.getReservationActives());
     }
+    @PreAuthorize("hasAnyRole('ADMIN','LIBRARIAN')")
     @GetMapping("/inactives")
     public ResponseEntity<?> getReservationInactives() {
         return ResponseEntity.ok(reserveBookService.gerReservationInactive());
@@ -52,6 +55,7 @@ public class ReserveBookController {
     public ResponseEntity<?> updatePartialReservation(@PathVariable Long id, @RequestBody ReserveBookUpdate reserveBookUpdate){
         return ResponseEntity.ok(reserveBookService.updateReservation(reserveBookUpdate,id));
     }
+    @PreAuthorize("hasAnyRole('ADMIN','LIBRARIAN')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteReservation(@PathVariable Long id){
         reserveBookService.deleteReservation(id);

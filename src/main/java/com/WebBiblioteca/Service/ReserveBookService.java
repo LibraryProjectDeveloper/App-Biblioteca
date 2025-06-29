@@ -28,9 +28,11 @@ public class ReserveBookService {
         return reserveBookRepository.findAll().stream().map(reserveBook -> new ReserveBookResponse(
                 reserveBook.getCodeReserve(),
                 reserveBook.getBook().getTitle(),
-                reserveBook.getUser().getName(),
-                reserveBook.getUser().getName(),
-                reserveBook.isActive(),
+                reserveBook.getUser().getCode(),
+                reserveBook.getUser().getName()+" "+reserveBook.getUser().getLastname(),
+                reserveBook.getLibrarian().getCode(),
+                reserveBook.getLibrarian().getName() +" "+reserveBook.getLibrarian().getLastname(),
+                reserveBook.getState(),
                 reserveBook.getDateReserve(),
                 reserveBook.getStartTime(),
                 reserveBook.getEndTime()))
@@ -41,9 +43,11 @@ public class ReserveBookService {
         return reserveBookRepository.findByState(true).stream().map(reserveBook -> new ReserveBookResponse(
                 reserveBook.getCodeReserve(),
                 reserveBook.getBook().getTitle(),
-                reserveBook.getUser().getName(),
-                reserveBook.getUser().getName(),
-                reserveBook.isActive(),
+                reserveBook.getUser().getCode(),
+                reserveBook.getUser().getName()+" "+reserveBook.getUser().getLastname(),
+                reserveBook.getLibrarian().getCode(),
+                reserveBook.getLibrarian().getName() +" "+reserveBook.getLibrarian().getLastname(),
+                reserveBook.getState(),
                 reserveBook.getDateReserve(),
                 reserveBook.getStartTime(),
                 reserveBook.getEndTime()))
@@ -53,9 +57,11 @@ public class ReserveBookService {
         return reserveBookRepository.findByState(false).stream().map(reserveBook -> new ReserveBookResponse(
                 reserveBook.getCodeReserve(),
                 reserveBook.getBook().getTitle(),
+                reserveBook.getUser().getCode(),
                 reserveBook.getUser().getName(),
-                reserveBook.getLibrarian().getName(),
-                reserveBook.isActive(),
+                reserveBook.getLibrarian().getCode(),
+                reserveBook.getLibrarian().getName() +" "+reserveBook.getLibrarian().getLastname(),
+                reserveBook.getState(),
                 reserveBook.getDateReserve(),
                 reserveBook.getStartTime(),
                 reserveBook.getEndTime()))
@@ -66,9 +72,11 @@ public class ReserveBookService {
         return new ReserveBookResponse(
                 reserveBook.getCodeReserve(),
                 reserveBook.getBook().getTitle(),
-                reserveBook.getUser().getName(),
-                reserveBook.getLibrarian().getName(),
-                reserveBook.isActive(),
+                reserveBook.getUser().getCode(),
+                reserveBook.getUser().getName()+" "+reserveBook.getUser().getLastname(),
+                reserveBook.getLibrarian().getCode(),
+                reserveBook.getLibrarian().getName() +" "+reserveBook.getLibrarian().getLastname(),
+                reserveBook.getState(),
                 reserveBook.getDateReserve(),
                 reserveBook.getStartTime(),
                 reserveBook.getEndTime()
@@ -78,9 +86,11 @@ public class ReserveBookService {
         return reserveBookRepository.findByUserId(id).stream().map(reserveBook -> new ReserveBookResponse(
                 reserveBook.getCodeReserve(),
                 reserveBook.getBook().getTitle(),
-                reserveBook.getUser().getName(),
-                reserveBook.getLibrarian().getName(),
-                reserveBook.isActive(),
+                reserveBook.getUser().getCode(),
+                reserveBook.getUser().getName()+" "+reserveBook.getUser().getLastname(),
+                reserveBook.getLibrarian().getCode(),
+                reserveBook.getLibrarian().getName() +" "+reserveBook.getLibrarian().getLastname(),
+                reserveBook.getState(),
                 reserveBook.getDateReserve(),
                 reserveBook.getStartTime(),
                 reserveBook.getEndTime()))
@@ -102,9 +112,11 @@ public class ReserveBookService {
         return new ReserveBookResponse(
                 reserveBookSave.getCodeReserve(),
                 reserveBookSave.getBook().getTitle(),
-                reserveBookSave.getUser().getName(),
-                reserveBookSave.getLibrarian().getName(),
-                reserveBookSave.isActive(),
+                reserveBookSave.getUser().getCode(),
+                reserveBookSave.getUser().getName()+" "+reserveBookSave.getUser().getLastname(),
+                reserveBookSave.getLibrarian().getCode(),
+                reserveBookSave.getLibrarian().getName() +" "+reserveBookSave.getLibrarian().getLastname(),
+                reserveBookSave.getState(),
                 reserveBookSave.getDateReserve(),
                 reserveBookSave.getStartTime(),
                 reserveBookSave.getEndTime()
@@ -131,9 +143,11 @@ public class ReserveBookService {
         return new ReserveBookResponse(
                 response.getCodeReserve(),
                 response.getBook().getTitle(),
-                response.getUser().getName(),
-                response.getLibrarian().getName(),
-                response.isActive(),
+                response.getUser().getCode(),
+                response.getUser().getName()+" "+response.getUser().getLastname(),
+                response.getLibrarian().getCode(),
+                response.getLibrarian().getName() +" "+response.getLibrarian().getLastname(),
+                response.getState(),
                 response.getDateReserve(),
                 response.getStartTime(),
                 response.getEndTime()

@@ -14,7 +14,9 @@ import java.time.LocalTime;
 public class ReserveBookResponse {
     private Long id;
     private String bookTitle;
+    private Long idUser;
     private String userName;
+    private Long librarianId;
     private String libraryName;
     private boolean isActive;
     private LocalDate reservationDate;
