@@ -22,7 +22,7 @@ public class LoanController {
     public ResponseEntity<?> getAllLoans(){
         return ResponseEntity.ok(loanService.getAllLoans());
     }
-    @GetMapping("/{state}")
+    @GetMapping("/state/{state}")
     public ResponseEntity<?> getLoansByState(@PathVariable String state){
         return ResponseEntity.ok(loanService.getLoansByState(state));
     }

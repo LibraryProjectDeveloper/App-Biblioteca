@@ -99,28 +99,33 @@ public class ReserveBookService {
     public ReserveBookResponse saveReservation(ReserveBookRequest request){
         User user = userService.getUser(request.getUserId());
         User librarian = userService.getUser(request.getLibraryId());
-        Book book = bookService.getBook(request.getBookId());
-        ReserveBook reserveBook = new ReserveBook();
-        reserveBook.setUser(user);
-        reserveBook.setLibrarian(librarian);
-        reserveBook.setBook(book);
-        reserveBook.setState(true);
-        reserveBook.setDateReserve(LocalDate.now());
-        reserveBook.setStartTime(LocalTime.now());
-        reserveBook.setEndTime(LocalTime.now().plusHours(4));
-        ReserveBook reserveBookSave = reserveBookRepository.save(reserveBook);
-        return new ReserveBookResponse(
-                reserveBookSave.getCodeReserve(),
-                reserveBookSave.getBook().getTitle(),
-                reserveBookSave.getUser().getCode(),
-                reserveBookSave.getUser().getName()+" "+reserveBookSave.getUser().getLastname(),
-                reserveBookSave.getLibrarian().getCode(),
-                reserveBookSave.getLibrarian().getName() +" "+reserveBookSave.getLibrarian().getLastname(),
-                reserveBookSave.getState(),
-                reserveBookSave.getDateReserve(),
-                reserveBookSave.getStartTime(),
-                reserveBookSave.getEndTime()
-        );
+        if (bookService.verifyBook(request.getBookId())) {
+            Book book = bookService.updateBookStock(request.getBookId(), -1);
+            ReserveBook reserveBook = new ReserveBook();
+            reserveBook.setUser(user);
+            reserveBook.setLibrarian(librarian);
+            reserveBook.setBook(book);
+            reserveBook.setState(true);
+            reserveBook.setDateReserve(LocalDate.now());
+            reserveBook.setStartTime(LocalTime.now());
+            reserveBook.setEndTime(LocalTime.now().plusHours(4));
+            ReserveBook reserveBookSave = reserveBookRepository.save(reserveBook);
+            bookService.updateBookStock(request.getBookId(), -1);
+            return new ReserveBookResponse(
+                    reserveBookSave.getCodeReserve(),
+                    reserveBookSave.getBook().getTitle(),
+                    reserveBookSave.getUser().getCode(),
+                    reserveBookSave.getUser().getName()+" "+reserveBookSave.getUser().getLastname(),
+                    reserveBookSave.getLibrarian().getCode(),
+                    reserveBookSave.getLibrarian().getName() +" "+reserveBookSave.getLibrarian().getLastname(),
+                    reserveBookSave.getState(),
+                    reserveBookSave.getDateReserve(),
+                    reserveBookSave.getStartTime(),
+                    reserveBookSave.getEndTime()
+            );
+        } else {
+            throw new IllegalArgumentException("Some books are not available for loan.");
+        }
     }
     public ReserveBookResponse updateReservation(ReserveBookUpdate request,Long id){
         ReserveBook reserveBook = reserveBookRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Reserve","id",id));
