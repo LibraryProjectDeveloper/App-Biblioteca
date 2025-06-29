@@ -40,6 +40,10 @@ public class ReserveBookController {
     public ResponseEntity<?> getReservationByUser(@PathVariable Long id){
         return ResponseEntity.ok(reserveBookService.getReservationByUser(id));
     }
+    @GetMapping("/user/dni/{dni}")
+    public ResponseEntity<?> getReservationByUser(@PathVariable String dni){
+        return ResponseEntity.ok(reserveBookService.getReservationByDni(dni));
+    }
     @PostMapping("/add")
     public ResponseEntity<?> saveReservation(@RequestBody ReserveBookRequest reserveBookRequest) {
         ReserveBookResponse reserveBookCreated = reserveBookService.saveReservation(reserveBookRequest);

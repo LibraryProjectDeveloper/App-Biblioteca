@@ -10,5 +10,7 @@ public interface ReserveBookRepository extends JpaRepository<ReserveBook, Long> 
     List<ReserveBook> findByState(boolean state);
     @Query("SELECT r FROM ReserveBook r WHERE r.user.code = ?1")
     List<ReserveBook> findByUserId(Long userId);
+    @Query("SELECT r FROM ReserveBook r WHERE r.user.DNI = ?1")
+    List<ReserveBook> findByUserDni(String dni);
 }
 

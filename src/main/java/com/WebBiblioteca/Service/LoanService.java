@@ -129,6 +129,41 @@ public class LoanService {
                 )).toList()
         )).toList();
     }
+
+    public List<LoanResponse> getLoansByUserDni(String dni) {
+        return loanRepository.findByUserDni(dni).stream().map(loan -> new LoanResponse(
+                loan.getIdLoan(),
+                loan.getLoanDate(),
+                loan.getDevolutionDate(),
+                loan.getState().name(),
+                loan.getBooksQuantity(),
+                loan.getUser().getCode(),
+                loan.getUser().getName()+" "+loan.getUser().getLastname(),
+                loan.getLibrarian().getCode(),
+                loan.getLibrarian().getName()+" "+loan.getLibrarian().getLastname(),
+                loan.getBooks().stream().map(book -> new BookResponse(
+                        book.getCodeBook(),
+                        book.getTitle(),
+                        book.getIsbn(),
+                        book.getPublicationDate(),
+                        book.getPublisher(),
+                        book.getCategory(),
+                        book.getStockTotal(),
+                        book.getEstado(),
+                        book.getAutores().stream()
+                                .map(author -> new AuthorResponse(
+                                        author.getIdAuthor(),
+                                        author.getNames(),
+                                        author.getLastname(),
+                                        author.getNationality(),
+                                        author.getBirthdate(),
+                                        author.getGender()
+                                )).toList()
+                )).toList()
+        )).toList();
+    }
+
+
     public LoanResponse getLoanById(Long id) {
         return loanRepository.findById(id)
                 .map(loan -> new LoanResponse(
