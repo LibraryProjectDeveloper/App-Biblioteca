@@ -96,6 +96,20 @@ public class ReserveBookService {
                 reserveBook.getEndTime()))
                 .toList();
     }
+    public List<ReserveBookResponse> getReservationByDni(String dni) {
+        return reserveBookRepository.findByUserDni(dni).stream().map(reserveBook -> new ReserveBookResponse(
+                        reserveBook.getCodeReserve(),
+                        reserveBook.getBook().getTitle(),
+                        reserveBook.getUser().getCode(),
+                        reserveBook.getUser().getName()+" "+reserveBook.getUser().getLastname(),
+                        reserveBook.getLibrarian().getCode(),
+                        reserveBook.getLibrarian().getName() +" "+reserveBook.getLibrarian().getLastname(),
+                        reserveBook.getState(),
+                        reserveBook.getDateReserve(),
+                        reserveBook.getStartTime(),
+                        reserveBook.getEndTime()))
+                .toList();
+    }
     public ReserveBookResponse saveReservation(ReserveBookRequest request){
         User user = userService.getUser(request.getUserId());
         User librarian = userService.getUser(request.getLibraryId());

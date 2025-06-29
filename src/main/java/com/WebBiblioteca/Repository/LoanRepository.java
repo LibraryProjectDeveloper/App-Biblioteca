@@ -18,4 +18,6 @@ public interface LoanRepository extends JpaRepository<Loan,Long> {
     Optional<Loan> findByUserCode(Long userCode);
     @Query("SELECT l FROM Loan l where l.devolutionDate < ?1 and l.state = ?2")
     List<Loan> findByDevolutionDateBeforeAndState(LocalDateTime devolutionDate, LoanState state);
+    @Query("SELECT l FROM Loan l WHERE l.user.DNI = ?1")
+    List<Loan> findByUserDni(String dni);
 }

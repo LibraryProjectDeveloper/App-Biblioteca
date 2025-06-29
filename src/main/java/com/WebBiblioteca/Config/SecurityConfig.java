@@ -49,7 +49,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/ADMIN/**").hasRole("ADMIN")
-                        .requestMatchers("/api/user/**").hasRole("ADMIN")
+                        .requestMatchers("/api/user/**").hasAnyRole("ADMIN","LIBRARIAN")
                         .requestMatchers("/api/user/").hasAnyRole("ADMIN", "LIBRARIAN")
                         .requestMatchers("/api/reserve/**").hasAnyRole("ADMIN", "LIBRARIAN", "USER")
                         .requestMatchers("/api/loan/**").hasAnyRole("ADMIN", "LIBRARIAN", "USER")
