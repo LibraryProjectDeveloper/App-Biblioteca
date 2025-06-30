@@ -33,6 +33,9 @@ public class AuthorService {
                 ))
                 .toList();
     }
+    public Author getAuthorById(Long id) {
+        return authorRepository.findByIdAuthor(id).orElseThrow(() -> new ResourceNotFoundException("Author","id",id));
+    }
     @Transactional
     public AuthorResponse addAuthor(AuthorRequest author) {
         Author newAuthor = new Author();
@@ -82,6 +85,21 @@ public class AuthorService {
     public void deleteAuthor(Long id){
         authorRepository.findByIdAuthor(id).orElseThrow(()->new ResourceNotFoundException("Author","id",id));
         authorRepository.deleteById(id);
+    }
+    public boolean existsAuthor(Long id) {
+        return authorRepository.existsById(id);
+
+    }
+    public boolean existsAuthors(Set<AuthorRequest> authors) {
+        if (authors == null || authors.isEmpty()) {
+            return false;
+        }
+        for(AuthorRequest author : authors) {
+            if(!existsAuthor(author.getIdAuthor())) {
+                return false;
+            }
+        }
+        return true;
     }
     public Set<Author> castAuthorResponseListToAuthor(List<AuthorResponse> authorResponses) {
         return authorResponses.stream()

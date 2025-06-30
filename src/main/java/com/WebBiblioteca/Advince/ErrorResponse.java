@@ -2,11 +2,10 @@ package com.WebBiblioteca.Advince;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 @AllArgsConstructor
-@Getter @Setter
+@Getter
 public class ErrorResponse {
     private int status;
     private LocalDateTime date;

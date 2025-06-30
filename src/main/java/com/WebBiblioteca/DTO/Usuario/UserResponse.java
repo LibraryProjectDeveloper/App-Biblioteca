@@ -1,6 +1,5 @@
 package com.WebBiblioteca.DTO.Usuario;
 
-import com.WebBiblioteca.Model.Rol;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

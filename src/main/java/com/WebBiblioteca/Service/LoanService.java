@@ -195,9 +195,9 @@ public class LoanService {
                 )).orElseThrow(() -> new ResourceNotFoundException("Loan", "id", id));
     }
     @Transactional
-    public LoanResponse saveLoan(LoanRequest loanRequest){
+    public LoanResponse saveLoan(LoanRequest loanRequest,Long idLibrarian) {
         User user = userService.getUser(loanRequest.getUserId());
-        User librarian = userService.getUser(loanRequest.getLibrarianId());
+        User librarian = userService.getUser(idLibrarian);
         if(bookService.verifyBooks(loanRequest.getBookIds())){
             Set<Book> books = bookService.updateBooksStock(bookService.getBooksByIds(loanRequest.getBookIds()));
             Loan loan = new Loan();
@@ -247,14 +247,11 @@ public class LoanService {
 
     }
     @Transactional
-    public LoanResponse updateLoan(Long id, LoanUpdateRequest loanRequest) {
+    public LoanResponse updateLoan(Long id,Long idLibrarian ,LoanUpdateRequest loanRequest) {
         Loan loan = loanRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Loan", "id", id));
         if(loanRequest.getUserId() != null){
             loan.setUser(userService.getUser(loanRequest.getUserId()));
-        }
-        if(loanRequest.getLibrarianId() != null){
-            loan.setLibrarian(userService.getUser(loanRequest.getLibrarianId()));
         }
         if(loanRequest.getLoanDays() != null){
             loan.setDevolutionDate(loan.getLoanDate().plusDays(loanRequest.getLoanDays()));

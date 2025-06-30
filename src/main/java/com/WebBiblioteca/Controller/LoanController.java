@@ -1,5 +1,6 @@
 package com.WebBiblioteca.Controller;
 
+import com.WebBiblioteca.DTO.CustomerUserDetails;
 import com.WebBiblioteca.DTO.Loan.LoanRequest;
 import com.WebBiblioteca.DTO.Loan.LoanResponse;
 import com.WebBiblioteca.DTO.Loan.LoanUpdateRequest;
@@ -8,6 +9,8 @@ import com.WebBiblioteca.Model.Role;
 import com.WebBiblioteca.Service.LoanService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -42,14 +45,19 @@ public class LoanController {
     }
     @PostMapping("/add")
     public ResponseEntity<?> addLoan(@RequestBody LoanRequest loanRequest) {
-        LoanResponse loanResponse = loanService.saveLoan(loanRequest);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomerUserDetails userDetails = (CustomerUserDetails) authentication.getPrincipal();
+        LoanResponse loanResponse = loanService.saveLoan(loanRequest,userDetails.getId());
         URI location = URI.create("/api/loan/" + loanResponse.getIdLean());
         return ResponseEntity.created(location).body(loanResponse);
     }
+
     @PreAuthorize("hasAnyRole('ADMIN','LIBRARIAN')")
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateLoan(@PathVariable Long id, @RequestBody LoanUpdateRequest loanRequest) {
-        return ResponseEntity.ok(loanService.updateLoan(id, loanRequest));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomerUserDetails userDetails = (CustomerUserDetails) authentication.getPrincipal();
+        return ResponseEntity.ok(loanService.updateLoan(id, userDetails.getId(),loanRequest));
     }
     @PreAuthorize("hasAnyRole('ADMIN','LIBRARIAN')")
     @PutMapping("/updateState/{id}")
@@ -59,7 +67,9 @@ public class LoanController {
     @PreAuthorize("hasAnyRole('ADMIN','LIBRARIAN')")
     @PatchMapping("/update/{id}")
     public ResponseEntity<?> updatePartialLoan(@PathVariable Long id, @RequestBody LoanUpdateRequest loanUpdateRequest) {
-        return ResponseEntity.ok(loanService.updateLoan(id, loanUpdateRequest));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomerUserDetails userDetails = (CustomerUserDetails) authentication.getPrincipal();
+        return ResponseEntity.ok(loanService.updateLoan(id, userDetails.getId() ,loanUpdateRequest));
     }
     @PreAuthorize("hasAnyRole('ADMIN','LIBRARIAN')")
     @DeleteMapping("/delete/{id}")

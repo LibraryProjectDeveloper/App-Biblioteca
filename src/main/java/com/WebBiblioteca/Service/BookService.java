@@ -141,26 +141,12 @@ public class BookService {
         newBook.setStockTotal(book.getStockTotal());
         newBook.setIsbn(book.getIsbn());
         newBook.setEstado(BookState.ACTIVO);
-        Set<Author> authors = book.getAuthor().stream()
-                .map(authorDTO -> {
-                    Author author = new Author();
-                    author.setIdAuthor(authorDTO.getIdAuthor());
-                    author.setNames(authorDTO.getNames());
-                    author.setLastname(authorDTO.getLastname());
-                    author.setNationality(authorDTO.getNationality());
-                    author.setBirthdate(authorDTO.getBirthdate());
-                    author.setGender(authorDTO.getGender());
-                    return author;
-                })
-                .collect(Collectors.toSet());
-        Set<Author> listAuthors = authorService.castAuthorResponseListToAuthor(authorService.getAllAuthors());
-        Set<Long> existingAuthorIds = listAuthors.stream()
-                .map(Author::getIdAuthor)
-                .collect(Collectors.toSet());
-        Set<Author> noExistingAuthors = authors.stream()
-                .filter(author -> !existingAuthorIds.contains(author.getIdAuthor()))
-                .collect(Collectors.toSet());
-        newBook.setAutores(noExistingAuthors);
+        if (authorService.existsAuthors(new HashSet<>(book.getAuthor()))) {
+            Set<Author> authors = book.getAuthor().stream()
+                    .map(authorRequest -> authorService.getAuthorById(authorRequest.getIdAuthor()))
+                    .collect(Collectors.toSet());
+            newBook.setAutores(authors);
+        }
         Book savedBook = bookReposity.save(newBook);
         return new BookResponse(
                 savedBook.getCodeBook(),
