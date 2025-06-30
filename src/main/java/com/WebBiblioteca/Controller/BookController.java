@@ -49,10 +49,19 @@ public class BookController {
     public ResponseEntity<?> getBooksByCategory(@PathVariable Category category) {
         return ResponseEntity.ok(bookService.filterBookCategory(category));
     }
-    @GetMapping("/search")
-    public ResponseEntity<?> getBooksByTitleOrCategory(@RequestParam(required = false) String title,
-                                                       @RequestParam(required = false) Category category) {
-        List<BookResponse> bookList = bookService.getBooksByTitleOrCategory(title, category);
+    @GetMapping("/searchTitle")
+    public ResponseEntity<?> getBooksByTitle(@RequestParam(required = false) String title) {
+        List<BookResponse> bookList = bookService.getBooksByTitle(title);
+
+        if (!bookList.isEmpty()) {
+            return ResponseEntity.ok(bookList);
+        }
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/searchCategory")
+    public ResponseEntity<?> getBooksByCategoryName(@RequestParam(required = false) String category) {
+        List<BookResponse> bookList = bookService.getBooksByCategoryName(category);
 
         if (!bookList.isEmpty()) {
             return ResponseEntity.ok(bookList);

@@ -306,17 +306,32 @@ public class BookService {
         return bookReposity.save(book);
     }
 
-    public List<BookResponse> getBooksByTitleOrCategory(String title, Category category) {
+    public List<BookResponse> getBooksByTitle(String title) {
         List<Book> bookList = Collections.emptyList();
         boolean titleValid = title != null && !title.isBlank();
-        boolean categoryValid = category != null;
 
-        if (titleValid && categoryValid) {
-            bookList = bookReposity.findByTitleContainingIgnoreCaseOrCategory(title, category);
-        } else if (titleValid) {
+        if (titleValid) {
             bookList = bookReposity.findByTitleContainingIgnoreCase(title);
-        } else if (categoryValid) {
-            bookList = bookReposity.findByCategory(category);
+        }
+
+        return bookList.stream()
+                .map(book -> new BookResponse(
+                        book.getCodeBook(),
+                        book.getTitle(),
+                        book.getIsbn(),
+                        book.getPublicationDate(),
+                        book.getPublisher(),
+                        book.getCategory(),
+                        book.getStockTotal(),
+                        book.getEstado())).collect(Collectors.toList());
+    }
+
+    public List<BookResponse> getBooksByCategoryName(String category) {
+        List<Book> bookList = Collections.emptyList();
+        boolean categoryValid = category != null && !category.isBlank();
+
+        if (categoryValid) {
+            bookList = bookReposity.findByCategory(Category.valueOf(category.toUpperCase()));
         }
 
         return bookList.stream()
