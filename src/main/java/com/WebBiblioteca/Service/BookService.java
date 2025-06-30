@@ -192,6 +192,12 @@ public class BookService {
         if (book.getState() != null) {
             bookToUpdate.setEstado(book.getState());
         }
+        if(book.getAuthor() !=null && authorService.existsAuthors(new HashSet<>(book.getAuthor()))) {
+            Set<Author> authors = book.getAuthor().stream()
+                    .map(authorRequest -> authorService.getAuthorById(authorRequest.getIdAuthor()))
+                    .collect(Collectors.toSet());
+            bookToUpdate.setAutores(authors);
+        }
         Book bookUpdate = bookReposity.save(bookToUpdate);
         return new BookResponse(
                 bookUpdate.getCodeBook(),

@@ -43,6 +43,8 @@ public class LoanController {
     public ResponseEntity<?> getLoanById(@PathVariable Long id) {
         return ResponseEntity.ok(loanService.getLoanById(id));
     }
+    @PreAuthorize("hasAnyRole('ADMIN','LIBRARIAN')")
+
     @PostMapping("/add")
     public ResponseEntity<?> addLoan(@RequestBody LoanRequest loanRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
