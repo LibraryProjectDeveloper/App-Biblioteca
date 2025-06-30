@@ -158,18 +158,6 @@ public class UserService  implements UserDetailsService {
         userRepository.save(userToDelete);
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + user.getRol().getNameRol()));
-        return new CustomerUserDetails(
-                user.getCode(),
-                user.getEmail(),
-                user.getPassword(),
-                authorities
-        );
-    }
-
     public UserResponse getUserResponse(Long id){
         return userRepository.findById(id).map(user -> new UserResponse(
                 user.getCode(),
@@ -202,4 +190,17 @@ public class UserService  implements UserDetailsService {
                         user.getRol().getNameRol().name()
                 )).toList();
     }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + user.getRol().getNameRol()));
+        return new CustomerUserDetails(
+                user.getCode(),
+                user.getEmail(),
+                user.getPassword(),
+                authorities
+        );
+    }
+
 }
