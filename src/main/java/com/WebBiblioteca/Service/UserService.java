@@ -7,6 +7,7 @@ import com.WebBiblioteca.DTO.Usuario.UserResponse;
 import com.WebBiblioteca.Exception.DuplicateResourceException;
 import com.WebBiblioteca.Exception.ResourceNotFoundException;
 import com.WebBiblioteca.Model.Rol;
+import com.WebBiblioteca.Model.Role;
 import com.WebBiblioteca.Model.User;
 import com.WebBiblioteca.Repository.RolRepository;
 import com.WebBiblioteca.Repository.UserRepository;
@@ -167,5 +168,38 @@ public class UserService  implements UserDetailsService {
                 user.getPassword(),
                 authorities
         );
+    }
+
+    public UserResponse getUserResponse(Long id){
+        return userRepository.findById(id).map(user -> new UserResponse(
+                user.getCode(),
+                user.getName(),
+                user.getLastname(),
+                user.getEmail(),
+                user.getPhone(),
+                user.getAddress(),
+                user.getDNI(),
+                user.getPassword(),
+                user.getState(),
+                user.getDateRegistered(),
+                user.getRol().getNameRol().name()
+        )).orElseThrow(() -> new ResourceNotFoundException("Usuario","id",id));
+    }
+
+    public List<UserResponse> getUserByDniAndRol(String dni, Role role) {
+        return userRepository.findByDNIAndRol(dni,role).
+                stream().map(user -> new UserResponse(
+                        user.getCode(),
+                        user.getName(),
+                        user.getLastname(),
+                        user.getEmail(),
+                        user.getPhone(),
+                        user.getAddress(),
+                        user.getDNI(),
+                        user.getPassword(),
+                        user.getState(),
+                        user.getDateRegistered(),
+                        user.getRol().getNameRol().name()
+                )).toList();
     }
 }
