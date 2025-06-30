@@ -20,4 +20,6 @@ public interface BookReposity extends JpaRepository<Book,Long> {
 
     @Query(value = "SELECT b FROM Book b WHERE year(b.publicationDate) = :anio")
     List<Book> findByPublicationDateYear(@Param("anio") Integer anio);
+    List<Book> findByTitleContainingIgnoreCase(String title);
+    List<Book> findByTitleContainingIgnoreCaseOrCategory(String title, Category category);
 }

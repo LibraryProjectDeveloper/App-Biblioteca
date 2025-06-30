@@ -14,6 +14,7 @@ import com.WebBiblioteca.Repository.BookReposity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -289,5 +290,45 @@ public class BookService {
         Book book = bookReposity.findByCodeBook(id).orElseThrow(() -> new ResourceNotFoundException("Book", "id", id));
         book.setStockTotal(book.getStockTotal() + stock);
         return bookReposity.save(book);
+    }
+
+    public List<BookResponse> getBooksByTitle(String title) {
+        List<Book> bookList = Collections.emptyList();
+        boolean titleValid = title != null && !title.isBlank();
+
+        if (titleValid) {
+            bookList = bookReposity.findByTitleContainingIgnoreCase(title);
+        }
+
+        return bookList.stream()
+                .map(book -> new BookResponse(
+                        book.getCodeBook(),
+                        book.getTitle(),
+                        book.getIsbn(),
+                        book.getPublicationDate(),
+                        book.getPublisher(),
+                        book.getCategory(),
+                        book.getStockTotal(),
+                        book.getEstado())).collect(Collectors.toList());
+    }
+
+    public List<BookResponse> getBooksByCategoryName(String category) {
+        List<Book> bookList = Collections.emptyList();
+        boolean categoryValid = category != null && !category.isBlank();
+
+        if (categoryValid) {
+            bookList = bookReposity.findByCategory(Category.valueOf(category.toUpperCase()));
+        }
+
+        return bookList.stream()
+                .map(book -> new BookResponse(
+                        book.getCodeBook(),
+                        book.getTitle(),
+                        book.getIsbn(),
+                        book.getPublicationDate(),
+                        book.getPublisher(),
+                        book.getCategory(),
+                        book.getStockTotal(),
+                        book.getEstado())).collect(Collectors.toList());
     }
 }

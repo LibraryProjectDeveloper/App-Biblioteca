@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.util.List;
 
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 public class BookResponse {
@@ -30,4 +29,27 @@ public class BookResponse {
     private BookState state ;
 
     private List<AuthorResponse> author;
+
+    public BookResponse(Long codeBook, String title, String isbn, LocalDate publicationDate, String publisher, Category category, Integer stockTotal, BookState state) {
+        this.codeBook = codeBook;
+        this.title = title;
+        this.isbn = isbn;
+        this.publicationDate = publicationDate;
+        this.publisher = publisher;
+        this.category = category;
+        this.stockTotal = stockTotal;
+        this.state = state;
+    }
+
+    public BookResponse(Long codeBook, String title, String isbn, LocalDate publicationDate, String publisher, Category category, Integer stockTotal, BookState state, List<AuthorResponse> author) {
+        this.codeBook = codeBook;
+        this.title = title;
+        this.isbn = isbn;
+        this.publicationDate = publicationDate;
+        this.publisher = publisher;
+        this.category = category;
+        this.stockTotal = stockTotal;
+        this.state = state;
+        this.author = author;
+    }
 }

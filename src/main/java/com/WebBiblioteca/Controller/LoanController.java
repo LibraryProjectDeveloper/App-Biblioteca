@@ -5,6 +5,7 @@ import com.WebBiblioteca.DTO.Loan.LoanRequest;
 import com.WebBiblioteca.DTO.Loan.LoanResponse;
 import com.WebBiblioteca.DTO.Loan.LoanUpdateRequest;
 import com.WebBiblioteca.Model.LoanState;
+import com.WebBiblioteca.Model.Role;
 import com.WebBiblioteca.Service.LoanService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -36,7 +37,7 @@ public class LoanController {
     }
     @GetMapping("/user/dni/{dni}")
     public ResponseEntity<?> getLoansByUserId(@PathVariable String dni) {
-        return ResponseEntity.ok(loanService.getLoansByUserDni(dni));
+        return ResponseEntity.ok(loanService.getLoansByUserDni(dni, Role.USER));
     }
     @GetMapping("/id/{id}")
     public ResponseEntity<?> getLoanById(@PathVariable Long id) {

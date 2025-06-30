@@ -1,5 +1,6 @@
 package com.WebBiblioteca.Repository;
 
+import com.WebBiblioteca.Model.Role;
 import com.WebBiblioteca.Model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,5 +17,8 @@ public interface UserRepository extends JpaRepository<User,Long> {
     Optional<User> findByEmail(String email);
 
     Optional<User> findByDNI(String dni);
+
+    @Query("SELECT u FROM User u WHERE u.DNI = ?1 AND u.rol.nameRol = ?2")
+    Optional<User> findByDNIAndRol(String dni, Role role);
 
 }

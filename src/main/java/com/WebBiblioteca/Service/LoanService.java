@@ -6,10 +6,7 @@ import com.WebBiblioteca.DTO.Loan.LoanRequest;
 import com.WebBiblioteca.DTO.Loan.LoanResponse;
 import com.WebBiblioteca.DTO.Loan.LoanUpdateRequest;
 import com.WebBiblioteca.Exception.ResourceNotFoundException;
-import com.WebBiblioteca.Model.Book;
-import com.WebBiblioteca.Model.Loan;
-import com.WebBiblioteca.Model.LoanState;
-import com.WebBiblioteca.Model.User;
+import com.WebBiblioteca.Model.*;
 import com.WebBiblioteca.Repository.LoanRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -130,8 +127,8 @@ public class LoanService {
         )).toList();
     }
 
-    public List<LoanResponse> getLoansByUserDni(String dni) {
-        return loanRepository.findByUserDni(dni).stream().map(loan -> new LoanResponse(
+    public List<LoanResponse> getLoansByUserDni(String dni, Role role) {
+        return loanRepository.findByUserDni(dni,role).stream().map(loan -> new LoanResponse(
                 loan.getIdLoan(),
                 loan.getLoanDate(),
                 loan.getDevolutionDate(),

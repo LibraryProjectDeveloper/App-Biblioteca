@@ -2,6 +2,7 @@ package com.WebBiblioteca.Controller;
 
 import com.WebBiblioteca.DTO.Usuario.UserRequest;
 import com.WebBiblioteca.DTO.Usuario.UserResponse;
+import com.WebBiblioteca.Model.Role;
 import com.WebBiblioteca.Service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -34,8 +35,14 @@ public class UserController {
     @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN')")
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserById(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getUser(id));
+        return ResponseEntity.ok(userService.getUserResponse(id));
     }
+
+    @GetMapping("/dniRol/{dni}/{rol}")
+    public ResponseEntity<?> getUserByDniAndRol(@PathVariable String dni, @PathVariable Role rol) {
+        return ResponseEntity.ok(userService.getUserByDniAndRol(dni,rol));
+    }
+
     @PostMapping("/add")
     public ResponseEntity<?> addUser(@Valid @RequestBody UserRequest user) {
         UserResponse userResponse = userService.addUser(user);
