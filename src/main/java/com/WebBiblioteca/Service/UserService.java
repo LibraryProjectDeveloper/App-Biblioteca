@@ -51,7 +51,8 @@ public class UserService  implements UserDetailsService {
                         user.getPassword(),
                         user.getState(),
                         user.getDateRegistered(),
-                        user.getRol().getNameRol().name()
+                        user.getRol().getNameRol().name(),
+                        user.getRol().getIdRol()
                 )).toList();
     }
     public List<UserResponse> getAllUsersByState(Boolean state) {
@@ -67,7 +68,8 @@ public class UserService  implements UserDetailsService {
                         user.getPassword(),
                         user.getState(),
                         user.getDateRegistered(),
-                        user.getRol().getNameRol().name()
+                        user.getRol().getNameRol().name(),
+                        user.getRol().getIdRol()
                 )).toList();
     }
 
@@ -103,7 +105,8 @@ public class UserService  implements UserDetailsService {
                 userCreating.getPassword(),
                 userCreating.getState(),
                 userCreating.getDateRegistered(),
-                userCreating.getRol().getNameRol().name()
+                userCreating.getRol().getNameRol().name(),
+                userCreating.getRol().getIdRol()
         );
     }
     @Transactional
@@ -149,7 +152,8 @@ public class UserService  implements UserDetailsService {
                 userUpdate.getPassword(),
                 userUpdate.getState(),
                 userUpdate.getDateRegistered(),
-                userUpdate.getRol().getNameRol().name()
+                userUpdate.getRol().getNameRol().name(),
+                userUpdate.getRol().getIdRol()
         );
     }
     public void deleteUser(Long id) {
@@ -170,7 +174,8 @@ public class UserService  implements UserDetailsService {
                 user.getPassword(),
                 user.getState(),
                 user.getDateRegistered(),
-                user.getRol().getNameRol().name()
+                user.getRol().getNameRol().name(),
+                user.getRol().getIdRol()
         )).orElseThrow(() -> new ResourceNotFoundException("Usuario","id",id));
     }
 
@@ -187,7 +192,8 @@ public class UserService  implements UserDetailsService {
                         user.getPassword(),
                         user.getState(),
                         user.getDateRegistered(),
-                        user.getRol().getNameRol().name()
+                        user.getRol().getNameRol().name(),
+                        user.getRol().getIdRol()
                 )).toList();
     }
 

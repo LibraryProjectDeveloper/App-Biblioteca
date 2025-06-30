@@ -21,4 +21,5 @@ public class UserResponse {
     private Boolean state;
     private LocalDateTime dateRegistered;
     private String roleName;
+    private  Long idRol;
 }
