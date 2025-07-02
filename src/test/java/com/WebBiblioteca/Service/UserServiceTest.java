@@ -39,7 +39,9 @@ public class UserServiceTest {
     @Test
     void testGetAllUsers() {
         User user = mock(User.class);
-        Rol rol = mock(Rol.class);
+        Rol rol = new Rol();
+        rol.setIdRol(1L);
+        rol.setNameRol(Role.USER);
         when(user.getCode()).thenReturn(1L);
         when(user.getName()).thenReturn("Juan");
         when(user.getLastname()).thenReturn("Perez");
@@ -51,7 +53,6 @@ public class UserServiceTest {
         when(user.getState()).thenReturn(true);
         when(user.getDateRegistered()).thenReturn(LocalDateTime.now());
         when(user.getRol()).thenReturn(rol);
-        when(rol.getIdRol()).thenReturn(2L);
         when(userRepository.findAll()).thenReturn(List.of(user));
         List<UserResponse> result = userService.getAllUsers();
         assertEquals(1, result.size());
@@ -64,6 +65,7 @@ public class UserServiceTest {
         UserRequest req = mock(UserRequest.class);
         Rol rol = new Rol();
         rol.setIdRol(1L);
+        rol.setNameRol(Role.USER);
         when(req.getIdRol()).thenReturn(1L);
         when(req.getEmail()).thenReturn("test@mail.com");
         when(req.getDNI()).thenReturn("12345678");
@@ -85,6 +87,7 @@ public class UserServiceTest {
         User user = new User();
         Rol rol = new Rol();
         rol.setIdRol(1L);
+        rol.setNameRol(Role.USER);
         when(req.getIdUsuario()).thenReturn(1L);
         when(req.getName()).thenReturn("NuevoNombre");
         when(req.getLastname()).thenReturn("NuevoApellido");

@@ -90,9 +90,11 @@ void testAddBook() {
     void testUpdateBook() {
         BookRequest req = mock(BookRequest.class);
         Book book = new Book();
+        AuthorService mockAuthorService = mock(AuthorService.class);
+        BookService bookServiceWithMock = new BookService(bookReposity, mockAuthorService);
         when(bookReposity.findByCodeBook(1L)).thenReturn(Optional.of(book));
         when(bookReposity.save(any(Book.class))).thenReturn(book);
-        BookResponse result = bookService.updateBook(1L, req);
+        BookResponse result = bookServiceWithMock.updateBook(1L, req);
         assertNotNull(result);
     }
 }
