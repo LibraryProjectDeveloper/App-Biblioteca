@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - backend
+      - release-candidate
 
 jobs:
   test:
@@ -25,3 +26,9 @@ jobs:
 
       - name : Build JAR
         run: ./mvnw package -DskipTests
+
+      - name: Upload JAR as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: App-biblioteca-jar
+          path: target/*.jar
