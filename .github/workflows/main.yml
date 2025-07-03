@@ -22,3 +22,6 @@ jobs:
         run: chmod +x mvnw
       - name: Build and run tests
         run: ./mvnw test
+
+      - name : Build JAR
+        run: ./mvnw package -DskipTests
