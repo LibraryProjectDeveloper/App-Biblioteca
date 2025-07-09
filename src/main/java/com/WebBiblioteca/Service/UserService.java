@@ -11,6 +11,7 @@ import com.WebBiblioteca.Model.Role;
 import com.WebBiblioteca.Model.User;
 import com.WebBiblioteca.Repository.RolRepository;
 import com.WebBiblioteca.Repository.UserRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -39,7 +40,8 @@ public class UserService  implements UserDetailsService {
     }
 
     public List<UserResponse> getAllUsers() {
-        return userRepository.findAll().
+        Sort sort = Sort.by(Sort.Direction.DESC, "dateRegistered");
+        return userRepository.findAll(sort).
                 stream().map(user -> new UserResponse(
                         user.getCode(),
                         user.getName(),
@@ -197,6 +199,77 @@ public class UserService  implements UserDetailsService {
                 )).toList();
     }
 
+    public List<UserResponse> getUserByName(String name) {
+        return userRepository.findByNameContainingIgnoreCase(name).
+                stream().map(user -> new UserResponse(
+                        user.getCode(),
+                        user.getName(),
+                        user.getLastname(),
+                        user.getEmail(),
+                        user.getPhone(),
+                        user.getAddress(),
+                        user.getDNI(),
+                        user.getPassword(),
+                        user.getState(),
+                        user.getDateRegistered(),
+                        user.getRol().getNameRol().name(),
+                        user.getRol().getIdRol()
+                )).toList();
+    }
+
+    public UserResponse getUserByDNI(String dni) {
+        return userRepository.findByDNI(dni)
+                .map(user -> new UserResponse(
+                        user.getCode(),
+                        user.getName(),
+                        user.getLastname(),
+                        user.getEmail(),
+                        user.getPhone(),
+                        user.getAddress(),
+                        user.getDNI(),
+                        user.getPassword(),
+                        user.getState(),
+                        user.getDateRegistered(),
+                        user.getRol().getNameRol().name(),
+                        user.getRol().getIdRol()
+                )).orElseThrow(() -> new ResourceNotFoundException("Usuario","DNI",dni));
+    }
+
+    public UserResponse getUserByEmail(String email) {
+        return userRepository.findByEmail(email).map(
+                user -> new UserResponse(
+                        user.getCode(),
+                        user.getName(),
+                        user.getLastname(),
+                        user.getEmail(),
+                        user.getPhone(),
+                        user.getAddress(),
+                        user.getDNI(),
+                        user.getPassword(),
+                        user.getState(),
+                        user.getDateRegistered(),
+                        user.getRol().getNameRol().name(),
+                        user.getRol().getIdRol()
+                )).orElseThrow(() -> new ResourceNotFoundException("Usuario","email",email));
+    }
+
+    public List<UserResponse> findByRol(Long rol){
+        return userRepository.findByRol(rol)
+                .stream().map(user -> new UserResponse(
+                        user.getCode(),
+                        user.getName(),
+                        user.getLastname(),
+                        user.getEmail(),
+                        user.getPhone(),
+                        user.getAddress(),
+                        user.getDNI(),
+                        user.getPassword(),
+                        user.getState(),
+                        user.getDateRegistered(),
+                        user.getRol().getNameRol().name(),
+                        user.getRol().getIdRol()
+                )).toList();
+    }
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));

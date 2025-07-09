@@ -8,6 +8,7 @@ import com.WebBiblioteca.DTO.Loan.LoanUpdateRequest;
 import com.WebBiblioteca.Exception.ResourceNotFoundException;
 import com.WebBiblioteca.Model.*;
 import com.WebBiblioteca.Repository.LoanRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +30,8 @@ public class LoanService {
     }
 
     public List<LoanResponse> getAllLoans(){
-        return loanRepository.findAll().stream().map(loan -> new LoanResponse(
+        Sort sort = Sort.by(Sort.Direction.DESC, "loanDate");
+        return loanRepository.findAll(sort).stream().map(loan -> new LoanResponse(
                 loan.getIdLoan(),
                 loan.getLoanDate(),
                 loan.getDevolutionDate(),

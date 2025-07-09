@@ -2,7 +2,9 @@ package com.WebBiblioteca.Controller;
 
 import com.WebBiblioteca.DTO.Usuario.UserRequest;
 import com.WebBiblioteca.DTO.Usuario.UserResponse;
+import com.WebBiblioteca.Exception.ResourceNotFoundException;
 import com.WebBiblioteca.Model.Role;
+import com.WebBiblioteca.Model.User;
 import com.WebBiblioteca.Service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.Collections;
 
 
 @RestController
@@ -41,6 +44,51 @@ public class UserController {
     @GetMapping("/dniRol/{dni}/{rol}")
     public ResponseEntity<?> getUserByDniAndRol(@PathVariable String dni, @PathVariable Role rol) {
         return ResponseEntity.ok(userService.getUserByDniAndRol(dni,rol));
+    }
+    @GetMapping("/search/{consult}")
+    public ResponseEntity<?> searchUser(@PathVariable String consult) {
+        Object result;
+        System.out.println("Consult: " + consult);
+        if (consult.contains("@")) {
+            result = userService.getUserByEmail(consult);
+        } else if (consult.matches("^[0-9]{8}$")) {
+            result = userService.getUserByDNI(consult);
+        } else {
+            result = userService.getUserByName(consult);
+        }
+
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/rol/{idRol}")
+    public ResponseEntity<?> getUsersByRol(@PathVariable Long idRol) {
+        return ResponseEntity.ok(userService.findByRol(idRol));
+    }
+
+    @GetMapping("/existsEmail/{email}")
+    public ResponseEntity<?> existsUserByEmail(@PathVariable String email) {
+        try {
+            UserResponse userExists = userService.getUserByEmail(email);
+            if (userExists != null) {
+                return ResponseEntity.ok(Collections.singletonMap("exists", true));
+            }
+        } catch (ResourceNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+        return ResponseEntity.status(404).body(Collections.singletonMap("exists", false));
+    }
+
+    @GetMapping("/existsDni/{dni}")
+    public ResponseEntity<?> existsUserByDni(@PathVariable String dni) {
+        try {
+            UserResponse userExists = userService.getUserByDNI(dni);
+            if (userExists != null) {
+                return ResponseEntity.ok(Collections.singletonMap("exists", true));
+            }
+        } catch (ResourceNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+        return ResponseEntity.status(404).body(Collections.singletonMap("exists", false));
     }
 
     @PostMapping("/add")

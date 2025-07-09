@@ -17,8 +17,11 @@ public interface UserRepository extends JpaRepository<User,Long> {
     Optional<User> findByEmail(String email);
 
     Optional<User> findByDNI(String dni);
-
+    List<User> findByNameContainingIgnoreCase(String name);
     @Query("SELECT u FROM User u WHERE u.DNI = ?1 AND u.rol.nameRol = ?2")
     Optional<User> findByDNIAndRol(String dni, Role role);
+
+    @Query("SELECT u FROM User u JOIN u.rol r WHERE r.idRol = ?1")
+    List<User> findByRol(Long idRol);
 
 }
