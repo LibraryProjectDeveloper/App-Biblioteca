@@ -22,7 +22,9 @@ public class LoanMonitorScheduler {
         this.loanRepository = loanRepository;
         this.lateFeeRepository = lateFeeRepository;
     }
-    @Scheduled(cron = "0 0 0 * * ?")
+
+
+    @Scheduled(cron = "0 56,9 * * * ?")
     public void checkOverdueLoans() {
         List<Loan> overdueLoans = loanRepository.findByDevolutionDateBeforeAndState(LocalDateTime.now(), LoanState.PRESTADO);
         for (Loan loan : overdueLoans) {
