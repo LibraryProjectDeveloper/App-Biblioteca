@@ -2,18 +2,30 @@ package com.WebBiblioteca.Service;
 
 import com.WebBiblioteca.DTO.Autor.AuthorRequest;
 import com.WebBiblioteca.DTO.Autor.AuthorResponse;
+import com.WebBiblioteca.DTO.Book.BookReport;
 import com.WebBiblioteca.DTO.Book.BookRequest;
 import com.WebBiblioteca.DTO.Book.BookResponse;
 import com.WebBiblioteca.Exception.DuplicateResourceException;
+import com.WebBiblioteca.Exception.ExcelGenerationException;
+import com.WebBiblioteca.Exception.NoDataFoundException;
 import com.WebBiblioteca.Exception.ResourceNotFoundException;
 import com.WebBiblioteca.Model.Author;
 import com.WebBiblioteca.Model.Book;
 import com.WebBiblioteca.Model.BookState;
 import com.WebBiblioteca.Model.Category;
 import com.WebBiblioteca.Repository.BookReposity;
+import com.WebBiblioteca.Utils.ExcelUtils;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.WorkbookUtil;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -337,4 +349,45 @@ public class BookService {
                         book.getStockTotal(),
                         book.getEstado())).collect(Collectors.toList());
     }
+
+    public byte[] createReport(LocalDate dateStart,LocalDate dateEnd,String category){
+        if(dateStart == null || dateEnd == null || category == null){
+            throw new IllegalArgumentException();
+        }
+        List<BookReport> bookList = bookReposity.getPopularBooks(dateStart,dateEnd,category);
+        if(!bookList.isEmpty()){
+            try(Workbook wb = new XSSFWorkbook()) {
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                String safeName = WorkbookUtil.createSafeSheetName("Most popular books report");
+                Sheet sheet = wb.createSheet(safeName);
+                Row row = sheet.createRow(0);
+                ExcelUtils.createCell(wb,row,0,"ID libro");
+                ExcelUtils.createCell(wb,row,1,"ISBN");
+                ExcelUtils.createCell(wb,row,2,"Libro");
+                ExcelUtils.createCell(wb,row,3,"Categoria");
+                ExcelUtils.createCell(wb,row,4,"Editorial");
+                ExcelUtils.createCell(wb,row,5,"Fecha de publicacion");
+                ExcelUtils.createCell(wb,row,6,"Cantidad de veces solicitado");
+
+                int rowCount = 1;
+                for(BookReport book: bookList){
+                    Row rowItem = sheet.createRow(rowCount++);
+                    ExcelUtils.createCell(wb,rowItem,0,book.getCodeBook());
+                    ExcelUtils.createCell(wb,rowItem,1,book.getIsbn());
+                    ExcelUtils.createCell(wb,rowItem,2,book.getTitle());
+                    ExcelUtils.createCell(wb,rowItem,3,book.getCategory());
+                    ExcelUtils.createCell(wb,rowItem,4,book.getPublisher());
+                    ExcelUtils.createCell(wb,rowItem,5,book.getPublicationDate());
+                    ExcelUtils.createCell(wb,rowItem,6,book.getQuantity());
+                }
+                wb.write(outputStream);
+                return outputStream.toByteArray();
+            } catch (IOException e) {
+                throw new ExcelGenerationException("Most popular books report");
+            }
+
+        }
+        throw new NoDataFoundException("No se encontraron datos para los parámetros proporcionados");
+    }
+
 }

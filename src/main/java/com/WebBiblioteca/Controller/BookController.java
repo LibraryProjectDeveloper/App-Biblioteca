@@ -1,12 +1,13 @@
 package com.WebBiblioteca.Controller;
 
+import com.WebBiblioteca.DTO.Book.BookReportRequest;
 import com.WebBiblioteca.DTO.Book.BookRequest;
 import com.WebBiblioteca.DTO.Book.BookResponse;
 import com.WebBiblioteca.Model.BookState;
 import com.WebBiblioteca.Model.Category;
 import com.WebBiblioteca.Service.BookService;
 import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -74,6 +75,15 @@ public class BookController {
         BookResponse bookCreated = bookService.addBook(book);
         URI location = URI.create("/api/LIBRARIAN/books/" + bookCreated.getCodeBook());
         return ResponseEntity.created(location).body(bookCreated);
+    }
+    @PostMapping("/download-report")
+    public ResponseEntity<?> generateReport(@Valid @RequestBody BookReportRequest book){
+        byte[] file = bookService.createReport(book.getDateStart(),book.getDateEnd(),book.getCategory());
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType(
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+        headers.setContentDisposition(ContentDisposition.attachment().filename("Report.xlsx").build());
+        return new ResponseEntity<>(file,headers, HttpStatus.OK);
     }
 
     @PutMapping("/update/{id}")
