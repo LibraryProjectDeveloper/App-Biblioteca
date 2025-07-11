@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import java.time.LocalDateTime;
@@ -53,7 +54,7 @@ public class UserServiceTest {
         when(user.getState()).thenReturn(true);
         when(user.getDateRegistered()).thenReturn(LocalDateTime.now());
         when(user.getRol()).thenReturn(rol);
-        when(userRepository.findAll()).thenReturn(List.of(user));
+        when(userRepository.findAll(any(Sort.class))).thenReturn(List.of(user));
         List<UserResponse> result = userService.getAllUsers();
         assertEquals(1, result.size());
         assertEquals("Juan", result.getFirst().getName());
