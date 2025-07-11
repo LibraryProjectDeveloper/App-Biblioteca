@@ -1,5 +1,6 @@
 package com.WebBiblioteca.Model;
 
+import com.WebBiblioteca.DTO.Book.BookReportDto;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -15,15 +16,6 @@ import java.util.*;
 @Getter
 @Setter
 @Entity
-@NamedStoredProcedureQuery(
-        name = "getPopularBooks",
-        procedureName = "sp_get_popular_books",
-        parameters = {
-                @StoredProcedureParameter(mode = ParameterMode.IN,name = "p_date_start",type = LocalDate.class),
-                @StoredProcedureParameter(mode = ParameterMode.IN,name = "p_date_end",type = LocalDate.class),
-                @StoredProcedureParameter(mode = ParameterMode.IN,name = "p_category",type = String.class)
-        }
-)
 @Table(name = "libro")
 public class Book {
     @Id

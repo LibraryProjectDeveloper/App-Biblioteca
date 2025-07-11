@@ -7,13 +7,12 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 @Getter @AllArgsConstructor @NoArgsConstructor
-public class BookReport {
+public class BookReportDto {
     private Long codeBook;
-    private String title;
     private String isbn;
+    private String title;
+    private Category category;
     private LocalDate publicationDate;
     private String publisher;
-    private Category category;
     private int quantity;
-
 }

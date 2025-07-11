@@ -2,7 +2,7 @@ package com.WebBiblioteca.Service;
 
 import com.WebBiblioteca.DTO.Autor.AuthorRequest;
 import com.WebBiblioteca.DTO.Autor.AuthorResponse;
-import com.WebBiblioteca.DTO.Book.BookReport;
+import com.WebBiblioteca.DTO.Book.BookReportDto;
 import com.WebBiblioteca.DTO.Book.BookRequest;
 import com.WebBiblioteca.DTO.Book.BookResponse;
 import com.WebBiblioteca.Exception.DuplicateResourceException;
@@ -26,10 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -354,7 +351,7 @@ public class BookService {
         if(dateStart == null || dateEnd == null || category == null){
             throw new IllegalArgumentException();
         }
-        List<BookReport> bookList = bookReposity.getPopularBooks(dateStart,dateEnd,category);
+        List<BookReportDto> bookList = getPopularBooks(dateStart,dateEnd,category);
         if(!bookList.isEmpty()){
             try(Workbook wb = new XSSFWorkbook()) {
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -370,7 +367,7 @@ public class BookService {
                 ExcelUtils.createCell(wb,row,6,"Cantidad de veces solicitado");
 
                 int rowCount = 1;
-                for(BookReport book: bookList){
+                for(BookReportDto book: bookList){
                     Row rowItem = sheet.createRow(rowCount++);
                     ExcelUtils.createCell(wb,rowItem,0,book.getCodeBook());
                     ExcelUtils.createCell(wb,rowItem,1,book.getIsbn());
@@ -388,6 +385,24 @@ public class BookService {
 
         }
         throw new NoDataFoundException("No se encontraron datos para los parámetros proporcionados");
+    }
+
+    private List<BookReportDto> getPopularBooks(LocalDate dateStart,LocalDate dateEnd,String category){
+        List<BookReportDto> booksReportDto = new LinkedList<>();
+        List<Object[]> booksList = bookReposity.getPopularBooks(dateStart,dateEnd,category);
+        for(Object[] row : booksList){
+            BookReportDto bookReportDto = new BookReportDto(
+                    (Long) row[0],
+                    (String) row[1],
+                    (String) row[2],
+                    Category.valueOf((String) row[3]),
+                    ((java.sql.Date) row[4]).toLocalDate(),
+                    (String) row[5],
+                    ((Long) row[6]).intValue()
+            );
+            booksReportDto.add(bookReportDto);
+        }
+        return booksReportDto;
     }
 
 }
