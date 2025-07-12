@@ -347,7 +347,7 @@ public class BookService {
                         book.getEstado())).collect(Collectors.toList());
     }
 
-    public byte[] createReport(LocalDate dateStart,LocalDate dateEnd,String category){
+    public byte[] createReportExcel(LocalDate dateStart, LocalDate dateEnd, String category){
         if(dateStart == null || dateEnd == null || category == null){
             throw new IllegalArgumentException();
         }
@@ -370,11 +370,14 @@ public class BookService {
                 for(BookReportDto book: bookList){
                     Row rowItem = sheet.createRow(rowCount++);
                     ExcelUtils.createCell(wb,rowItem,0,book.getCodeBook());
+                    System.out.println(book.getCodeBook());
                     ExcelUtils.createCell(wb,rowItem,1,book.getIsbn());
                     ExcelUtils.createCell(wb,rowItem,2,book.getTitle());
                     ExcelUtils.createCell(wb,rowItem,3,book.getCategory());
+                    System.out.println(book.getCategory());
                     ExcelUtils.createCell(wb,rowItem,4,book.getPublisher());
                     ExcelUtils.createCell(wb,rowItem,5,book.getPublicationDate());
+                    System.out.println(book.getPublicationDate());
                     ExcelUtils.createCell(wb,rowItem,6,book.getQuantity());
                 }
                 wb.write(outputStream);

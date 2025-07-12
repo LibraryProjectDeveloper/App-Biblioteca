@@ -1,6 +1,9 @@
 package com.WebBiblioteca.Utils;
 
+import com.WebBiblioteca.Model.Category;
 import org.apache.poi.ss.usermodel.*;
+
+import java.time.LocalDate;
 
 public class ExcelUtils {
 
@@ -17,6 +20,13 @@ public class ExcelUtils {
         } else if (val instanceof java.sql.Date) {
             cell.setCellValue((java.sql.Date) val);
             cellStyle.setDataFormat(creationHelper.createDataFormat().getFormat("dd/MM/yyyy"));
+        }else if (val instanceof  Long){
+            cell.setCellValue(((Long)val).intValue());
+        }else if ( val instanceof LocalDate){
+            cell.setCellValue((LocalDate) val);
+            cellStyle.setDataFormat(creationHelper.createDataFormat().getFormat("dd-MM-yyyy"));
+        } else if (val instanceof Category) {
+            cell.setCellValue(((Category) val).name());
         }
         cellStyle.setAlignment(HorizontalAlignment.CENTER);
         cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
