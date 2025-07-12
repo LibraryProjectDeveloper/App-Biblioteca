@@ -1,16 +1,26 @@
 package com.WebBiblioteca.Service;
 
-import com.WebBiblioteca.DTO.ReserveBook.ReserveBookRequest;
-import com.WebBiblioteca.DTO.ReserveBook.ReserveBookResponse;
-import com.WebBiblioteca.DTO.ReserveBook.ReserveBookUpdate;
+import com.WebBiblioteca.DTO.ReserveBook.*;
+import com.WebBiblioteca.Exception.ExcelGenerationException;
+import com.WebBiblioteca.Exception.NoDataFoundException;
 import com.WebBiblioteca.Exception.ResourceNotFoundException;
 import com.WebBiblioteca.Model.Book;
 import com.WebBiblioteca.Model.ReserveBook;
 import com.WebBiblioteca.Model.User;
 import com.WebBiblioteca.Repository.ReserveBookRepository;
+import com.WebBiblioteca.Utils.ExcelUtils;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.WorkbookUtil;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -177,6 +187,58 @@ public class ReserveBookService {
         ReserveBook reserveBook = reserveBookRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Reservation","id",id));
         reserveBook.setState(false);
         reserveBookRepository.save(reserveBook);
+    }
+
+    public byte[] createReportExcel(ReserveBookReportRequest request){
+        List<ReserveBookReportDto> reportDtoList = getReserveBookHistory(request.getDateStart(),request.getDateEnd());
+        if(reportDtoList.isEmpty()){
+            throw new NoDataFoundException("No se encontraron datos para los parámetros proporcionados");
+        }
+        try(Workbook wb = new XSSFWorkbook()){
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            String safeName = WorkbookUtil.createSafeSheetName("Report of the reserves");
+            Sheet sheet = wb.createSheet(safeName);
+            Row row = sheet.createRow(0);
+            ExcelUtils.createCell(wb,row,0,"Fecha de la reserva");
+            ExcelUtils.createCell(wb,row,1,"Hora de inicio");
+            ExcelUtils.createCell(wb,row,2,"Hora de fin");
+            ExcelUtils.createCell(wb,row,3,"Libro");
+            ExcelUtils.createCell(wb,row,3,"Usuario");
+            ExcelUtils.createCell(wb,row,4,"Bibliotecario");
+
+            int rowCount = 1;
+            for(ReserveBookReportDto reportDto: reportDtoList){
+                Row rowItem = sheet.createRow(rowCount++);
+                ExcelUtils.createCell(wb,rowItem,0,reportDto.getDateReserve());
+                ExcelUtils.createCell(wb,rowItem,1,reportDto.getTimeStart());
+                ExcelUtils.createCell(wb,rowItem,2,reportDto.getTimeEnd());
+                ExcelUtils.createCell(wb,rowItem,3,reportDto.getTitleBook());
+                ExcelUtils.createCell(wb,rowItem,4,reportDto.getUserName());
+                ExcelUtils.createCell(wb,rowItem,5,reportDto.getLibrarianName());
+            }
+            wb.write(outputStream);
+            return outputStream.toByteArray();
+        }catch (IOException e){
+            throw new ExcelGenerationException("Report of the reserves");
+        }
+
+    }
+
+    private List<ReserveBookReportDto> getReserveBookHistory(LocalDate dateStart,LocalDate dateEnd){
+        List<Object[]> list = reserveBookRepository.getHistoryReservation(dateStart,dateEnd);
+        List<ReserveBookReportDto> reserveBookReportDto = new LinkedList<>();
+        for(Object[] row:list){
+            ReserveBookReportDto reportDto = new ReserveBookReportDto(
+                    ((java.sql.Date) row[0]).toLocalDate(),
+                    ((java.sql.Time) row[1]).toLocalTime(),
+                    ((java.sql.Time) row[2]).toLocalTime(),
+                    (String) row[3],
+                    (String) row[4],
+                    (String) row[5]
+            );
+            reserveBookReportDto.add(reportDto);
+        }
+        return reserveBookReportDto;
     }
 
 }
