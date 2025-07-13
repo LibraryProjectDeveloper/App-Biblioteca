@@ -8,8 +8,8 @@ import java.time.LocalDate;
 
 @Getter @AllArgsConstructor
 public class ReserveBookReportRequest {
-    @NotNull(message = "the date cannot be null")
+    //@NotNull(message = "the date cannot be null")
     private LocalDate dateStart;
-    @NotNull(message = "the date cannot be null")
+    //@NotNull(message = "the date cannot be null")
     private LocalDate dateEnd;
 }

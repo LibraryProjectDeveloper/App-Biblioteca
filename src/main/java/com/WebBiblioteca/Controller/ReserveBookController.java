@@ -9,8 +9,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 import java.net.URI;
+
 
 @RestController
 @RequestMapping("/api/reserve")
@@ -60,6 +60,12 @@ public class ReserveBookController {
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
         headers.setContentDisposition(ContentDisposition.attachment().filename("Report.xlsx").build());
         return new ResponseEntity<>(file,headers, HttpStatus.OK);
+    }
+    @GetMapping("/report")
+    public ResponseEntity<?> getReserveDataReport(
+            @RequestParam(value = "dateStart") String dateStart,
+            @RequestParam(value = "dateEnd") String dateEnd){
+        return ResponseEntity.ok(reserveBookService.getReserveBookHistory(dateStart,dateEnd));
     }
 
     @PutMapping("/update/{id}")

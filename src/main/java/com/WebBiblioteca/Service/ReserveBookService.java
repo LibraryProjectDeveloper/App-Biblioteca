@@ -203,8 +203,8 @@ public class ReserveBookService {
             ExcelUtils.createCell(wb,row,1,"Hora de inicio");
             ExcelUtils.createCell(wb,row,2,"Hora de fin");
             ExcelUtils.createCell(wb,row,3,"Libro");
-            ExcelUtils.createCell(wb,row,3,"Usuario");
-            ExcelUtils.createCell(wb,row,4,"Bibliotecario");
+            ExcelUtils.createCell(wb,row,4,"Usuario");
+            ExcelUtils.createCell(wb,row,5,"Bibliotecario");
 
             int rowCount = 1;
             for(ReserveBookReportDto reportDto: reportDtoList){
@@ -224,7 +224,27 @@ public class ReserveBookService {
 
     }
 
-    private List<ReserveBookReportDto> getReserveBookHistory(LocalDate dateStart,LocalDate dateEnd){
+    public List<ReserveBookReportDto> getReserveBookHistory(LocalDate dateStart,LocalDate dateEnd){
+        List<Object[]> list = reserveBookRepository.getHistoryReservation(dateStart,dateEnd);
+        List<ReserveBookReportDto> reserveBookReportDto = new LinkedList<>();
+        for(Object[] row:list){
+            ReserveBookReportDto reportDto = new ReserveBookReportDto(
+                    ((java.sql.Date) row[0]).toLocalDate(),
+                    ((java.sql.Time) row[1]).toLocalTime(),
+                    ((java.sql.Time) row[2]).toLocalTime(),
+                    (String) row[3],
+                    (String) row[4],
+                    (String) row[5]
+            );
+            reserveBookReportDto.add(reportDto);
+        }
+        return reserveBookReportDto;
+    }
+    public List<ReserveBookReportDto> getReserveBookHistory(String start,String end){
+        LocalDate dateStart;
+        LocalDate dateEnd;
+        dateStart = (start == null || start.isEmpty()) ? null : LocalDate.parse(start);
+        dateEnd = (end == null || end.isEmpty()) ? null : LocalDate.parse(end);
         List<Object[]> list = reserveBookRepository.getHistoryReservation(dateStart,dateEnd);
         List<ReserveBookReportDto> reserveBookReportDto = new LinkedList<>();
         for(Object[] row:list){
