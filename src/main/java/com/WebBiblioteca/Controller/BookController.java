@@ -85,6 +85,15 @@ public class BookController {
         headers.setContentDisposition(ContentDisposition.attachment().filename("Report.xlsx").build());
         return new ResponseEntity<>(file,headers, HttpStatus.OK);
     }
+    @GetMapping("/report")
+    public ResponseEntity<?> getBookDataReport(
+            @RequestParam("dateStart") String dateStart,
+            @RequestParam("dateEnd") String dateEnd,
+            @RequestParam("category") String category
+    ){
+        return ResponseEntity.ok(bookService.getPopularBooks(dateStart,dateEnd,category));
+
+    }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateBook(@PathVariable Long id, @Valid @RequestBody BookRequest book) {

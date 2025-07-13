@@ -154,7 +154,7 @@ public class ReserveBookService {
     public ReserveBookResponse updateReservation(ReserveBookUpdate request,Long id){
         ReserveBook reserveBook = reserveBookRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Reserve","id",id));
         if(request.getBookId() !=null){
-            reserveBook.setBook(bookService.getBook(request.getId()));
+            reserveBook.setBook(bookService.getBook(request.getBookId()));
         }
         if (request.getStartTime() !=null){
             reserveBook.setStartTime(request.getStartTime());

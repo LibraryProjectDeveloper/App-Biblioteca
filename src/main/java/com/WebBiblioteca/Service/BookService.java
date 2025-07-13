@@ -404,5 +404,28 @@ public class BookService {
         }
         return booksReportDto;
     }
+    public List<BookReportDto> getPopularBooks(String start,String end,String category){
+        LocalDate dateStart;
+        LocalDate dateEnd;
+        Category category1;
+        dateStart = (start == null || start.isEmpty())?LocalDate.now().withDayOfMonth(1) : LocalDate.parse(start);
+        dateEnd = (end == null || end.isEmpty())?LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth()) : LocalDate.parse(end);
+        category1 = (category == null || category.isEmpty())?null : Category.valueOf(category);
+        List<BookReportDto> booksReportDto = new LinkedList<>();
+        List<Object[]> booksList = bookReposity.getPopularBooks(dateStart,dateEnd,category);
+        for(Object[] row : booksList){
+            BookReportDto bookReportDto = new BookReportDto(
+                    (Long) row[0],
+                    (String) row[1],
+                    (String) row[2],
+                    Category.valueOf((String) row[3]),
+                    ((java.sql.Date) row[4]).toLocalDate(),
+                    (String) row[5],
+                    ((Long) row[6]).intValue()
+            );
+            booksReportDto.add(bookReportDto);
+        }
+        return booksReportDto;
+    }
 
 }
