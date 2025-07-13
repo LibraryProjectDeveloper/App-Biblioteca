@@ -78,7 +78,7 @@ public class BookController {
     }
     @PostMapping("/download-report")
     public ResponseEntity<?> generateReport(@Valid @RequestBody BookReportRequest book){
-        byte[] file = bookService.createReport(book.getDateStart(),book.getDateEnd(),book.getCategory());
+        byte[] file = bookService.createReportExcel(book.getDateStart(),book.getDateEnd(),book.getCategory());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType(
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));

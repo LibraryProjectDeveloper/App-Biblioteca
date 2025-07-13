@@ -347,7 +347,7 @@ public class BookService {
                         book.getEstado())).collect(Collectors.toList());
     }
 
-    public byte[] createReport(LocalDate dateStart,LocalDate dateEnd,String category){
+    public byte[] createReportExcel(LocalDate dateStart, LocalDate dateEnd, String category){
         if(dateStart == null || dateEnd == null || category == null){
             throw new IllegalArgumentException();
         }

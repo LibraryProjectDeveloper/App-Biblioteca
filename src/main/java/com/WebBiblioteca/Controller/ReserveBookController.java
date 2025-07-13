@@ -1,10 +1,12 @@
 package com.WebBiblioteca.Controller;
 
+import com.WebBiblioteca.DTO.ReserveBook.ReserveBookReportRequest;
 import com.WebBiblioteca.DTO.ReserveBook.ReserveBookRequest;
 import com.WebBiblioteca.DTO.ReserveBook.ReserveBookResponse;
 import com.WebBiblioteca.DTO.ReserveBook.ReserveBookUpdate;
 import com.WebBiblioteca.Service.ReserveBookService;
-import org.springframework.http.ResponseEntity;
+import jakarta.validation.Valid;
+import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,6 +62,15 @@ public class ReserveBookController {
         ReserveBookResponse reserveBookCreated = reserveBookService.saveReservation(reserveBookRequest);
         URI location = URI.create("/api/reserve"+reserveBookCreated.getId());
         return ResponseEntity.created(location).body(reserveBookCreated);
+    }
+    @PostMapping("/download-report")
+    public ResponseEntity<?> createReport(@Valid @RequestBody ReserveBookReportRequest request){
+        byte [] file = reserveBookService.createReportExcel(request);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType(
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+        headers.setContentDisposition(ContentDisposition.attachment().filename("Report.xlsx").build());
+        return new ResponseEntity<>(file,headers, HttpStatus.OK);
     }
 
     @PutMapping("/update/{id}")
