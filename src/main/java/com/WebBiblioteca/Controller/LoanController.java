@@ -56,9 +56,15 @@ public class LoanController {
     @PreAuthorize("hasAnyRole('ADMIN','LIBRARIAN')")
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateLoan(@PathVariable Long id, @RequestBody LoanUpdateRequest loanRequest) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomerUserDetails userDetails = (CustomerUserDetails) authentication.getPrincipal();
-        return ResponseEntity.ok(loanService.updateLoan(id, userDetails.getId(),loanRequest));
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            CustomerUserDetails userDetails = (CustomerUserDetails) authentication.getPrincipal();
+            return ResponseEntity.ok(loanService.updateLoan(id, userDetails.getId(),loanRequest));
+        }catch (Exception e){
+            System.out.println("Error updating loan: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error updating loan: " + e.getMessage());
+        }
+
     }
     @PreAuthorize("hasAnyRole('ADMIN','LIBRARIAN')")
     @PutMapping("/updateState/{id}")

@@ -179,4 +179,37 @@ public class ReserveBookService {
         reserveBookRepository.save(reserveBook);
     }
 
+    public List<ReserveBookResponse> getReservationsByBookTitle(String title){
+        List<ReserveBook> reserveBooks = reserveBookRepository.findByBookTitleContains(title);
+        if (reserveBooks.isEmpty()) {
+            throw new ResourceNotFoundException("Reservation", "title", title);
+        }
+        return reserveBooks.stream().map(reserveBook -> new ReserveBookResponse(
+                reserveBook.getCodeReserve(),
+                reserveBook.getBook().getTitle(),
+                reserveBook.getUser().getCode(),
+                reserveBook.getUser().getName()+" "+reserveBook.getUser().getLastname(),
+                reserveBook.getLibrarian().getCode(),
+                reserveBook.getLibrarian().getName() +" "+reserveBook.getLibrarian().getLastname(),
+                reserveBook.getState(),
+                reserveBook.getDateReserve(),
+                reserveBook.getStartTime(),
+                reserveBook.getEndTime()))
+                .toList();
+    }
+
+    public List<ReserveBookResponse> getReservationByDate(LocalDate date){
+       return reserveBookRepository.findByDateReserve(date).stream().map(reserveBook -> new ReserveBookResponse(
+                reserveBook.getCodeReserve(),
+                reserveBook.getBook().getTitle(),
+                reserveBook.getUser().getCode(),
+                reserveBook.getUser().getName()+" "+reserveBook.getUser().getLastname(),
+                reserveBook.getLibrarian().getCode(),
+                reserveBook.getLibrarian().getName() +" "+reserveBook.getLibrarian().getLastname(),
+                reserveBook.getState(),
+                reserveBook.getDateReserve(),
+                reserveBook.getStartTime(),
+                reserveBook.getEndTime()))
+                .toList();
+    }
 }

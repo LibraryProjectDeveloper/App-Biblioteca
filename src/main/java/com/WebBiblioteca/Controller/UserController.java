@@ -47,17 +47,20 @@ public class UserController {
     }
     @GetMapping("/search/{consult}")
     public ResponseEntity<?> searchUser(@PathVariable String consult) {
-        Object result;
-        System.out.println("Consult: " + consult);
-        if (consult.contains("@")) {
-            result = userService.getUserByEmail(consult);
-        } else if (consult.matches("^[0-9]{8}$")) {
-            result = userService.getUserByDNI(consult);
-        } else {
-            result = userService.getUserByName(consult);
+        try {
+            Object result;
+            if (consult.contains("@")) {
+                result = userService.getUserByEmail(consult);
+            } else if (consult.matches("^[0-9]{8}$")) {
+                result = userService.getUserByDNI(consult);
+            } else {
+                result = userService.getUserByName(consult);
+            }
+            return ResponseEntity.ok(result);
+        }catch (ResourceNotFoundException e){
+            return ResponseEntity.status(404).
+                    body(Collections.singletonMap("message", e.getMessage()));
         }
-
-        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/rol/{idRol}")
