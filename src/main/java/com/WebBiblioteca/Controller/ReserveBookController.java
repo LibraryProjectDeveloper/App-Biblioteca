@@ -10,6 +10,7 @@ import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.net.URI;
+import java.time.LocalDate;
 
 
 @RestController
@@ -45,6 +46,16 @@ public class ReserveBookController {
     @GetMapping("/user/dni/{dni}")
     public ResponseEntity<?> getReservationByUser(@PathVariable String dni){
         return ResponseEntity.ok(reserveBookService.getReservationByDni(dni));
+    }
+
+    @GetMapping("/book/{title}")
+    public ResponseEntity<?> getReservationByBookTitle(@PathVariable String title) {
+        return ResponseEntity.ok(reserveBookService.getReservationsByBookTitle(title));
+    }
+
+    @GetMapping("/date/{date}")
+    public ResponseEntity<?> getReservationByDate(@PathVariable String date) {
+        return ResponseEntity.ok(reserveBookService.getReservationByDate(LocalDate.parse(date)));
     }
     @PostMapping("/add")
     public ResponseEntity<?> saveReservation(@RequestBody ReserveBookRequest reserveBookRequest) {

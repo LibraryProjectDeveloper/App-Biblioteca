@@ -16,6 +16,12 @@ public interface ReserveBookRepository extends JpaRepository<ReserveBook, Long> 
     @Query("SELECT r FROM ReserveBook r WHERE r.user.DNI = ?1")
     List<ReserveBook> findByUserDni(String dni);
 
+
+    @Query("SELECT r FROM ReserveBook r JOIN r.book b WHERE b.title LIKE %?1%")
+    List<ReserveBook> findByBookTitleContains(String title);
+
+    List<ReserveBook> findByDateReserve(LocalDate dateReserve);
+
     @Query(
            value = "CALL sp_get_history_reservation(:p_date_start,:p_date_end)",
            nativeQuery = true
@@ -24,5 +30,6 @@ public interface ReserveBookRepository extends JpaRepository<ReserveBook, Long> 
             @Param("p_date_start")LocalDate date_start,
             @Param("p_date_end")LocalDate date_end
             );
+
 }
 
