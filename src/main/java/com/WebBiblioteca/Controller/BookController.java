@@ -7,10 +7,12 @@ import com.WebBiblioteca.Model.BookState;
 import com.WebBiblioteca.Model.Category;
 import com.WebBiblioteca.Service.BookService;
 import jakarta.validation.Valid;
+import org.openxmlformats.schemas.drawingml.x2006.main.STAdjAngle;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -58,6 +60,21 @@ public class BookController {
             return ResponseEntity.ok(bookList);
         }
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/book-info/available")
+    public ResponseEntity<?> getAvailableBooks() {
+        try {
+            List<BookResponse> bookList = bookService.booksActiveAndStock();
+
+            if (!bookList.isEmpty()) {
+                return ResponseEntity.ok(bookList);
+            }
+            return ResponseEntity.noContent().build();
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(Collections.singletonMap("message", "Libros no disponibles"));
+        }
+
     }
 
     @GetMapping("/searchCategory")

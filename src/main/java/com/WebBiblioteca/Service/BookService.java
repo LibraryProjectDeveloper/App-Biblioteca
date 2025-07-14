@@ -34,10 +34,12 @@ public class BookService {
 
     private final BookReposity bookReposity;
     private final AuthorService authorService;
+
     public BookService(BookReposity bookReposity, AuthorService authorService) {
         this.authorService = authorService;
         this.bookReposity = bookReposity;
     }
+
     public List<BookResponse> getBookList() {
         return bookReposity.findAll()
                 .stream()
@@ -61,6 +63,7 @@ public class BookService {
                                 )).collect(Collectors.toList())
                 )).collect(Collectors.toList());
     }
+
     public List<BookResponse> getBookList(BookState bookState) {
         return bookReposity.findByEstado(bookState)
                 .stream().
@@ -106,6 +109,7 @@ public class BookService {
                         )).collect(Collectors.toList())
         );
     }
+
     public List<Category> getAllCategories() {
         return bookReposity.findAll()
                 .stream()
@@ -137,6 +141,7 @@ public class BookService {
                                 )).collect(Collectors.toList())
                 )).collect(Collectors.toList());
     }
+
     @Transactional
     public BookResponse addBook(BookRequest book) {
         if (bookReposity.findByIsbn(book.getIsbn()).isPresent()) {
@@ -201,7 +206,7 @@ public class BookService {
         if (book.getState() != null) {
             bookToUpdate.setEstado(book.getState());
         }
-        if(book.getAuthor() !=null && authorService.existsAuthors(new HashSet<>(book.getAuthor()))) {
+        if (book.getAuthor() != null && authorService.existsAuthors(new HashSet<>(book.getAuthor()))) {
             Set<Author> authors = book.getAuthor().stream()
                     .map(authorRequest -> authorService.getAuthorById(authorRequest.getIdAuthor()))
                     .collect(Collectors.toSet());
@@ -228,6 +233,7 @@ public class BookService {
                         )).collect(Collectors.toList())
         );
     }
+
     public void deleteBook(Long id) {
         Book book = bookReposity.findByCodeBook(id).orElseThrow(() -> new ResourceNotFoundException("Book", "id", id));
         book.setEstado(BookState.INACTIVO);
@@ -258,20 +264,22 @@ public class BookService {
                                 )).collect(Collectors.toList())
                 )).collect(Collectors.toList());
     }
-    public boolean verifyBooks(List<Long> booklist){
-        for(Long book : booklist){
-            if(bookReposity.findById(book).isEmpty()){
+
+    public boolean verifyBooks(List<Long> booklist) {
+        for (Long book : booklist) {
+            if (bookReposity.findById(book).isEmpty()) {
                 return false;
             }
-            if(isAvailable(book)){
+            if (isAvailable(book)) {
                 return false;
             }
-            if(getBookById(book).getStockTotal() <=0){
+            if (getBookById(book).getStockTotal() <= 0) {
                 return false;
             }
         }
         return true;
     }
+
     public boolean verifyBook(Long bookId) {
         if (bookReposity.findById(bookId).isEmpty()) {
             return false;
@@ -281,16 +289,20 @@ public class BookService {
         }
         return getBookById(bookId).getStockTotal() > 0;
     }
-    public boolean isAvailable(Long id){
+
+    public boolean isAvailable(Long id) {
         Book book = bookReposity.findByCodeBook(id).orElseThrow(() -> new ResourceNotFoundException("Book", "id", id));
         return book.getEstado() != BookState.ACTIVO;
     }
+
     public Book getBook(Long id) {
         return bookReposity.findById(id).orElseThrow(() -> new ResourceNotFoundException("Book", "id", id));
     }
+
     public Set<Book> getBooksByIds(List<Long> bookIds) {
         return new HashSet<>(bookReposity.findAllById(bookIds));
     }
+
     public Set<Book> updateBooksStock(Set<Book> books) {
         Set<Book> updatedBooks = new HashSet<>();
         for (Book book : books) {
@@ -301,6 +313,7 @@ public class BookService {
         }
         return updatedBooks;
     }
+
     public Book updateBookStock(Long id, Integer stock) {
         Book book = bookReposity.findByCodeBook(id).orElseThrow(() -> new ResourceNotFoundException("Book", "id", id));
         book.setStockTotal(book.getStockTotal() + stock);
@@ -347,35 +360,35 @@ public class BookService {
                         book.getEstado())).collect(Collectors.toList());
     }
 
-    public byte[] createReportExcel(LocalDate dateStart, LocalDate dateEnd, String category){
-        if(dateStart == null || dateEnd == null || category == null){
+    public byte[] createReportExcel(LocalDate dateStart, LocalDate dateEnd, String category) {
+        if (dateStart == null || dateEnd == null || category == null) {
             throw new IllegalArgumentException();
         }
-        List<BookReportDto> bookList = getPopularBooks(dateStart,dateEnd,category);
-        if(!bookList.isEmpty()){
-            try(Workbook wb = new XSSFWorkbook()) {
+        List<BookReportDto> bookList = getPopularBooks(dateStart, dateEnd, category);
+        if (!bookList.isEmpty()) {
+            try (Workbook wb = new XSSFWorkbook()) {
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                 String safeName = WorkbookUtil.createSafeSheetName("Most popular books report");
                 Sheet sheet = wb.createSheet(safeName);
                 Row row = sheet.createRow(0);
-                ExcelUtils.createCell(wb,row,0,"ID libro");
-                ExcelUtils.createCell(wb,row,1,"ISBN");
-                ExcelUtils.createCell(wb,row,2,"Libro");
-                ExcelUtils.createCell(wb,row,3,"Categoria");
-                ExcelUtils.createCell(wb,row,4,"Editorial");
-                ExcelUtils.createCell(wb,row,5,"Fecha de publicacion");
-                ExcelUtils.createCell(wb,row,6,"Cantidad de veces solicitado");
+                ExcelUtils.createCell(wb, row, 0, "ID libro");
+                ExcelUtils.createCell(wb, row, 1, "ISBN");
+                ExcelUtils.createCell(wb, row, 2, "Libro");
+                ExcelUtils.createCell(wb, row, 3, "Categoria");
+                ExcelUtils.createCell(wb, row, 4, "Editorial");
+                ExcelUtils.createCell(wb, row, 5, "Fecha de publicacion");
+                ExcelUtils.createCell(wb, row, 6, "Cantidad de veces solicitado");
 
                 int rowCount = 1;
-                for(BookReportDto book: bookList){
+                for (BookReportDto book : bookList) {
                     Row rowItem = sheet.createRow(rowCount++);
-                    ExcelUtils.createCell(wb,rowItem,0,book.getCodeBook());
-                    ExcelUtils.createCell(wb,rowItem,1,book.getIsbn());
-                    ExcelUtils.createCell(wb,rowItem,2,book.getTitle());
-                    ExcelUtils.createCell(wb,rowItem,3,book.getCategory());
-                    ExcelUtils.createCell(wb,rowItem,4,book.getPublisher());
-                    ExcelUtils.createCell(wb,rowItem,5,book.getPublicationDate());
-                    ExcelUtils.createCell(wb,rowItem,6,book.getQuantity());
+                    ExcelUtils.createCell(wb, rowItem, 0, book.getCodeBook());
+                    ExcelUtils.createCell(wb, rowItem, 1, book.getIsbn());
+                    ExcelUtils.createCell(wb, rowItem, 2, book.getTitle());
+                    ExcelUtils.createCell(wb, rowItem, 3, book.getCategory());
+                    ExcelUtils.createCell(wb, rowItem, 4, book.getPublisher());
+                    ExcelUtils.createCell(wb, rowItem, 5, book.getPublicationDate());
+                    ExcelUtils.createCell(wb, rowItem, 6, book.getQuantity());
                 }
                 wb.write(outputStream);
                 return outputStream.toByteArray();
@@ -387,33 +400,10 @@ public class BookService {
         throw new NoDataFoundException("No se encontraron datos para los parámetros proporcionados");
     }
 
-    private List<BookReportDto> getPopularBooks(LocalDate dateStart,LocalDate dateEnd,String category){
+    private List<BookReportDto> getPopularBooks(LocalDate dateStart, LocalDate dateEnd, String category) {
         List<BookReportDto> booksReportDto = new LinkedList<>();
-        List<Object[]> booksList = bookReposity.getPopularBooks(dateStart,dateEnd,category);
-        for(Object[] row : booksList){
-            BookReportDto bookReportDto = new BookReportDto(
-                    (Long) row[0],
-                    (String) row[1],
-                    (String) row[2],
-                    Category.valueOf((String) row[3]),
-                    ((java.sql.Date) row[4]).toLocalDate(),
-                    (String) row[5],
-                    ((Long) row[6]).intValue()
-            );
-            booksReportDto.add(bookReportDto);
-        }
-        return booksReportDto;
-    }
-    public List<BookReportDto> getPopularBooks(String start,String end,String category){
-        LocalDate dateStart;
-        LocalDate dateEnd;
-        Category category1;
-        dateStart = (start == null || start.isEmpty())?LocalDate.now().withDayOfMonth(1) : LocalDate.parse(start);
-        dateEnd = (end == null || end.isEmpty())?LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth()) : LocalDate.parse(end);
-        category1 = (category == null || category.isEmpty())?null : Category.valueOf(category);
-        List<BookReportDto> booksReportDto = new LinkedList<>();
-        List<Object[]> booksList = bookReposity.getPopularBooks(dateStart,dateEnd,category);
-        for(Object[] row : booksList){
+        List<Object[]> booksList = bookReposity.getPopularBooks(dateStart, dateEnd, category);
+        for (Object[] row : booksList) {
             BookReportDto bookReportDto = new BookReportDto(
                     (Long) row[0],
                     (String) row[1],
@@ -428,4 +418,51 @@ public class BookService {
         return booksReportDto;
     }
 
+    public List<BookReportDto> getPopularBooks(String start, String end, String category) {
+        LocalDate dateStart;
+        LocalDate dateEnd;
+        Category category1;
+        dateStart = (start == null || start.isEmpty()) ? LocalDate.now().withDayOfMonth(1) : LocalDate.parse(start);
+        dateEnd = (end == null || end.isEmpty()) ? LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth()) : LocalDate.parse(end);
+        category1 = (category == null || category.isEmpty()) ? null : Category.valueOf(category);
+        List<BookReportDto> booksReportDto = new LinkedList<>();
+        List<Object[]> booksList = bookReposity.getPopularBooks(dateStart, dateEnd, category);
+        for (Object[] row : booksList) {
+            BookReportDto bookReportDto = new BookReportDto(
+                    (Long) row[0],
+                    (String) row[1],
+                    (String) row[2],
+                    Category.valueOf((String) row[3]),
+                    ((java.sql.Date) row[4]).toLocalDate(),
+                    (String) row[5],
+                    ((Long) row[6]).intValue()
+            );
+            booksReportDto.add(bookReportDto);
+        }
+        return booksReportDto;
+    }
+
+    public List<BookResponse> booksActiveAndStock() {
+        return bookReposity.findAvailableBooksByState(BookState.ACTIVO)
+                .stream()
+                .map(book -> new BookResponse(
+                        book.getCodeBook(),
+                        book.getTitle(),
+                        book.getIsbn(),
+                        book.getPublicationDate(),
+                        book.getPublisher(),
+                        book.getCategory(),
+                        book.getStockTotal(),
+                        book.getEstado(),
+                        book.getAutores().stream()
+                                .map(author -> new AuthorResponse(
+                                        author.getIdAuthor(),
+                                        author.getNames(),
+                                        author.getLastname(),
+                                        author.getNationality(),
+                                        author.getBirthdate(),
+                                        author.getGender()
+                                )).collect(Collectors.toList())
+                )).collect(Collectors.toList());
+    }
 }

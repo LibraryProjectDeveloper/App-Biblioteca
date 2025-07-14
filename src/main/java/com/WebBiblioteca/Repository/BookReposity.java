@@ -21,8 +21,6 @@ public interface BookReposity extends JpaRepository<Book,Long> {
     @Query(value = "SELECT b FROM Book b WHERE year(b.publicationDate) = :anio")
     List<Book> findByPublicationDateYear(@Param("anio") Integer anio);
     List<Book> findByTitleContainingIgnoreCase(String title);
-    List<Book> findByTitleContainingIgnoreCaseOrCategory(String title, Category category);
-
 
     @Query(
             value = "CALL sp_get_popular_books(:p_date_start,:p_date_end,:p_category)",
@@ -33,4 +31,7 @@ public interface BookReposity extends JpaRepository<Book,Long> {
             @Param("p_date_end") LocalDate dateEnd,
             @Param("p_category") String category
     );
+
+    @Query(value = "SELECT b FROM Book b WHERE b.stockTotal > 0 AND b.estado = :estado")
+    List<Book> findAvailableBooksByState(@Param("estado") BookState estado);
 }
