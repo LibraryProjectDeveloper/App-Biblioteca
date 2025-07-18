@@ -26,7 +26,6 @@ public class ReserveBook {
 
     @Column(name = "fecha_reserva", columnDefinition = "DATE")
     @NotNull(message = "La fecha de reserva es obligatoria")
-    @FutureOrPresent(message = "La fecha de reserva no puede ser pasada")
     private LocalDate dateReserve;
 
     @Column(name = "estado_reserva", columnDefinition = "BOOLEAN")
