@@ -52,7 +52,7 @@ public class BookController {
     public ResponseEntity<?> getBooksByCategory(@PathVariable Category category) {
         return ResponseEntity.ok(bookService.filterBookCategory(category));
     }
-    @GetMapping("/searchTitle")
+    @GetMapping("/book-info/searchTitle")
     public ResponseEntity<?> getBooksByTitle(@RequestParam(required = false) String title) {
         List<BookResponse> bookList = bookService.getBooksByTitle(title);
 
@@ -112,6 +112,15 @@ public class BookController {
 
     }
 
+    @GetMapping("/book-info/searchAuthor")
+    public ResponseEntity<?> getBooksByAuthor(@RequestParam(required = false) String authorName) {
+        List<BookResponse> bookList = bookService.getBooksByAuthor(authorName);
+        System.out.println("Length de la lista: " + bookList.size());
+        if (!bookList.isEmpty()) {
+            return ResponseEntity.ok(bookList);
+        }
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(Collections.singletonMap("message", bookList));
+    }
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateBook(@PathVariable Long id, @Valid @RequestBody BookRequest book) {
         return ResponseEntity.ok(bookService.updateBook(id, book));

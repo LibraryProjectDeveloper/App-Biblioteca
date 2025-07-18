@@ -465,4 +465,28 @@ public class BookService {
                                 )).collect(Collectors.toList())
                 )).collect(Collectors.toList());
     }
+
+    public List<BookResponse> getBooksByAuthor(String authorName) {
+        return bookReposity.searchAutor(authorName)
+                .stream()
+                .map(book -> new BookResponse(
+                        book.getCodeBook(),
+                        book.getTitle(),
+                        book.getIsbn(),
+                        book.getPublicationDate(),
+                        book.getPublisher(),
+                        book.getCategory(),
+                        book.getStockTotal(),
+                        book.getEstado(),
+                        book.getAutores().stream()
+                                .map(author -> new AuthorResponse(
+                                        author.getIdAuthor(),
+                                        author.getNames(),
+                                        author.getLastname(),
+                                        author.getNationality(),
+                                        author.getBirthdate(),
+                                        author.getGender()
+                                )).collect(Collectors.toList())
+                )).collect(Collectors.toList());
+    }
 }
