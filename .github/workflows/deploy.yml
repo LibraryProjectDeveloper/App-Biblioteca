@@ -1,0 +1,31 @@
+name: Deploy to Ubuntu server
+
+on:
+  workflow_run:
+    workflows:
+      - "Build and push Docker image"
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_KEY }}
+          script: |
+            docker pull renatobs24/app-biblioteca:latest
+            docker stop app-biblioteca || true
+            docker rm app-biblioteca || true
+            docker run -d --name app-biblioteca \
+              -p 8080:8080 \
+              --env DB_USER \
+              --env DB_PASSWORD \
+              -e DB_DATASOURCE="jdbc:mysql://localhost:3306/db_biblioteca" \
+              renatobs24/app-biblioteca:latest
