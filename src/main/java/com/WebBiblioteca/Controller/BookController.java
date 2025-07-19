@@ -48,8 +48,13 @@ public class BookController {
         return ResponseEntity.ok(bookService.getAllCategories());
     }
 
-    @GetMapping("/categoria/{category}")
+    @GetMapping({"/categoria/{category}","/book-info/category/{category}"})
     public ResponseEntity<?> getBooksByCategory(@PathVariable Category category) {
+        List<BookResponse> listaObtenida = bookService.filterBookCategory(category);
+        if (listaObtenida.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).
+                    body(Collections.singletonMap("message", Collections.singletonMap("category", listaObtenida)));
+        }
         return ResponseEntity.ok(bookService.filterBookCategory(category));
     }
     @GetMapping("/book-info/searchTitle")

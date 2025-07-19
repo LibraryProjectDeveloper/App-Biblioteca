@@ -31,170 +31,32 @@ public class LoanService {
 
     public List<LoanResponse> getAllLoans(){
         Sort sort = Sort.by(Sort.Direction.DESC, "loanDate");
-        return loanRepository.findAll(sort).stream().map(loan -> new LoanResponse(
-                loan.getIdLoan(),
-                loan.getLoanDate(),
-                loan.getDevolutionDate(),
-                loan.getState().name(),
-                loan.getBooksQuantity(),
-                loan.getUser().getCode(),
-                loan.getUser().getName()+" "+loan.getUser().getLastname(),
-                loan.getLibrarian().getCode(),
-                loan.getLibrarian().getName()+" "+loan.getLibrarian().getLastname(),
-                loan.getBooks().stream().map(book -> new BookResponse(
-                        book.getCodeBook(),
-                        book.getTitle(),
-                        book.getIsbn(),
-                        book.getPublicationDate(),
-                        book.getPublisher(),
-                        book.getCategory(),
-                        book.getStockTotal(),
-                        book.getEstado(),
-                        book.getAutores().stream()
-                                .map(author -> new AuthorResponse(
-                                        author.getIdAuthor(),
-                                        author.getNames(),
-                                        author.getLastname(),
-                                        author.getNationality(),
-                                        author.getBirthdate(),
-                                        author.getGender()
-                                )).toList()
-                )).toList()
-        )).toList();
+        return loanRepository.findAll(sort).stream().map(this::mapToLoanResponse).toList();
     }
 
     public List<LoanResponse> getLoansByState(LoanState state){
-        return loanRepository.findByState(state).stream().map(loan -> new LoanResponse(
-
-                loan.getIdLoan(),
-                loan.getLoanDate(),
-                loan.getDevolutionDate(),
-                loan.getState().name(),
-                loan.getBooksQuantity(),
-                loan.getUser().getCode(),
-                loan.getUser().getName()+" "+loan.getUser().getLastname(),
-                loan.getLibrarian().getCode(),
-                loan.getLibrarian().getName()+" "+loan.getLibrarian().getLastname(),
-                loan.getBooks().stream().map(book -> new BookResponse(
-                        book.getCodeBook(),
-                        book.getTitle(),
-                        book.getIsbn(),
-                        book.getPublicationDate(),
-                        book.getPublisher(),
-                        book.getCategory(),
-                        book.getStockTotal(),
-                        book.getEstado(),
-                        book.getAutores().stream()
-                                .map(author -> new AuthorResponse(
-                                        author.getIdAuthor(),
-                                        author.getNames(),
-                                        author.getLastname(),
-                                        author.getNationality(),
-                                        author.getBirthdate(),
-                                        author.getGender()
-                                )).toList()
-                )).toList()
-        )).toList();
+        return loanRepository.findByState(state).stream().map(this::mapToLoanResponse).toList();
     }
     public List<LoanResponse> getLoansByUserId(Long userId) {
-        return loanRepository.findByUserCode(userId).stream().map(loan -> new LoanResponse(
-                loan.getIdLoan(),
-                loan.getLoanDate(),
-                loan.getDevolutionDate(),
-                loan.getState().name(),
-                loan.getBooksQuantity(),
-                loan.getUser().getCode(),
-                loan.getUser().getName()+" "+loan.getUser().getLastname(),
-                loan.getLibrarian().getCode(),
-                loan.getLibrarian().getName()+" "+loan.getLibrarian().getLastname(),
-                loan.getBooks().stream().map(book -> new BookResponse(
-                        book.getCodeBook(),
-                        book.getTitle(),
-                        book.getIsbn(),
-                        book.getPublicationDate(),
-                        book.getPublisher(),
-                        book.getCategory(),
-                        book.getStockTotal(),
-                        book.getEstado(),
-                        book.getAutores().stream()
-                                .map(author -> new AuthorResponse(
-                                        author.getIdAuthor(),
-                                        author.getNames(),
-                                        author.getLastname(),
-                                        author.getNationality(),
-                                        author.getBirthdate(),
-                                        author.getGender()
-                                )).toList()
-                )).toList()
-        )).toList();
+        return loanRepository.findByUserCode(userId).stream().map(this::mapToLoanResponse).toList();
     }
 
     public List<LoanResponse> getLoansByUserDni(String dni, Role role) {
-        return loanRepository.findByUserDni(dni,role).stream().map(loan -> new LoanResponse(
-                loan.getIdLoan(),
-                loan.getLoanDate(),
-                loan.getDevolutionDate(),
-                loan.getState().name(),
-                loan.getBooksQuantity(),
-                loan.getUser().getCode(),
-                loan.getUser().getName()+" "+loan.getUser().getLastname(),
-                loan.getLibrarian().getCode(),
-                loan.getLibrarian().getName()+" "+loan.getLibrarian().getLastname(),
-                loan.getBooks().stream().map(book -> new BookResponse(
-                        book.getCodeBook(),
-                        book.getTitle(),
-                        book.getIsbn(),
-                        book.getPublicationDate(),
-                        book.getPublisher(),
-                        book.getCategory(),
-                        book.getStockTotal(),
-                        book.getEstado(),
-                        book.getAutores().stream()
-                                .map(author -> new AuthorResponse(
-                                        author.getIdAuthor(),
-                                        author.getNames(),
-                                        author.getLastname(),
-                                        author.getNationality(),
-                                        author.getBirthdate(),
-                                        author.getGender()
-                                )).toList()
-                )).toList()
-        )).toList();
+        return loanRepository.findByUserDni(dni,role).stream().map(this::mapToLoanResponse).toList();
     }
 
+    public List<LoanResponse> getLoansByBookTitleOrAuthorNameOrAuthorLastName(Long idUser,String searchTerm) {
+        return loanRepository.findByBookTitleOrAuthorNameOrAuthorLastName(idUser,searchTerm).stream().map(this::mapToLoanResponse).toList();
+    }
+
+    public List<LoanResponse> getLoanStateByUserCode(LoanState state, Long userCode) {
+        return loanRepository.findByStateAndUserCode(state, userCode).stream().map(this::mapToLoanResponse).toList();
+    }
 
     public LoanResponse getLoanById(Long id) {
-        return loanRepository.findById(id)
-                .map(loan -> new LoanResponse(
-                        loan.getIdLoan(),
-                        loan.getLoanDate(),
-                        loan.getDevolutionDate(),
-                        loan.getState().name(),
-                        loan.getBooksQuantity(),
-                        loan.getUser().getCode(),
-                        loan.getUser().getName()+" "+loan.getUser().getLastname(),
-                        loan.getLibrarian().getCode(),
-                        loan.getLibrarian().getName()+" "+loan.getLibrarian().getLastname(),
-                        loan.getBooks().stream().map(book -> new BookResponse(
-                                book.getCodeBook(),
-                                book.getTitle(),
-                                book.getIsbn(),
-                                book.getPublicationDate(),
-                                book.getPublisher(),
-                                book.getCategory(),
-                                book.getStockTotal(),
-                                book.getEstado(),
-                                book.getAutores().stream()
-                                        .map(author -> new AuthorResponse(
-                                                author.getIdAuthor(),
-                                                author.getNames(),
-                                                author.getLastname(),
-                                                author.getNationality(),
-                                                author.getBirthdate(),
-                                                author.getGender()
-                                        )).toList()
-                        )).toList()
-                )).orElseThrow(() -> new ResourceNotFoundException("Loan", "id", id));
+        Loan loan = loanRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Loan", "id", id));
+        return mapToLoanResponse(loan);
     }
     @Transactional
     public LoanResponse saveLoan(LoanRequest loanRequest,Long idLibrarian) {
@@ -211,36 +73,7 @@ public class LoanService {
             loan.setDevolutionDate(loan.getLoanDate().plusDays(loanRequest.getLoanDays()));
             loan.setState(LoanState.PRESTADO);
             Loan savedLoan = loanRepository.save(loan);
-            return new LoanResponse(
-                    savedLoan.getIdLoan(),
-                    savedLoan.getLoanDate(),
-                    savedLoan.getDevolutionDate(),
-                    savedLoan.getState().name(),
-                    savedLoan.getBooksQuantity(),
-                    savedLoan.getUser().getCode(),
-                    savedLoan.getUser().getName()+" "+savedLoan.getUser().getLastname(),
-                    savedLoan.getLibrarian().getCode(),
-                    savedLoan.getLibrarian().getName()+" "+savedLoan.getLibrarian().getLastname(),
-                    savedLoan.getBooks().stream().map(book -> new BookResponse(
-                            book.getCodeBook(),
-                            book.getTitle(),
-                            book.getIsbn(),
-                            book.getPublicationDate(),
-                            book.getPublisher(),
-                            book.getCategory(),
-                            book.getStockTotal(),
-                            book.getEstado(),
-                            book.getAutores().stream()
-                                    .map(author -> new AuthorResponse(
-                                            author.getIdAuthor(),
-                                            author.getNames(),
-                                            author.getLastname(),
-                                            author.getNationality(),
-                                            author.getBirthdate(),
-                                            author.getGender()
-                                    )).toList()
-                    )).toList()
-            );
+            return mapToLoanResponse(savedLoan);
 
         }
         else {
@@ -273,36 +106,7 @@ public class LoanService {
             }
         }
         Loan updatedLoan = loanRepository.save(loan);
-        return new LoanResponse(
-                updatedLoan.getIdLoan(),
-                updatedLoan.getLoanDate(),
-                updatedLoan.getDevolutionDate(),
-                updatedLoan.getState().name(),
-                updatedLoan.getBooksQuantity(),
-                updatedLoan.getUser().getCode(),
-                updatedLoan.getUser().getName()+" "+updatedLoan.getUser().getLastname(),
-                updatedLoan.getLibrarian().getCode(),
-                updatedLoan.getLibrarian().getName()+" "+updatedLoan.getLibrarian().getLastname(),
-                updatedLoan.getBooks().stream().map(book -> new BookResponse(
-                        book.getCodeBook(),
-                        book.getTitle(),
-                        book.getIsbn(),
-                        book.getPublicationDate(),
-                        book.getPublisher(),
-                        book.getCategory(),
-                        book.getStockTotal(),
-                        book.getEstado(),
-                        book.getAutores().stream()
-                                .map(author -> new AuthorResponse(
-                                        author.getIdAuthor(),
-                                        author.getNames(),
-                                        author.getLastname(),
-                                        author.getNationality(),
-                                        author.getBirthdate(),
-                                        author.getGender()
-                                )).toList()
-                )).toList()
-        );
+        return mapToLoanResponse(updatedLoan);
     }
     @Transactional
     public LoanResponse updateState(Long id, String state) {
@@ -316,36 +120,7 @@ public class LoanService {
         }
         loan.setState(loanState);
         Loan updatedLoan = loanRepository.save(loan);
-        return new LoanResponse(
-                updatedLoan.getIdLoan(),
-                updatedLoan.getLoanDate(),
-                updatedLoan.getDevolutionDate(),
-                updatedLoan.getState().name(),
-                updatedLoan.getBooksQuantity(),
-                updatedLoan.getUser().getCode(),
-                updatedLoan.getUser().getName()+" "+updatedLoan.getUser().getLastname(),
-                updatedLoan.getLibrarian().getCode(),
-                updatedLoan.getLibrarian().getName()+" "+updatedLoan.getLibrarian().getLastname(),
-                updatedLoan.getBooks().stream().map(book -> new BookResponse(
-                        book.getCodeBook(),
-                        book.getTitle(),
-                        book.getIsbn(),
-                        book.getPublicationDate(),
-                        book.getPublisher(),
-                        book.getCategory(),
-                        book.getStockTotal(),
-                        book.getEstado(),
-                        book.getAutores().stream()
-                                .map(author -> new AuthorResponse(
-                                        author.getIdAuthor(),
-                                        author.getNames(),
-                                        author.getLastname(),
-                                        author.getNationality(),
-                                        author.getBirthdate(),
-                                        author.getGender()
-                                )).toList()
-                )).toList()
-        );
+        return mapToLoanResponse(updatedLoan);
     }
     @Transactional
     public void deleteLoan(Long id) {
@@ -354,4 +129,53 @@ public class LoanService {
         loanRepository.delete(loan);
     }
 
+    //Metodos para mapear las entidades a DTOS
+    private LoanResponse mapToLoanResponse(Loan loan){
+        return new LoanResponse(
+                loan.getIdLoan(),
+                loan.getLoanDate(),
+                loan.getDevolutionDate(),
+                loan.getState().name(),
+                loan.getBooksQuantity(),
+                loan.getUser().getCode(),
+                loan.getUser().getName()+" "+loan.getUser().getLastname(),
+                loan.getLibrarian().getCode(),
+                loan.getLibrarian().getName()+" "+loan.getLibrarian().getLastname(),
+                mapToBookResponses(loan.getBooks())
+        );
+    }
+
+    private List<BookResponse> mapToBookResponses(Set<Book> book){
+        return book.stream().map(this::mapToBookResponse).toList();
+    }
+
+    private BookResponse mapToBookResponse(Book book){
+        return new BookResponse(
+                book.getCodeBook(),
+                book.getTitle(),
+                book.getIsbn(),
+                book.getPublicationDate(),
+                book.getPublisher(),
+                book.getCategory(),
+                book.getStockTotal(),
+                book.getEstado(),
+                mapToAuthorResponses(book.getAutores())
+        );
+    }
+
+
+    private AuthorResponse mapToAuthorResponse(Author author) {
+        return new AuthorResponse(
+                author.getIdAuthor(),
+                author.getNames(),
+                author.getLastname(),
+                author.getNationality(),
+                author.getBirthdate(),
+                author.getGender()
+        );
+    }
+
+    private List<AuthorResponse> mapToAuthorResponses(Set<Author> authors) {
+        return authors.stream().map(this::mapToAuthorResponse).toList();
+    }
 }

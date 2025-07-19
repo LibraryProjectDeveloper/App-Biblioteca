@@ -31,10 +31,23 @@ public class LoanController {
     public ResponseEntity<?> getLoansByState(@PathVariable LoanState state){
         return ResponseEntity.ok(loanService.getLoansByState(state));
     }
+
+    @GetMapping("/userByState/{state}/{userCode}")
+    public ResponseEntity<?> getLoanStateByUserCode(@PathVariable LoanState state, @PathVariable Long userCode) {
+        return ResponseEntity.ok(loanService.getLoanStateByUserCode(state, userCode));
+    }
+
     @GetMapping("/user/{userId}")
     public ResponseEntity<?> getLoansByUserId(@PathVariable Long userId) {
         return ResponseEntity.ok(loanService.getLoansByUserId(userId));
     }
+
+    @GetMapping("/searchBook/{idUser}")
+    public ResponseEntity<?> getLoansByBookTitleOrAuthorNameOrAuthorLastName(@RequestParam(name = "searchTerm") String searchTerm, @PathVariable Long idUser) {
+        System.out.println("Search Term: " + searchTerm+" User ID: " + idUser);
+        return ResponseEntity.ok(loanService.getLoansByBookTitleOrAuthorNameOrAuthorLastName(idUser,searchTerm));
+    }
+
     @GetMapping("/user/dni/{dni}")
     public ResponseEntity<?> getLoansByUserId(@PathVariable String dni) {
         return ResponseEntity.ok(loanService.getLoansByUserDni(dni, Role.USER));
