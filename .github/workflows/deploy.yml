@@ -21,6 +21,6 @@ jobs:
           key: ${{ secrets.SERVER_KEY }}
           script: |
             cd /home/ubuntu/config-docker         
-            docker compose pull                    
-            docker compose up -d           
-            docker compose ps
+            docker-compose pull                    
+            docker-compose up -d           
+            docker-compose ps
