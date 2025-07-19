@@ -20,12 +20,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_KEY }}
           script: |
-            docker pull renatobs24/app-biblioteca:latest
-            docker stop app-biblioteca || true
-            docker rm app-biblioteca || true
-            docker run -d --name app-biblioteca \
-              -p 8080:8080 \
-              --env DB_USER \
-              --env DB_PASSWORD \
-              -e DB_DATASOURCE="jdbc:mysql://10.0.0.242:3306/db_biblioteca" \
-              renatobs24/app-biblioteca:latest
+            cd /home/ubuntu/config-docker         
+            docker compose pull                    
+            docker compose up -d           
+            docker compose ps
