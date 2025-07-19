@@ -27,5 +27,5 @@ jobs:
               -p 8080:8080 \
               --env DB_USER \
               --env DB_PASSWORD \
-              -e DB_DATASOURCE="jdbc:mysql://localhost:3306/db_biblioteca" \
+              -e DB_DATASOURCE="jdbc:mysql://10.0.0.242:3306/db_biblioteca" \
               renatobs24/app-biblioteca:latest
