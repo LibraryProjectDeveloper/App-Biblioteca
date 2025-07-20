@@ -74,7 +74,6 @@ public class LoanService {
             loan.setState(LoanState.PRESTADO);
             Loan savedLoan = loanRepository.save(loan);
             return mapToLoanResponse(savedLoan);
-
         }
         else {
             throw new IllegalArgumentException("Some books are not available for loan.");
@@ -126,7 +125,9 @@ public class LoanService {
     public void deleteLoan(Long id) {
         Loan loan = loanRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Loan", "id", id));
-        loanRepository.delete(loan);
+        loan.setState(LoanState.CANCELADO);
+        loan.getBooks().forEach(book -> book.setStockTotal(book.getStockTotal()+1));
+        loanRepository.save(loan);
     }
 
     //Metodos para mapear las entidades a DTOS
