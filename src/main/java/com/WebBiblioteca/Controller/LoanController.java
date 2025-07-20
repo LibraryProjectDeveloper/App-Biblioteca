@@ -14,6 +14,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/loan")
@@ -43,7 +45,8 @@ public class LoanController {
     }
 
     @GetMapping("/searchBook/{idUser}")
-    public ResponseEntity<?> getLoansByBookTitleOrAuthorNameOrAuthorLastName(@RequestParam(name = "searchTerm") String searchTerm, @PathVariable Long idUser) {
+    public ResponseEntity<?> getLoansByBookTitleOrAuthorNameOrAuthorLastName(
+            @RequestParam(name = "searchTerm") String searchTerm, @PathVariable Long idUser) {
         System.out.println("Search Term: " + searchTerm+" User ID: " + idUser);
         return ResponseEntity.ok(loanService.getLoansByBookTitleOrAuthorNameOrAuthorLastName(idUser,searchTerm));
     }
@@ -56,6 +59,15 @@ public class LoanController {
     public ResponseEntity<?> getLoanById(@PathVariable Long id) {
         return ResponseEntity.ok(loanService.getLoanById(id));
     }
+
+    @GetMapping("/loanDate/{loanDate}/{idUser}")
+    public ResponseEntity<?> getLoansByDevolutionDateBeforeAndState(@PathVariable("loanDate") String loanDate, @PathVariable Long idUser) {
+        LocalDate searchDate = LocalDate.parse(loanDate);
+        LocalDateTime start = searchDate.atStartOfDay();
+        LocalDateTime end = searchDate.plusDays(1).atStartOfDay();
+        return ResponseEntity.ok(loanService.getLoansByDate(start,end, idUser));
+    }
+
     @PreAuthorize("hasAnyRole('ADMIN','LIBRARIAN')")
     @PostMapping("/add")
     public ResponseEntity<?> addLoan(@RequestBody LoanRequest loanRequest) {

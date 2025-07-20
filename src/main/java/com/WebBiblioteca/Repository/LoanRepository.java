@@ -26,4 +26,6 @@ public interface LoanRepository extends JpaRepository<Loan,Long> {
     List<Loan> findByBookTitleOrAuthorNameOrAuthorLastName(Long idUser,String searchTerm);
 
     List<Loan> findByStateAndUserCode(LoanState state, Long userCode);
+    @Query("SELECT l FROM Loan l WHERE l.loanDate >= ?1 AND l.loanDate <= ?2 AND l.user.code = ?3")
+    List<Loan> findByLoanDateAndUserCode(LocalDateTime dateStart,LocalDateTime dateEnd, Long userCode);
 }

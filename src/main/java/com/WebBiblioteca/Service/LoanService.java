@@ -58,6 +58,10 @@ public class LoanService {
                 .orElseThrow(() -> new ResourceNotFoundException("Loan", "id", id));
         return mapToLoanResponse(loan);
     }
+
+    public List<LoanResponse> getLoansByDate(LocalDateTime dateStart,LocalDateTime dateEnd,Long idUser) {
+        return loanRepository.findByLoanDateAndUserCode(dateStart,dateEnd,idUser).stream().map(this::mapToLoanResponse).toList();
+    }
     @Transactional
     public LoanResponse saveLoan(LoanRequest loanRequest,Long idLibrarian) {
         User user = userService.getUser(loanRequest.getUserId());
