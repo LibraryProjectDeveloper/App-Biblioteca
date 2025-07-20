@@ -97,6 +97,12 @@ public class LoanController {
         return ResponseEntity.ok(loanService.updateState(id, state));
     }
     @PreAuthorize("hasAnyRole('ADMIN','LIBRARIAN')")
+    @PutMapping("/finished/{id}")
+    public ResponseEntity<?> finishedLoan(@PathVariable Long id){
+        return ResponseEntity.ok(loanService.finishedLoan(id));
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN','LIBRARIAN')")
     @PatchMapping("/update/{id}")
     public ResponseEntity<?> updatePartialLoan(@PathVariable Long id, @RequestBody LoanUpdateRequest loanUpdateRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

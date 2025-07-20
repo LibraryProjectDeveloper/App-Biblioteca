@@ -8,10 +8,12 @@ import com.WebBiblioteca.Repository.LateFeeRepository;
 import com.WebBiblioteca.Repository.LoanRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class LoanMonitorScheduler {
@@ -24,7 +26,8 @@ public class LoanMonitorScheduler {
     }
 
 
-    @Scheduled(cron = "0 56,9 * * * ?")
+    @Scheduled(cron = "0 57 3 * * * ")
+    @Transactional
     public void checkOverdueLoans() {
         List<Loan> overdueLoans = loanRepository.findByDevolutionDateBeforeAndState(LocalDateTime.now(), LoanState.PRESTADO);
         for (Loan loan : overdueLoans) {
@@ -36,7 +39,16 @@ public class LoanMonitorScheduler {
                 lateFee.setState(LateFeeState.PENDIENTE);
                 lateFee.setLoan(loan);
                 lateFeeRepository.save(lateFee);
+            }else{
+                Optional<LateFee> lateFeeOptional = lateFeeRepository.getLateFeeByLoan(loan.getIdLoan());
+                if(lateFeeOptional.isPresent()){
+                    LateFee lateFee = lateFeeOptional.get();
+                    lateFee.setAmount(calculateLateFee(loan));
+                    lateFeeRepository.save(lateFee);
+                }
             }
+            loan.setState(LoanState.RETRASADO);
+            loanRepository.save(loan);
         }
     }
     private double calculateLateFee(Loan loan) {
