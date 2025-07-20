@@ -4,5 +4,6 @@ public enum LoanState {
     PRESTADO,
     NO_PRESTADO,
     DEVUELTO,
-    CANCELADO
+    CANCELADO,
+    RETRASADO
 }

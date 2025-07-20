@@ -31,7 +31,6 @@ public class Loan {
 
     @Column(columnDefinition = "DATE",name="fecha_devolucion")
     @NotNull(message = "La fecha de devolución es obligatoria")
-    @Future(message = "La fecha de devolución debe ser una fecha futura")
     private LocalDateTime devolutionDate;
 
     @Enumerated(EnumType.STRING)
