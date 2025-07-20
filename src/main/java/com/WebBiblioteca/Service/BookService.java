@@ -5,6 +5,7 @@ import com.WebBiblioteca.DTO.Autor.AuthorResponse;
 import com.WebBiblioteca.DTO.Book.BookReportDto;
 import com.WebBiblioteca.DTO.Book.BookRequest;
 import com.WebBiblioteca.DTO.Book.BookResponse;
+import com.WebBiblioteca.DTO.Book.CountBookByCategory;
 import com.WebBiblioteca.Exception.DuplicateResourceException;
 import com.WebBiblioteca.Exception.ExcelGenerationException;
 import com.WebBiblioteca.Exception.NoDataFoundException;
@@ -488,5 +489,16 @@ public class BookService {
                                         author.getGender()
                                 )).collect(Collectors.toList())
                 )).collect(Collectors.toList());
+    }
+
+    public List<CountBookByCategory> countBooksLoanedByCategory() {
+        List<Object[]> rawResults = bookReposity.countBooksLoanedByCategory();
+        return rawResults
+                .stream()
+                .map(row -> new CountBookByCategory(
+                        (Category) row[0],
+                        (Long) row[1]
+                ))
+                .collect(Collectors.toList());
     }
 }

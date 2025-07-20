@@ -3,6 +3,7 @@ package com.WebBiblioteca.Controller;
 import com.WebBiblioteca.DTO.Book.BookReportRequest;
 import com.WebBiblioteca.DTO.Book.BookRequest;
 import com.WebBiblioteca.DTO.Book.BookResponse;
+import com.WebBiblioteca.DTO.Book.CountBookByCategory;
 import com.WebBiblioteca.Model.BookState;
 import com.WebBiblioteca.Model.Category;
 import com.WebBiblioteca.Service.BookService;
@@ -90,6 +91,15 @@ public class BookController {
             return ResponseEntity.ok(bookList);
         }
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/countBooksLoanedByCategory")
+    public ResponseEntity<?> countBooksLoanedByCategory() {
+        List<CountBookByCategory> bookList = bookService.countBooksLoanedByCategory();
+        if (!bookList.isEmpty()) {
+            return ResponseEntity.ok(bookList);
+        }
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(Collections.singletonMap("message", "No hay libros prestados por categoria"));
     }
 
     @PostMapping("/add")

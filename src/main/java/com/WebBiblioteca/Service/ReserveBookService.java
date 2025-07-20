@@ -35,89 +35,28 @@ public class ReserveBookService {
         this.userService = userService;
     }
     public List<ReserveBookResponse> getReservationList() {
-        return reserveBookRepository.findAll().stream().map(reserveBook -> new ReserveBookResponse(
-                reserveBook.getCodeReserve(),
-                reserveBook.getBook().getTitle(),
-                reserveBook.getUser().getCode(),
-                reserveBook.getUser().getName()+" "+reserveBook.getUser().getLastname(),
-                reserveBook.getLibrarian().getCode(),
-                reserveBook.getLibrarian().getName() +" "+reserveBook.getLibrarian().getLastname(),
-                reserveBook.getState(),
-                reserveBook.getDateReserve(),
-                reserveBook.getStartTime(),
-                reserveBook.getEndTime()))
+        return reserveBookRepository.findAll().stream().map(this::convertToReserveBookResponse)
                 .toList();
     }
 
     public List<ReserveBookResponse> getReservationActives() {
-        return reserveBookRepository.findByState(true).stream().map(reserveBook -> new ReserveBookResponse(
-                reserveBook.getCodeReserve(),
-                reserveBook.getBook().getTitle(),
-                reserveBook.getUser().getCode(),
-                reserveBook.getUser().getName()+" "+reserveBook.getUser().getLastname(),
-                reserveBook.getLibrarian().getCode(),
-                reserveBook.getLibrarian().getName() +" "+reserveBook.getLibrarian().getLastname(),
-                reserveBook.getState(),
-                reserveBook.getDateReserve(),
-                reserveBook.getStartTime(),
-                reserveBook.getEndTime()))
+        return reserveBookRepository.findByState(true).stream().map(this::convertToReserveBookResponse)
                 .toList();
     }
     public List<ReserveBookResponse> gerReservationInactive() {
-        return reserveBookRepository.findByState(false).stream().map(reserveBook -> new ReserveBookResponse(
-                reserveBook.getCodeReserve(),
-                reserveBook.getBook().getTitle(),
-                reserveBook.getUser().getCode(),
-                reserveBook.getUser().getName(),
-                reserveBook.getLibrarian().getCode(),
-                reserveBook.getLibrarian().getName() +" "+reserveBook.getLibrarian().getLastname(),
-                reserveBook.getState(),
-                reserveBook.getDateReserve(),
-                reserveBook.getStartTime(),
-                reserveBook.getEndTime()))
+        return reserveBookRepository.findByState(false).stream().map(this::convertToReserveBookResponse)
                 .toList();
     }
     public ReserveBookResponse getReservationById(Long id){
         ReserveBook reserveBook = reserveBookRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("ReserveBook", "id", id));
-        return new ReserveBookResponse(
-                reserveBook.getCodeReserve(),
-                reserveBook.getBook().getTitle(),
-                reserveBook.getUser().getCode(),
-                reserveBook.getUser().getName()+" "+reserveBook.getUser().getLastname(),
-                reserveBook.getLibrarian().getCode(),
-                reserveBook.getLibrarian().getName() +" "+reserveBook.getLibrarian().getLastname(),
-                reserveBook.getState(),
-                reserveBook.getDateReserve(),
-                reserveBook.getStartTime(),
-                reserveBook.getEndTime()
-        );
+        return convertToReserveBookResponse(reserveBook);
     }
     public List<ReserveBookResponse> getReservationByUser(Long id) {
-        return reserveBookRepository.findByUserId(id).stream().map(reserveBook -> new ReserveBookResponse(
-                reserveBook.getCodeReserve(),
-                reserveBook.getBook().getTitle(),
-                reserveBook.getUser().getCode(),
-                reserveBook.getUser().getName()+" "+reserveBook.getUser().getLastname(),
-                reserveBook.getLibrarian().getCode(),
-                reserveBook.getLibrarian().getName() +" "+reserveBook.getLibrarian().getLastname(),
-                reserveBook.getState(),
-                reserveBook.getDateReserve(),
-                reserveBook.getStartTime(),
-                reserveBook.getEndTime()))
+        return reserveBookRepository.findByUserId(id).stream().map(this::convertToReserveBookResponse)
                 .toList();
     }
     public List<ReserveBookResponse> getReservationByDni(String dni) {
-        return reserveBookRepository.findByUserDni(dni).stream().map(reserveBook -> new ReserveBookResponse(
-                        reserveBook.getCodeReserve(),
-                        reserveBook.getBook().getTitle(),
-                        reserveBook.getUser().getCode(),
-                        reserveBook.getUser().getName()+" "+reserveBook.getUser().getLastname(),
-                        reserveBook.getLibrarian().getCode(),
-                        reserveBook.getLibrarian().getName() +" "+reserveBook.getLibrarian().getLastname(),
-                        reserveBook.getState(),
-                        reserveBook.getDateReserve(),
-                        reserveBook.getStartTime(),
-                        reserveBook.getEndTime()))
+        return reserveBookRepository.findByUserDni(dni).stream().map(this::convertToReserveBookResponse)
                 .toList();
     }
     public ReserveBookResponse saveReservation(ReserveBookRequest request){
@@ -135,18 +74,7 @@ public class ReserveBookService {
             reserveBook.setEndTime(LocalTime.now().plusHours(4));
             ReserveBook reserveBookSave = reserveBookRepository.save(reserveBook);
             bookService.updateBookStock(request.getBookId(), -1);
-            return new ReserveBookResponse(
-                    reserveBookSave.getCodeReserve(),
-                    reserveBookSave.getBook().getTitle(),
-                    reserveBookSave.getUser().getCode(),
-                    reserveBookSave.getUser().getName()+" "+reserveBookSave.getUser().getLastname(),
-                    reserveBookSave.getLibrarian().getCode(),
-                    reserveBookSave.getLibrarian().getName() +" "+reserveBookSave.getLibrarian().getLastname(),
-                    reserveBookSave.getState(),
-                    reserveBookSave.getDateReserve(),
-                    reserveBookSave.getStartTime(),
-                    reserveBookSave.getEndTime()
-            );
+            return convertToReserveBookResponse(reserveBookSave);
         } else {
             throw new IllegalArgumentException("Some books are not available for loan.");
         }
@@ -169,18 +97,7 @@ public class ReserveBookService {
             reserveBook.setState(request.getIsActive());
         }
         ReserveBook response = reserveBookRepository.save(reserveBook);
-        return new ReserveBookResponse(
-                response.getCodeReserve(),
-                response.getBook().getTitle(),
-                response.getUser().getCode(),
-                response.getUser().getName()+" "+response.getUser().getLastname(),
-                response.getLibrarian().getCode(),
-                response.getLibrarian().getName() +" "+response.getLibrarian().getLastname(),
-                response.getState(),
-                response.getDateReserve(),
-                response.getStartTime(),
-                response.getEndTime()
-        );
+        return convertToReserveBookResponse(response);
     }
 
     public void deleteReservation(Long id){
@@ -194,32 +111,12 @@ public class ReserveBookService {
         if (reserveBooks.isEmpty()) {
             throw new ResourceNotFoundException("Reservation", "title", title);
         }
-        return reserveBooks.stream().map(reserveBook -> new ReserveBookResponse(
-                reserveBook.getCodeReserve(),
-                reserveBook.getBook().getTitle(),
-                reserveBook.getUser().getCode(),
-                reserveBook.getUser().getName()+" "+reserveBook.getUser().getLastname(),
-                reserveBook.getLibrarian().getCode(),
-                reserveBook.getLibrarian().getName() +" "+reserveBook.getLibrarian().getLastname(),
-                reserveBook.getState(),
-                reserveBook.getDateReserve(),
-                reserveBook.getStartTime(),
-                reserveBook.getEndTime()))
+        return reserveBooks.stream().map(this::convertToReserveBookResponse)
                 .toList();
     }
 
     public List<ReserveBookResponse> getReservationByDate(LocalDate date){
-       return reserveBookRepository.findByDateReserve(date).stream().map(reserveBook -> new ReserveBookResponse(
-                reserveBook.getCodeReserve(),
-                reserveBook.getBook().getTitle(),
-                reserveBook.getUser().getCode(),
-                reserveBook.getUser().getName()+" "+reserveBook.getUser().getLastname(),
-                reserveBook.getLibrarian().getCode(),
-                reserveBook.getLibrarian().getName() +" "+reserveBook.getLibrarian().getLastname(),
-                reserveBook.getState(),
-                reserveBook.getDateReserve(),
-                reserveBook.getStartTime(),
-                reserveBook.getEndTime()))
+       return reserveBookRepository.findByDateReserve(date).stream().map(this::convertToReserveBookResponse)
                 .toList();
     }
 
@@ -293,5 +190,48 @@ public class ReserveBookService {
             reserveBookReportDto.add(reportDto);
         }
         return reserveBookReportDto;
+    }
+
+    public List<ReserveBookResponse> getReservationsByBookTitleOrAuthorNameOrAuthorLastName(String query, Long userId) {
+        List<ReserveBook> reserveBooks = reserveBookRepository.findByBookTitleOrAuthorNameOrAuthorLastName(query, userId);
+        if (reserveBooks.isEmpty()) {
+            throw new ResourceNotFoundException("Reservation", "title or author name", query + " or " + query);
+        }
+        return reserveBooks.stream().map(this::convertToReserveBookResponse)
+                .toList();
+    }
+
+    private ReserveBookResponse convertToReserveBookResponse(ReserveBook reserveBooks) {
+        return new ReserveBookResponse(
+                reserveBooks.getCodeReserve(),
+                reserveBooks.getBook().getTitle(),
+                reserveBooks.getUser().getCode(),
+                reserveBooks.getUser().getName()+" "+reserveBooks.getUser().getLastname(),
+                reserveBooks.getLibrarian().getCode(),
+                reserveBooks.getLibrarian().getName() +" "+reserveBooks.getLibrarian().getLastname(),
+                reserveBooks.getState(),
+                reserveBooks.getDateReserve(),
+                reserveBooks.getStartTime(),
+                reserveBooks.getEndTime(),
+                reserveBooks.getBook().getAutores().stream()
+                        .map(author -> author.getNames() + " " + author.getLastname())
+                        .reduce((a, b) -> a + ", " + b)
+                        .orElse("Unknown Author"),
+                reserveBooks.getBook().getCategory()
+        );
+    }
+
+    public List<ReserveBookResponse> getReservationByDateAndUserCode(LocalDate date, Long userCode) {
+    return reserveBookRepository.findByDateReserveAndUserCode(date, userCode).stream()
+            .map(this::convertToReserveBookResponse)
+            .toList();
+    }
+
+    public List<ReserveBookResponse> getReservationsByStateAndUserCode(boolean state, Long userCode) {
+        List<ReserveBook> reserveBooks = reserveBookRepository.findByStateAndUserCode(state, userCode);
+        if (reserveBooks.isEmpty()) {
+            throw new ResourceNotFoundException("Reservation", "state and user code", state + " and " + userCode);
+        }
+        return reserveBooks.stream().map(this::convertToReserveBookResponse).toList();
     }
 }

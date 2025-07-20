@@ -31,5 +31,11 @@ public interface ReserveBookRepository extends JpaRepository<ReserveBook, Long> 
             @Param("p_date_end")LocalDate date_end
             );
 
+    @Query("select r from ReserveBook as r join r.book l join l.autores as la where l.title  like %?1% or la.names like %?1% and r.user.code = ?2 ")
+    List<ReserveBook> findByBookTitleOrAuthorNameOrAuthorLastName(String query, Long userId);
+
+    List<ReserveBook> findByDateReserveAndUserCode(LocalDate dateReserve, Long userCode);
+
+    List<ReserveBook> findByStateAndUserCode(boolean state, Long userCode);
 }
 

@@ -53,10 +53,32 @@ public class ReserveBookController {
         return ResponseEntity.ok(reserveBookService.getReservationsByBookTitle(title));
     }
 
+    @GetMapping("/searchReserveBookAut/{query}/{idUser}")
+    public ResponseEntity<?> getReservationByBookTitleOrAuthorNameOrAuthorLastName(
+            @PathVariable String query,
+            @PathVariable Long idUser) {
+        return ResponseEntity.ok(reserveBookService.getReservationsByBookTitleOrAuthorNameOrAuthorLastName(query, idUser));
+    }
+
     @GetMapping("/date/{date}")
     public ResponseEntity<?> getReservationByDate(@PathVariable String date) {
         return ResponseEntity.ok(reserveBookService.getReservationByDate(LocalDate.parse(date)));
     }
+
+    @GetMapping("/searchDateByUser/{date}/user/{userCode}")
+    public ResponseEntity<?> getReservationByDateAndUserCode(
+            @PathVariable String date,
+            @PathVariable Long userCode) {
+        return ResponseEntity.ok(reserveBookService.getReservationByDateAndUserCode(LocalDate.parse(date), userCode));
+    }
+
+    @GetMapping("/searchByStateAndUser/{state}/user/{userCode}")
+    public ResponseEntity<?> getReservationsByStateAndUserCode(
+            @PathVariable boolean state,
+            @PathVariable Long userCode) {
+        return ResponseEntity.ok(reserveBookService.getReservationsByStateAndUserCode(state, userCode));
+    }
+
     @PostMapping("/add")
     public ResponseEntity<?> saveReservation(@RequestBody ReserveBookRequest reserveBookRequest) {
         ReserveBookResponse reserveBookCreated = reserveBookService.saveReservation(reserveBookRequest);

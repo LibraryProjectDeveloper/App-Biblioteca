@@ -1,4 +1,5 @@
 package com.WebBiblioteca.Repository;
+import com.WebBiblioteca.DTO.Book.CountBookByCategory;
 import com.WebBiblioteca.Model.Book;
 import com.WebBiblioteca.Model.BookState;
 import com.WebBiblioteca.Model.Category;
@@ -37,4 +38,7 @@ public interface BookReposity extends JpaRepository<Book,Long> {
 
     @Query("SELECT b FROM Book b join b.autores a WHERE a.names LIKE %?1% OR a.lastname LIKE %?1%")
     List<Book> searchAutor(@Param("authorName") String authorName);
+
+    @Query(value = "SELECT b.category, COUNT(r.idLoan) FROM Book b JOIN b.loans r WHERE r.state = 'PRESTADO' GROUP BY b.category")
+    List<Object[]> countBooksLoanedByCategory();
 }
