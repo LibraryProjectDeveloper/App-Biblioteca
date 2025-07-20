@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -28,4 +29,7 @@ public interface LoanRepository extends JpaRepository<Loan,Long> {
     List<Loan> findByStateAndUserCode(LoanState state, Long userCode);
     @Query("SELECT l FROM Loan l WHERE l.loanDate >= ?1 AND l.loanDate <= ?2 AND l.user.code = ?3")
     List<Loan> findByLoanDateAndUserCode(LocalDateTime dateStart,LocalDateTime dateEnd, Long userCode);
+
+    @Query("SELECT l FROM Loan l WHERE l.loanDate BETWEEN ?1 AND ?2")
+    List<Loan> findByLoanDateBetween(LocalDateTime startDate, LocalDateTime endDate);
 }
