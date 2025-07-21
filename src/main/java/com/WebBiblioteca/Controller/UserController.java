@@ -28,12 +28,15 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
     @GetMapping("/actives")
-    public ResponseEntity<?> getAllUsersActives() {
-        return ResponseEntity.ok(userService.getAllUsersByState(true));
+    public ResponseEntity<?> getAllUsersActives(@RequestParam(required = false) int page,
+                                                @RequestParam(required = false) int size) {
+        return ResponseEntity.ok(userService.getAllUsersByState(true, page, size));
     }
     @GetMapping("/inactives")
-    public ResponseEntity<?> getAllUsersInactives() {
-        return ResponseEntity.ok(userService.getAllUsersByState(false));
+    public ResponseEntity<?> getAllUsersInactives(@RequestParam(value = "page",defaultValue = "0") int page,
+                                                  @RequestParam(value = "size",defaultValue = "10") int size)
+    {
+        return ResponseEntity.ok(userService.getAllUsersByState(false, page, size));
     }
     @PreAuthorize("hasAnyRole('ADMIN', 'LIBRARIAN')")
     @GetMapping("/{id}")
@@ -46,17 +49,11 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserByDniAndRol(dni,rol));
     }
     @GetMapping("/search/{consult}")
-    public ResponseEntity<?> searchUser(@PathVariable String consult) {
+    public ResponseEntity<?> searchUser(@PathVariable String consult,
+                                        @RequestParam(value = "page",defaultValue = "0") int page,
+                                        @RequestParam(value = "size",defaultValue = "10") int size) {
         try {
-            Object result;
-            if (consult.contains("@")) {
-                result = userService.getUserByEmail(consult);
-            } else if (consult.matches("^[0-9]{8}$")) {
-                result = userService.getUserByDNI(consult);
-            } else {
-                result = userService.getUserByName(consult);
-            }
-            return ResponseEntity.ok(result);
+            return ResponseEntity.ok(userService.getUserByNameOrEmailOrDNI(consult,page,size));
         }catch (ResourceNotFoundException e){
             return ResponseEntity.status(404).
                     body(Collections.singletonMap("message", e.getMessage()));
@@ -64,8 +61,10 @@ public class UserController {
     }
 
     @GetMapping("/rol/{idRol}")
-    public ResponseEntity<?> getUsersByRol(@PathVariable Long idRol) {
-        return ResponseEntity.ok(userService.findByRol(idRol));
+    public ResponseEntity<?> getUsersByRol(@PathVariable Long idRol,
+                                           @RequestParam(value = "page",defaultValue = "0") int page,
+                                           @RequestParam(value = "size",defaultValue = "10") int size) {
+        return ResponseEntity.ok(userService.findByRol(idRol,page,size));
     }
 
     @GetMapping("/existsEmail/{email}")

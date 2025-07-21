@@ -2,15 +2,21 @@ package com.WebBiblioteca.Service;
 
 import com.WebBiblioteca.Config.EncodeConfig;
 import com.WebBiblioteca.DTO.CustomerUserDetails;
+import com.WebBiblioteca.DTO.Loan.LoanResponse;
+import com.WebBiblioteca.DTO.PageResponse;
 import com.WebBiblioteca.DTO.Usuario.UserRequest;
 import com.WebBiblioteca.DTO.Usuario.UserResponse;
 import com.WebBiblioteca.Exception.DuplicateResourceException;
 import com.WebBiblioteca.Exception.ResourceNotFoundException;
+import com.WebBiblioteca.Model.Loan;
 import com.WebBiblioteca.Model.Rol;
 import com.WebBiblioteca.Model.Role;
 import com.WebBiblioteca.Model.User;
 import com.WebBiblioteca.Repository.RolRepository;
 import com.WebBiblioteca.Repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -57,22 +63,11 @@ public class UserService  implements UserDetailsService {
                         user.getRol().getIdRol()
                 )).toList();
     }
-    public List<UserResponse> getAllUsersByState(Boolean state) {
-        return userRepository.findByState(state).
-                stream().map(user -> new UserResponse(
-                        user.getCode(),
-                        user.getName(),
-                        user.getLastname(),
-                        user.getEmail(),
-                        user.getPhone(),
-                        user.getAddress(),
-                        user.getDNI(),
-                        user.getPassword(),
-                        user.getState(),
-                        user.getDateRegistered(),
-                        user.getRol().getNameRol().name(),
-                        user.getRol().getIdRol()
-                )).toList();
+    public PageResponse<UserResponse> getAllUsersByState(Boolean state, int page, int size) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "dateRegistered");
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<User> userPage = userRepository.findByState(state, pageable);
+        return mapToPageResponse(userPage);
     }
 
     @Transactional
@@ -235,6 +230,12 @@ public class UserService  implements UserDetailsService {
                 )).orElseThrow(() -> new ResourceNotFoundException("Usuario","DNI",dni));
     }
 
+    public PageResponse<UserResponse> getUserByNameOrEmailOrDNI(String query, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "dateRegistered"));
+        Page<User> userPage = userRepository.findByNameOrEmailOrDNI(query, pageable);
+        return mapToPageResponse(userPage);
+    }
+
     public UserResponse getUserByEmail(String email) {
         return userRepository.findByEmail(email).map(
                 user -> new UserResponse(
@@ -253,22 +254,43 @@ public class UserService  implements UserDetailsService {
                 )).orElseThrow(() -> new ResourceNotFoundException("Usuario","email",email));
     }
 
-    public List<UserResponse> findByRol(Long rol){
-        return userRepository.findByRol(rol)
-                .stream().map(user -> new UserResponse(
-                        user.getCode(),
-                        user.getName(),
-                        user.getLastname(),
-                        user.getEmail(),
-                        user.getPhone(),
-                        user.getAddress(),
-                        user.getDNI(),
-                        user.getPassword(),
-                        user.getState(),
-                        user.getDateRegistered(),
-                        user.getRol().getNameRol().name(),
-                        user.getRol().getIdRol()
-                )).toList();
+    private PageResponse<UserResponse> mapToPageResponse(Page<User> userPage){
+        List<UserResponse> content = userPage.getContent()
+                .stream()
+                .map(this::mapToUserResponse)
+                .toList();
+
+        return new PageResponse<>(
+                content,
+                userPage.getNumber(),
+                userPage.getSize(),
+                userPage.getTotalElements(),
+                userPage.getTotalPages(),
+                userPage.isLast()
+        );
+    }
+
+    private UserResponse mapToUserResponse(User user) {
+        return new UserResponse(
+                user.getCode(),
+                user.getName(),
+                user.getLastname(),
+                user.getEmail(),
+                user.getPhone(),
+                user.getAddress(),
+                user.getDNI(),
+                user.getPassword(),
+                user.getState(),
+                user.getDateRegistered(),
+                user.getRol().getNameRol().name(),
+                user.getRol().getIdRol()
+        );
+    }
+
+    public PageResponse<UserResponse> findByRol(Long rol,int page,int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "dateRegistered"));
+        Page<User> userPage = userRepository.findByRol(rol, pageable);
+        return mapToPageResponse(userPage);
     }
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
