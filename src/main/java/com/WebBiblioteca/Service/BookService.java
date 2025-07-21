@@ -286,7 +286,17 @@ public class BookService {
                         book.getPublisher(),
                         book.getCategory(),
                         book.getStockTotal(),
-                        book.getEstado())).collect(Collectors.toList());
+                        book.getEstado(),
+                        book.getAutores().stream()
+                                .map(author -> new AuthorResponse(
+                                        author.getIdAuthor(),
+                                        author.getNames(),
+                                        author.getLastname(),
+                                        author.getNationality(),
+                                        author.getBirthdate(),
+                                        author.getGender()
+                                )).collect(Collectors.toList())
+                )).collect(Collectors.toList());
     }
 
     public List<BookResponse> getBooksByCategoryName(String category, int page, int size) {

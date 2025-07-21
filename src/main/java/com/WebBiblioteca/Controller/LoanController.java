@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/loan")
@@ -77,6 +78,15 @@ public class LoanController {
         LocalDateTime start = searchDate.atStartOfDay();
         LocalDateTime end = searchDate.plusDays(1).atStartOfDay();
         return ResponseEntity.ok(loanService.getLoansByDate(start,end, idUser));
+    }
+
+    @GetMapping("/loansByDate/{date}")
+    public ResponseEntity<?> getLoansByDateRange(@PathVariable String date) {
+        LocalDate searchDate = LocalDate.parse(date);
+        LocalDateTime startDate = searchDate.atStartOfDay();
+        LocalDateTime endDate = searchDate.plusDays(1).atStartOfDay();
+        List<LoanResponse> loans = loanService.getLoansByDateRange(startDate, endDate);
+        return ResponseEntity.ok(loans);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','LIBRARIAN')")

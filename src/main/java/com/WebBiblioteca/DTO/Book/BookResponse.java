@@ -41,7 +41,8 @@ public class BookResponse {
         this.state = state;
     }
 
-    public BookResponse(Long codeBook, String title, String isbn, LocalDate publicationDate, String publisher, Category category, Integer stockTotal, BookState state, List<AuthorResponse> author) {
+    public BookResponse(Long codeBook, String title, String isbn, LocalDate publicationDate, String publisher, Category category,
+                        Integer stockTotal, BookState state, List<AuthorResponse> author) {
         this.codeBook = codeBook;
         this.title = title;
         this.isbn = isbn;

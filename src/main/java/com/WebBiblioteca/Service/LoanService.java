@@ -16,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -78,6 +79,14 @@ public class LoanService {
     public List<LoanResponse> getLoansByDate(LocalDateTime dateStart,LocalDateTime dateEnd,Long idUser) {
         return loanRepository.findByLoanDateAndUserCode(dateStart,dateEnd,idUser).stream().map(this::mapToLoanResponse).toList();
     }
+
+    public List<LoanResponse> getLoansByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
+        return loanRepository.findByLoanDateBetween(startDate, endDate)
+                .stream()
+                .map(this::mapToLoanResponse)
+                .toList();
+    }
+
     @Transactional
     public LoanResponse saveLoan(LoanRequest loanRequest,Long idLibrarian) {
         User user = userService.getUser(loanRequest.getUserId());
