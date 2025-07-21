@@ -38,8 +38,10 @@ public class BookController {
     }
 
     @GetMapping("/year/{year}")
-    public ResponseEntity<?> getBooksByPublicationYear(@PathVariable Integer year) {
-        return ResponseEntity.ok(bookService.getBooksByPublicationYear(year));
+    public ResponseEntity<?> getBooksByPublicationYear(@PathVariable Integer year,
+                                                       @RequestParam(value = "page", defaultValue = "0") int page,
+                                                       @RequestParam(value = "size", defaultValue = "10") int size) {
+        return ResponseEntity.ok(bookService.getBooksByPublicationYear(year,page,size));
     }
 
     @GetMapping("/book-info/{id}")

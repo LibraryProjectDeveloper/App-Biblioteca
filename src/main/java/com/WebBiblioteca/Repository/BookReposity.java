@@ -25,7 +25,8 @@ public interface BookReposity extends JpaRepository<Book,Long> {
    Page<Book> findByCategory(Category category, Pageable pageable);
 
     @Query(value = "SELECT b FROM Book b WHERE year(b.publicationDate) = :anio")
-    List<Book> findByPublicationDateYear(@Param("anio") Integer anio);
+    Page<Book> findByPublicationDateYear(@Param("anio") Integer anio,Pageable pageable);
+
     List<Book> findByTitleContainingIgnoreCase(String title);
 
     @Query(

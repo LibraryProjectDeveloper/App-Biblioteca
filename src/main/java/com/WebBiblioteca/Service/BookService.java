@@ -87,28 +87,10 @@ public class BookService {
                 .collect(Collectors.toList());
     }
 
-    public List<BookResponse> getBooksByPublicationYear(Integer year) {
-        return bookReposity.findByPublicationDateYear(year)
-                .stream()
-                .map(book -> new BookResponse(
-                        book.getCodeBook(),
-                        book.getTitle(),
-                        book.getIsbn(),
-                        book.getPublicationDate(),
-                        book.getPublisher(),
-                        book.getCategory(),
-                        book.getStockTotal(),
-                        book.getEstado(),
-                        book.getAutores().stream()
-                                .map(author -> new AuthorResponse(
-                                        author.getIdAuthor(),
-                                        author.getNames(),
-                                        author.getLastname(),
-                                        author.getNationality(),
-                                        author.getBirthdate(),
-                                        author.getGender()
-                                )).collect(Collectors.toList())
-                )).collect(Collectors.toList());
+    public PageResponse<BookResponse> getBooksByPublicationYear(Integer year,int page,int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Book> Bookpage = bookReposity.findByPublicationDateYear(year, pageable);
+        return convertToPageResponse(Bookpage);
     }
 
     @Transactional
