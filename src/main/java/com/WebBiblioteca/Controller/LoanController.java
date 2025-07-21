@@ -25,13 +25,22 @@ public class LoanController {
     public LoanController(LoanService loanService) {
         this.loanService = loanService;
     }
-    @GetMapping("")
+    @GetMapping("/all")
     public ResponseEntity<?> getAllLoans(){
         return ResponseEntity.ok(loanService.getAllLoans());
     }
+    @GetMapping("")
+    public ResponseEntity<?> getAllLoans(
+            @RequestParam(value = "page",defaultValue = "0") int pages,
+            @RequestParam(value = "size",defaultValue = "10") int size
+    ){
+        return ResponseEntity.ok(loanService.getAllLoans(pages,size));
+    }
+
     @GetMapping("/state/{state}")
-    public ResponseEntity<?> getLoansByState(@PathVariable LoanState state){
-        return ResponseEntity.ok(loanService.getLoansByState(state));
+    public ResponseEntity<?> getLoansByState(@PathVariable LoanState state, @RequestParam(value = "page", defaultValue = "0") int page,
+                                             @RequestParam(value = "size", defaultValue = "10") int size) {
+        return ResponseEntity.ok(loanService.getLoansByState(page,size,state));
     }
 
     @GetMapping("/userByState/{state}/{userCode}")
@@ -52,8 +61,10 @@ public class LoanController {
     }
 
     @GetMapping("/user/dni/{dni}")
-    public ResponseEntity<?> getLoansByUserId(@PathVariable String dni) {
-        return ResponseEntity.ok(loanService.getLoansByUserDni(dni, Role.USER));
+    public ResponseEntity<?> getLoansByUserId(@PathVariable String dni,
+                                              @RequestParam(value = "page", defaultValue = "0") int page,
+                                              @RequestParam(value = "size", defaultValue = "10") int size) {
+        return ResponseEntity.ok(loanService.getLoansByUserDni(dni, Role.USER, page, size));
     }
     @GetMapping("/id/{id}")
     public ResponseEntity<?> getLoanById(@PathVariable Long id) {

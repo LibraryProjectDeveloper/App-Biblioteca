@@ -5,9 +5,13 @@ import com.WebBiblioteca.DTO.Book.BookResponse;
 import com.WebBiblioteca.DTO.Loan.LoanRequest;
 import com.WebBiblioteca.DTO.Loan.LoanResponse;
 import com.WebBiblioteca.DTO.Loan.LoanUpdateRequest;
+import com.WebBiblioteca.DTO.PageResponse;
 import com.WebBiblioteca.Exception.ResourceNotFoundException;
 import com.WebBiblioteca.Model.*;
 import com.WebBiblioteca.Repository.LoanRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,15 +38,27 @@ public class LoanService {
         return loanRepository.findAll(sort).stream().map(this::mapToLoanResponse).toList();
     }
 
-    public List<LoanResponse> getLoansByState(LoanState state){
-        return loanRepository.findByState(state).stream().map(this::mapToLoanResponse).toList();
+    public PageResponse<LoanResponse> getAllLoans(int page,int size){
+        Sort sort = Sort.by(Sort.Direction.DESC,"loanDate");
+        Pageable pageable = PageRequest.of(page,size,sort);
+        Page<Loan> loanPage = loanRepository.findAll(pageable);
+        return mapToPageResponse(loanPage);
+    }
+
+    public PageResponse<LoanResponse> getLoansByState(int page,int size,LoanState state){
+        Sort sort = Sort.by(Sort.Direction.DESC, "loanDate");
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Loan> loanPage = loanRepository.findByState(state, pageable);
+        return mapToPageResponse(loanPage);
     }
     public List<LoanResponse> getLoansByUserId(Long userId) {
         return loanRepository.findByUserCode(userId).stream().map(this::mapToLoanResponse).toList();
     }
 
-    public List<LoanResponse> getLoansByUserDni(String dni, Role role) {
-        return loanRepository.findByUserDni(dni,role).stream().map(this::mapToLoanResponse).toList();
+    public PageResponse<LoanResponse> getLoansByUserDni(String dni, Role role, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "loanDate"));
+        Page<Loan> loanPage = loanRepository.findByUserDni(dni, role, pageable);
+        return mapToPageResponse(loanPage);
     }
 
     public List<LoanResponse> getLoansByBookTitleOrAuthorNameOrAuthorLastName(Long idUser,String searchTerm) {
@@ -143,6 +159,25 @@ public class LoanService {
     }
 
     //Metodos para mapear las entidades a DTOS
+    private PageResponse<LoanResponse> mapToPageResponse(Page<Loan> loanPage){
+        List<LoanResponse> content = loanPage.getContent()
+                .stream()
+                .map(this::mapToLoanResponse)
+                .toList();
+
+        return new PageResponse<>(
+                content,
+                loanPage.getNumber(),
+                loanPage.getSize(),
+                loanPage.getTotalElements(),
+                loanPage.getTotalPages(),
+                loanPage.isLast()
+        );
+    }
+
+
+
+
     private LoanResponse mapToLoanResponse(Loan loan){
         return new LoanResponse(
                 loan.getIdLoan(),

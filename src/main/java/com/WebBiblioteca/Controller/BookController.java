@@ -8,7 +8,6 @@ import com.WebBiblioteca.Model.BookState;
 import com.WebBiblioteca.Model.Category;
 import com.WebBiblioteca.Service.BookService;
 import jakarta.validation.Valid;
-import org.openxmlformats.schemas.drawingml.x2006.main.STAdjAngle;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,14 +24,17 @@ public class BookController {
     }
 
     @GetMapping("")
-    public ResponseEntity<?> getAllBooks() {
-        List<BookResponse> bookList = bookService.getBookList();
-        return ResponseEntity.ok(bookList);
+    public ResponseEntity<?> getAllBooks(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok(bookService.getBookList(page,size));
     }
     @GetMapping("/state/{value}")
-    public ResponseEntity<?> getAllActiveBooks(@PathVariable BookState value) {
-        List<BookResponse> bookList = bookService.getBookList(value);
-        return ResponseEntity.ok(bookList);
+    public ResponseEntity<?> getAllActiveBooks(@PathVariable BookState value,
+                                               @RequestParam(value = "page", defaultValue = "0") int page,
+                                               @RequestParam(value = "size", defaultValue = "10") int size) {
+        return ResponseEntity.ok(bookService.getBookList(value,page,size));
     }
 
     @GetMapping("/year/{year}")
@@ -50,13 +52,9 @@ public class BookController {
     }
 
     @GetMapping({"/categoria/{category}","/book-info/category/{category}"})
-    public ResponseEntity<?> getBooksByCategory(@PathVariable Category category) {
-        List<BookResponse> listaObtenida = bookService.filterBookCategory(category);
-        if (listaObtenida.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).
-                    body(Collections.singletonMap("message", Collections.singletonMap("category", listaObtenida)));
-        }
-        return ResponseEntity.ok(bookService.filterBookCategory(category));
+    public ResponseEntity<?> getBooksByCategory(@PathVariable Category category, @RequestParam(value = "page", defaultValue = "0") int page,
+                                               @RequestParam(value = "size", defaultValue = "10") int size) {
+        return ResponseEntity.ok(bookService.getBooksByCategory(category, page, size));
     }
     @GetMapping("/book-info/searchTitle")
     public ResponseEntity<?> getBooksByTitle(@RequestParam(required = false) String title) {
@@ -84,13 +82,10 @@ public class BookController {
     }
 
     @GetMapping("/searchCategory")
-    public ResponseEntity<?> getBooksByCategoryName(@RequestParam(required = false) String category) {
-        List<BookResponse> bookList = bookService.getBooksByCategoryName(category);
-
-        if (!bookList.isEmpty()) {
-            return ResponseEntity.ok(bookList);
-        }
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> getBooksByCategoryName(@RequestParam(required = false) String category,
+                                                    @RequestParam(value = "page",defaultValue = "0") int page,
+                                                    @RequestParam(value="size",defaultValue = "10") int size) {
+        return ResponseEntity.ok(bookService.getBooksByCategoryName(category, page, size));
     }
 
     @GetMapping("/countBooksLoanedByCategory")

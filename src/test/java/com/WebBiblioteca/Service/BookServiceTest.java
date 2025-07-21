@@ -12,6 +12,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+
 import java.util.Collections;
 import java.util.Optional;
 import java.util.List;
@@ -42,10 +44,16 @@ public class BookServiceTest {
         when(book.getCategory()).thenReturn(null);
         when(book.getStockTotal()).thenReturn(5);
         when(book.getEstado()).thenReturn(state);
-        when(bookReposity.findByEstado(state)).thenReturn(List.of(book));
-        List<BookResponse> result = bookService.getBookList(state);
-        assertEquals(1, result.size());
-        assertEquals("Libro 1", result.getFirst().getTitle());
+        Page<Book> bookPage = mock(Page.class);
+        when(bookPage.getContent()).thenReturn(List.of(book));
+        when(bookPage.getNumber()).thenReturn(0);
+        when(bookPage.getSize()).thenReturn(10);
+        when(bookPage.getTotalElements()).thenReturn(1L);
+        when(bookPage.getTotalPages()).thenReturn(1);
+        when(bookReposity.findByEstado(eq(state), any())).thenReturn(bookPage);
+        var result = bookService.getBookList(state, 0, 10);
+        assertEquals(1, result.getContent().size());
+        assertEquals("Libro 1", result.getContent().get(0).getTitle());
     }
 
     @Test

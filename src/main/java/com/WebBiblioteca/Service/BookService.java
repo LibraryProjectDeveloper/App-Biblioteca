@@ -6,6 +6,7 @@ import com.WebBiblioteca.DTO.Book.BookReportDto;
 import com.WebBiblioteca.DTO.Book.BookRequest;
 import com.WebBiblioteca.DTO.Book.BookResponse;
 import com.WebBiblioteca.DTO.Book.CountBookByCategory;
+import com.WebBiblioteca.DTO.PageResponse;
 import com.WebBiblioteca.Exception.DuplicateResourceException;
 import com.WebBiblioteca.Exception.ExcelGenerationException;
 import com.WebBiblioteca.Exception.NoDataFoundException;
@@ -21,6 +22,9 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,52 +45,16 @@ public class BookService {
         this.bookReposity = bookReposity;
     }
 
-    public List<BookResponse> getBookList() {
-        return bookReposity.findAll()
-                .stream()
-                .map(book -> new BookResponse(
-                        book.getCodeBook(),
-                        book.getTitle(),
-                        book.getIsbn(),
-                        book.getPublicationDate(),
-                        book.getPublisher(),
-                        book.getCategory(),
-                        book.getStockTotal(),
-                        book.getEstado(),
-                        book.getAutores().stream()
-                                .map(author -> new AuthorResponse(
-                                        author.getIdAuthor(),
-                                        author.getNames(),
-                                        author.getLastname(),
-                                        author.getNationality(),
-                                        author.getBirthdate(),
-                                        author.getGender()
-                                )).collect(Collectors.toList())
-                )).collect(Collectors.toList());
+    public PageResponse<BookResponse> getBookList(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Book> bookPage = bookReposity.findAll(pageable);
+        return convertToPageResponse(bookPage);
     }
 
-    public List<BookResponse> getBookList(BookState bookState) {
-        return bookReposity.findByEstado(bookState)
-                .stream().
-                map(book -> new BookResponse(
-                        book.getCodeBook(),
-                        book.getTitle(),
-                        book.getIsbn(),
-                        book.getPublicationDate(),
-                        book.getPublisher(),
-                        book.getCategory(),
-                        book.getStockTotal(),
-                        book.getEstado(),
-                        book.getAutores().stream()
-                                .map(author -> new AuthorResponse(
-                                        author.getIdAuthor(),
-                                        author.getNames(),
-                                        author.getLastname(),
-                                        author.getNationality(),
-                                        author.getBirthdate(),
-                                        author.getGender()
-                                )).collect(Collectors.toList())
-                )).collect(Collectors.toList());
+    public PageResponse<BookResponse> getBookList(BookState bookState, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Book> bookPage = bookReposity.findByEstado(bookState, pageable);
+        return convertToPageResponse(bookPage);
     }
 
     public BookRequest getBookById(Long id) {
@@ -241,31 +209,11 @@ public class BookService {
         bookReposity.save(book);
     }
 
-
-    public List<BookResponse> filterBookCategory(Category category) {
-        return bookReposity.findByCategory(category)
-                .stream()
-                .map(book -> new BookResponse(
-                        book.getCodeBook(),
-                        book.getTitle(),
-                        book.getIsbn(),
-                        book.getPublicationDate(),
-                        book.getPublisher(),
-                        book.getCategory(),
-                        book.getStockTotal(),
-                        book.getEstado(),
-                        book.getAutores().stream()
-                                .map(author -> new AuthorResponse(
-                                        author.getIdAuthor(),
-                                        author.getNames(),
-                                        author.getLastname(),
-                                        author.getNationality(),
-                                        author.getBirthdate(),
-                                        author.getGender()
-                                )).collect(Collectors.toList())
-                )).collect(Collectors.toList());
+    public PageResponse<BookResponse> getBooksByCategory(Category category, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Book> bookPage = bookReposity.findByCategory(category, pageable);
+        return convertToPageResponse(bookPage);
     }
-
     public boolean verifyBooks(List<Long> booklist) {
         for (Long book : booklist) {
             if (bookReposity.findById(book).isEmpty()) {
@@ -341,12 +289,12 @@ public class BookService {
                         book.getEstado())).collect(Collectors.toList());
     }
 
-    public List<BookResponse> getBooksByCategoryName(String category) {
+    public List<BookResponse> getBooksByCategoryName(String category, int page, int size) {
         List<Book> bookList = Collections.emptyList();
         boolean categoryValid = category != null && !category.isBlank();
 
         if (categoryValid) {
-            bookList = bookReposity.findByCategory(Category.valueOf(category.toUpperCase()));
+            bookList = bookReposity.findByCategory(Category.valueOf(category.toUpperCase()), PageRequest.of(page, size)).getContent();
         }
 
         return bookList.stream()
@@ -500,5 +448,45 @@ public class BookService {
                         (Long) row[1]
                 ))
                 .collect(Collectors.toList());
+    }
+
+
+    private BookResponse convertToBookResponse(Book book) {
+        return new BookResponse(
+                book.getCodeBook(),
+                book.getTitle(),
+                book.getIsbn(),
+                book.getPublicationDate(),
+                book.getPublisher(),
+                book.getCategory(),
+                book.getStockTotal(),
+                book.getEstado(),
+                book.getAutores().stream()
+                        .map(author -> new AuthorResponse(
+                                author.getIdAuthor(),
+                                author.getNames(),
+                                author.getLastname(),
+                                author.getNationality(),
+                                author.getBirthdate(),
+                                author.getGender()
+                        )).collect(Collectors.toList())
+        );
+    }
+
+    private PageResponse <BookResponse> convertToPageResponse(Page<Book> bookPage) {
+
+        List<BookResponse> bookResponseList = bookPage.getContent()
+                .stream()
+                .map(this::convertToBookResponse)
+                .toList();
+
+
+        PageResponse<BookResponse> pageResponse = new PageResponse<>();
+        pageResponse.setContent(bookResponseList);
+        pageResponse.setPage(bookPage.getNumber());
+        pageResponse.setSize(bookPage.getSize());
+        pageResponse.setTotalElements(bookPage.getTotalElements());
+        pageResponse.setTotalPages(bookPage.getTotalPages());
+        return pageResponse;
     }
 }
