@@ -1,6 +1,8 @@
 package com.WebBiblioteca.Service;
 
+import com.WebBiblioteca.DTO.PageResponse;
 import com.WebBiblioteca.DTO.ReserveBook.*;
+import com.WebBiblioteca.DTO.Usuario.UserResponse;
 import com.WebBiblioteca.Exception.ExcelGenerationException;
 import com.WebBiblioteca.Exception.NoDataFoundException;
 import com.WebBiblioteca.Exception.ResourceNotFoundException;
@@ -14,6 +16,9 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
@@ -34,9 +39,10 @@ public class ReserveBookService {
         this.bookService = bookService;
         this.userService = userService;
     }
-    public List<ReserveBookResponse> getReservationList() {
-        return reserveBookRepository.findAll().stream().map(this::convertToReserveBookResponse)
-                .toList();
+    public PageResponse<ReserveBookResponse> getReservationList(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ReserveBook> reserveBooks = reserveBookRepository.findAll(pageable);
+        return mapToPageResponse(reserveBooks);
     }
 
     public List<ReserveBookResponse> getReservationActives() {
@@ -233,5 +239,21 @@ public class ReserveBookService {
             throw new ResourceNotFoundException("Reservation", "state and user code", state + " and " + userCode);
         }
         return reserveBooks.stream().map(this::convertToReserveBookResponse).toList();
+    }
+
+    private PageResponse<ReserveBookResponse> mapToPageResponse(Page<ReserveBook> booksPage){
+        List<ReserveBookResponse> content = booksPage.getContent()
+                .stream()
+                .map(this::convertToReserveBookResponse)
+                .toList();
+
+        return new PageResponse<>(
+                content,
+                booksPage.getNumber(),
+                booksPage.getSize(),
+                booksPage.getTotalElements(),
+                booksPage.getTotalPages(),
+                booksPage.isLast()
+        );
     }
 }

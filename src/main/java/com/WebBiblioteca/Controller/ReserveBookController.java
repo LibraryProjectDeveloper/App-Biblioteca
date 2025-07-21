@@ -22,8 +22,9 @@ public class ReserveBookController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<?> getReservationAll() {
-       return ResponseEntity.ok(reserveBookService.getReservationList());
+    public ResponseEntity<?> getReservationAll(@RequestParam(value = "page", defaultValue = "0") int page,
+                                               @RequestParam(value = "size", defaultValue = "10") int size) {
+        return ResponseEntity.ok(reserveBookService.getReservationList(page, size));
     }
 
     @GetMapping("/actives")
