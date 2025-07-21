@@ -383,28 +383,10 @@ public class BookService {
         return booksReportDto;
     }
 
-    public List<BookResponse> booksActiveAndStock() {
-        return bookReposity.findAvailableBooksByState(BookState.ACTIVO)
-                .stream()
-                .map(book -> new BookResponse(
-                        book.getCodeBook(),
-                        book.getTitle(),
-                        book.getIsbn(),
-                        book.getPublicationDate(),
-                        book.getPublisher(),
-                        book.getCategory(),
-                        book.getStockTotal(),
-                        book.getEstado(),
-                        book.getAutores().stream()
-                                .map(author -> new AuthorResponse(
-                                        author.getIdAuthor(),
-                                        author.getNames(),
-                                        author.getLastname(),
-                                        author.getNationality(),
-                                        author.getBirthdate(),
-                                        author.getGender()
-                                )).collect(Collectors.toList())
-                )).collect(Collectors.toList());
+    public PageResponse<BookResponse> booksActiveAndStock(int page, int size) {
+        Pageable pageable = PageRequest.of(page,size);
+        Page<Book> bookPage = bookReposity.findAvailableBooksByState(BookState.ACTIVO, pageable);
+        return convertToPageResponse(bookPage);
     }
 
     public List<BookResponse> getBooksByAuthor(String authorName) {

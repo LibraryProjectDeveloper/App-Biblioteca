@@ -40,7 +40,7 @@ public interface BookReposity extends JpaRepository<Book,Long> {
     );
 
     @Query(value = "SELECT b FROM Book b WHERE b.stockTotal > 0 AND b.estado = :estado")
-    List<Book> findAvailableBooksByState(@Param("estado") BookState estado);
+    Page<Book> findAvailableBooksByState(@Param("estado") BookState estado,Pageable pageable);
 
     @Query("SELECT b FROM Book b join b.autores a WHERE a.names LIKE %?1% OR a.lastname LIKE %?1%")
     List<Book> searchAutor(@Param("authorName") String authorName);
