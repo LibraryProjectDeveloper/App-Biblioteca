@@ -26,7 +26,7 @@ public class LoanMonitorScheduler {
     }
 
 
-    @Scheduled(cron = "0 57 3 * * * ")
+    @Scheduled(cron = "0 0 0 * * * ")
     @Transactional
     public void checkOverdueLoans() {
         List<Loan> overdueLoans = loanRepository.findByDevolutionDateBeforeAndState(LocalDateTime.now(), LoanState.PRESTADO);

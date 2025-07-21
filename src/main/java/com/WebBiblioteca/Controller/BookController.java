@@ -69,18 +69,12 @@ public class BookController {
     }
 
     @GetMapping("/book-info/available")
-    public ResponseEntity<?> getAvailableBooks() {
-        try {
-            List<BookResponse> bookList = bookService.booksActiveAndStock();
-
-            if (!bookList.isEmpty()) {
-                return ResponseEntity.ok(bookList);
-            }
-            return ResponseEntity.noContent().build();
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(Collections.singletonMap("message", "Libros no disponibles"));
-        }
-
+    public ResponseEntity<?> getAvailableBooks(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    )
+    {
+        return ResponseEntity.ok(bookService.booksActiveAndStock(page, size));
     }
 
     @GetMapping("/searchCategory")
